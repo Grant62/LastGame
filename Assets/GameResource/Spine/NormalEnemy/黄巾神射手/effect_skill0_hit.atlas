@@ -1,0 +1,97 @@
+
+effect_skill0_hit.png
+size: 189,534
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+images/chutu/1_00001
+  rotate: false
+  xy: 2, 93
+  size: 92, 88
+  orig: 92, 96
+  offset: 0, 0
+  index: -1
+images/chutu/2_00018
+  rotate: true
+  xy: 63, 3
+  size: 67, 63
+  orig: 81, 75
+  offset: 11, 3
+  index: -1
+images/chutu/3_00018
+  rotate: true
+  xy: 2, 342
+  size: 131, 132
+  orig: 142, 139
+  offset: 4, 4
+  index: -1
+images/chutu/3_00021
+  rotate: true
+  xy: 2, 238
+  size: 102, 104
+  orig: 112, 118
+  offset: 9, 9
+  index: -1
+images/chutu/4_00021
+  rotate: true
+  xy: 96, 72
+  size: 87, 90
+  orig: 106, 117
+  offset: 7, 7
+  index: -1
+images/chutu/5_00021
+  rotate: false
+  xy: 2, 475
+  size: 144, 57
+  orig: 151, 77
+  offset: 6, 9
+  index: -1
+images/chutu/6_00021
+  rotate: true
+  xy: 108, 287
+  size: 53, 79
+  orig: 73, 85
+  offset: 8, 4
+  index: -1
+images/chutu/7_00021
+  rotate: true
+  xy: 108, 220
+  size: 65, 74
+  orig: 80, 83
+  offset: 9, 4
+  index: -1
+images/chutu/lizi2/1_00021
+  rotate: true
+  xy: 136, 395
+  size: 78, 43
+  orig: 120, 66
+  offset: 9, 12
+  index: -1
+images/chutu/lizi2/1_00023
+  rotate: false
+  xy: 2, 183
+  size: 101, 53
+  orig: 120, 66
+  offset: 9, 5
+  index: -1
+images/chutu/lizi2/1_00025
+  rotate: false
+  xy: 105, 161
+  size: 72, 57
+  orig: 120, 66
+  offset: 6, 3
+  index: -1
+images/chutu/lizi2/1_00027
+  rotate: true
+  xy: 128, 4
+  size: 66, 58
+  orig: 120, 66
+  offset: 4, 3
+  index: -1
+images/chutu/lizi2/1_00029
+  rotate: true
+  xy: 2, 2
+  size: 68, 59
+  orig: 120, 66
+  offset: 2, 4
+  index: -1

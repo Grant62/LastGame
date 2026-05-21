@@ -1,0 +1,69 @@
+
+effect_skill_hit.png
+size: 601,132
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+effect/1
+  rotate: false
+  xy: 457, 19
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+effect/shouji/1_00000
+  rotate: false
+  xy: 457, 53
+  size: 74, 77
+  orig: 128, 128
+  offset: 26, 28
+  index: -1
+effect/shouji/1_00001
+  rotate: false
+  xy: 247, 19
+  size: 111, 111
+  orig: 128, 128
+  offset: 8, 9
+  index: -1
+effect/shouji/1_00002
+  rotate: true
+  xy: 129, 4
+  size: 126, 116
+  orig: 128, 128
+  offset: 0, 5
+  index: -1
+effect/shouji/1_00003
+  rotate: true
+  xy: 2, 2
+  size: 128, 125
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+effect/shouji/1_00004
+  rotate: false
+  xy: 360, 27
+  size: 95, 103
+  orig: 128, 128
+  offset: 19, 21
+  index: -1
+effect/shouji/1_00005
+  rotate: false
+  xy: 533, 70
+  size: 66, 60
+  orig: 128, 128
+  offset: 53, 59
+  index: -1
+effect/shouji/1_00006
+  rotate: false
+  xy: 533, 12
+  size: 55, 56
+  orig: 128, 128
+  offset: 64, 59
+  index: -1
+effect/shouji/1_00007
+  rotate: false
+  xy: 360, 2
+  size: 47, 23
+  orig: 128, 128
+  offset: 69, 89
+  index: -1

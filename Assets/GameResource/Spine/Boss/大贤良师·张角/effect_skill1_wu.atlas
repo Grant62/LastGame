@@ -1,0 +1,97 @@
+
+effect_skill1_wu.png
+size: 773,203
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+images/zuoci/a_xin/skill1/yun001/yun_0001
+  rotate: false
+  xy: 327, 4
+  size: 146, 96
+  orig: 170, 101
+  offset: 21, 1
+  index: -1
+images/zuoci/a_xin/skill1/yun001/yun_0003
+  rotate: false
+  xy: 167, 3
+  size: 158, 97
+  orig: 170, 101
+  offset: 10, 1
+  index: -1
+images/zuoci/a_xin/skill1/yun001/yun_0005
+  rotate: false
+  xy: 512, 103
+  size: 169, 98
+  orig: 170, 101
+  offset: 1, 1
+  index: -1
+images/zuoci/a_xin/skill1/yun001/yun_0007
+  rotate: false
+  xy: 512, 3
+  size: 168, 98
+  orig: 170, 101
+  offset: 1, 2
+  index: -1
+images/zuoci/a_xin/skill1/yun001/yun_0009
+  rotate: false
+  xy: 2, 102
+  size: 168, 99
+  orig: 170, 101
+  offset: 1, 1
+  index: -1
+images/zuoci/a_xin/skill1/yun001/yun_0011
+  rotate: false
+  xy: 172, 102
+  size: 168, 99
+  orig: 170, 101
+  offset: 1, 1
+  index: -1
+images/zuoci/a_xin/skill1/yun001/yun_0013
+  rotate: false
+  xy: 342, 102
+  size: 168, 99
+  orig: 170, 101
+  offset: 1, 1
+  index: -1
+images/zuoci/a_xin/skill1/yun001/yun_0015
+  rotate: false
+  xy: 2, 2
+  size: 163, 98
+  orig: 170, 101
+  offset: 4, 2
+  index: -1
+images/zuoci/a_xin/skill1/yun001/yun_0017
+  rotate: true
+  xy: 683, 44
+  size: 157, 88
+  orig: 170, 101
+  offset: 9, 3
+  index: -1
+images/zuoci/a_xin/skill1/yun001/yun_0021
+  rotate: false
+  xy: 682, 13
+  size: 74, 29
+  orig: 170, 101
+  offset: 74, 29
+  index: -1
+images/zuoci/a_xin/skill1/yun001/yun_0025
+  rotate: true
+  xy: 475, 58
+  size: 42, 22
+  orig: 170, 101
+  offset: 106, 36
+  index: -1
+images/zuoci/a_xin/skill1/yun001/yun_0029
+  rotate: true
+  xy: 475, 36
+  size: 20, 18
+  orig: 170, 101
+  offset: 108, 39
+  index: -1
+images/zuoci/a_xin/skill1/zise
+  rotate: false
+  xy: 475, 19
+  size: 30, 15
+  orig: 30, 15
+  offset: 0, 0
+  index: -1

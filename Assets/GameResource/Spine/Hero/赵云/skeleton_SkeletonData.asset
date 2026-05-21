@@ -1,0 +1,101 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1b3b4b945939a54ea0b23d3396115fb, type: 3}
+  m_Name: skeleton_SkeletonData
+  m_EditorClassIdentifier: 
+  atlasAssets:
+  - {fileID: 11400000, guid: 9ba9ee2dc7f3d62498e2b09816c6b829, type: 2}
+  scale: 0.01
+  skeletonJSON: {fileID: 4900000, guid: 4a1dbc0b617fc2f4383ece03977518a2, type: 3}
+  fromAnimation:
+  - ready
+  - run
+  - run
+  - run
+  - ready
+  - ready
+  - ready
+  - run
+  - run
+  - run
+  - ready
+  - ready
+  - ready
+  - run
+  - hit1
+  - hit2
+  - hit3
+  - hit1
+  - hit2
+  - hit3
+  - ready
+  - run
+  - skill0
+  - skill1
+  - skill2
+  - appear
+  toAnimation:
+  - run
+  - hit1
+  - hit2
+  - hit3
+  - hit1
+  - hit2
+  - hit3
+  - skill0
+  - skill1
+  - skill2
+  - skill0
+  - skill1
+  - skill2
+  - ready
+  - run
+  - run
+  - run
+  - ready
+  - ready
+  - ready
+  - dead
+  - dead
+  - dead
+  - dead
+  - dead
+  - ready
+  duration:
+  - 0.12
+  - 0.05
+  - 0.05
+  - 0.05
+  - 0.05
+  - 0.05
+  - 0.05
+  - 0.08
+  - 0.08
+  - 0.08
+  - 0.08
+  - 0.08
+  - 0.08
+  - 0.12
+  - 0.05
+  - 0.05
+  - 0.05
+  - 0.05
+  - 0.05
+  - 0.05
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0.15
+  defaultMix: 0.2
+  controller: {fileID: 9100000, guid: 1bc9a7df4513141438f26b45f07fff1a, type: 2}

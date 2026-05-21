@@ -1,0 +1,13 @@
+
+effect_lizi3.png
+size: 20,20
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+images/effect/lizi_yuanlv
+  rotate: false
+  xy: 2, 2
+  size: 16, 16
+  orig: 20, 20
+  offset: 2, 2
+  index: -1

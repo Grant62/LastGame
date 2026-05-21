@@ -1,0 +1,20 @@
+
+effect_skill0.png
+size: 363,124
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+effect/daoguang/1_00000
+  rotate: false
+  xy: 2, 9
+  size: 185, 113
+  orig: 190, 125
+  offset: 2, 9
+  index: -1
+effect/daoguang/1_00002
+  rotate: false
+  xy: 189, 2
+  size: 172, 120
+  orig: 190, 125
+  offset: 18, 0
+  index: -1

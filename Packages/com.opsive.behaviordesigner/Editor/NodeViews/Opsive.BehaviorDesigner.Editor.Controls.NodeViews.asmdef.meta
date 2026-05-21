@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 98e4b74cf0784f4458e03260557a6cc4
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20000153
+  packageName: Behavior Designer Pro
+  packageVersion: 2.1.2
+  assetPath: Packages/com.opsive.behaviordesigner/Editor/NodeViews/Opsive.BehaviorDesigner.Editor.Controls.NodeViews.asmdef
+  uploadId: 0

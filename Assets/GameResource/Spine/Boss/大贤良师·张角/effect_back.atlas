@@ -1,0 +1,20 @@
+
+effect_back.png
+size: 336,68
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+images/zuoci/a_xin/skill0/dimian
+  rotate: false
+  xy: 2, 10
+  size: 194, 56
+  orig: 196, 58
+  offset: 1, 1
+  index: -1
+images/zuoci/a_xin/skill0/yun
+  rotate: false
+  xy: 198, 2
+  size: 136, 64
+  orig: 150, 64
+  offset: 9, 0
+  index: -1

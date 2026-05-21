@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: ffa99079a1d11e547943e43bd0446c86
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20000153
+  packageName: Behavior Designer Pro
+  packageVersion: 2.1.2
+  assetPath: Packages/com.opsive.behaviordesigner/Runtime/Systems/BeforeTraversalSystems.cs
+  uploadId: 0

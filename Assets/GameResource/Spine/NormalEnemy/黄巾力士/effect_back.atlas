@@ -1,0 +1,41 @@
+
+effect_back.png
+size: 151,75
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+zhanshichutu/dg/1_00021
+  rotate: true
+  xy: 88, 2
+  size: 18, 31
+  orig: 67, 65
+  offset: 43, 31
+  index: -1
+zhanshichutu/dg/1_00022
+  rotate: false
+  xy: 88, 22
+  size: 61, 51
+  orig: 67, 65
+  offset: 4, 4
+  index: -1
+zhanshichutu/dg/1_00023
+  rotate: true
+  xy: 2, 11
+  size: 62, 47
+  orig: 67, 65
+  offset: 3, 4
+  index: -1
+zhanshichutu/dg/1_00024
+  rotate: true
+  xy: 51, 11
+  size: 62, 35
+  orig: 67, 65
+  offset: 3, 4
+  index: -1
+zhanshichutu/dg/1_00025
+  rotate: true
+  xy: 121, 4
+  size: 16, 13
+  orig: 67, 65
+  offset: 3, 4
+  index: -1

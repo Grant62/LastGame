@@ -1,0 +1,104 @@
+
+effect_skill1.png
+size: 494,163
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+zb/ju/1_00012
+  rotate: true
+  xy: 405, 2
+  size: 39, 46
+  orig: 107, 70
+  offset: 3, 16
+  index: -1
+zb/ju/1_00013
+  rotate: false
+  xy: 406, 115
+  size: 63, 46
+  orig: 107, 70
+  offset: 9, 24
+  index: -1
+zb/ju/1_00014
+  rotate: true
+  xy: 286, 8
+  size: 85, 55
+  orig: 107, 70
+  offset: 13, 15
+  index: -1
+zb/ju/1_00015
+  rotate: false
+  xy: 2, 4
+  size: 94, 69
+  orig: 107, 70
+  offset: 12, 0
+  index: -1
+zb/ju/1_00017
+  rotate: false
+  xy: 191, 11
+  size: 93, 66
+  orig: 107, 70
+  offset: 12, 0
+  index: -1
+zb/ju/1_00019
+  rotate: false
+  xy: 98, 6
+  size: 91, 68
+  orig: 107, 70
+  offset: 12, 0
+  index: -1
+zb/ju/1_00021
+  rotate: false
+  xy: 259, 95
+  size: 83, 66
+  orig: 107, 70
+  offset: 15, 0
+  index: -1
+zb/ju/1_00023
+  rotate: true
+  xy: 343, 18
+  size: 75, 60
+  orig: 107, 70
+  offset: 19, 4
+  index: -1
+zb/ju/1_00025
+  rotate: false
+  xy: 405, 43
+  size: 63, 56
+  orig: 107, 70
+  offset: 28, 5
+  index: -1
+zb/sg/1_00016
+  rotate: false
+  xy: 453, 2
+  size: 39, 39
+  orig: 92, 89
+  offset: 26, 22
+  index: -1
+zb/sg/1_00018
+  rotate: false
+  xy: 344, 101
+  size: 60, 60
+  orig: 92, 89
+  offset: 15, 11
+  index: -1
+zb/sg/1_00020
+  rotate: true
+  xy: 89, 76
+  size: 85, 84
+  orig: 92, 89
+  offset: 3, 0
+  index: -1
+zb/sg/1_00022
+  rotate: true
+  xy: 2, 75
+  size: 86, 85
+  orig: 92, 89
+  offset: 2, 0
+  index: -1
+zb/sg/1_00024
+  rotate: false
+  xy: 175, 79
+  size: 82, 82
+  orig: 92, 89
+  offset: 4, 0
+  index: -1

@@ -1,0 +1,20 @@
+
+effect_skill1_yun.png
+size: 278,92
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+images/zuoci/a_xin/skill1/yun66
+  rotate: true
+  xy: 254, 15
+  size: 75, 22
+  orig: 75, 22
+  offset: 0, 0
+  index: -1
+images/zuoci/a_xin/skill1/yun77
+  rotate: false
+  xy: 2, 2
+  size: 250, 88
+  orig: 250, 89
+  offset: 0, 0
+  index: -1

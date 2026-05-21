@@ -1,0 +1,76 @@
+
+effect_skill0.png
+size: 216,277
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+effect/1
+  rotate: false
+  xy: 162, 31
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+effect/fangshe_00000
+  rotate: false
+  xy: 124, 65
+  size: 90, 95
+  orig: 100, 100
+  offset: 4, 5
+  index: -1
+effect/guang/1_00000
+  rotate: true
+  xy: 2, 233
+  size: 42, 128
+  orig: 45, 128
+  offset: 2, 0
+  index: -1
+effect/quan/1_00000
+  rotate: true
+  xy: 132, 227
+  size: 48, 80
+  orig: 64, 100
+  offset: 10, 10
+  index: -1
+effect/quan/1_00001
+  rotate: false
+  xy: 64, 2
+  size: 58, 100
+  orig: 64, 100
+  offset: 1, 0
+  index: -1
+effect/quan/1_00002
+  rotate: false
+  xy: 2, 2
+  size: 60, 100
+  orig: 64, 100
+  offset: 0, 0
+  index: -1
+effect/quan/1_00003
+  rotate: true
+  xy: 2, 104
+  size: 62, 100
+  orig: 64, 100
+  offset: 0, 0
+  index: -1
+effect/quan/1_00004
+  rotate: true
+  xy: 2, 168
+  size: 63, 100
+  orig: 64, 100
+  offset: 0, 0
+  index: -1
+effect/quan/1_00005
+  rotate: true
+  xy: 104, 162
+  size: 63, 100
+  orig: 64, 100
+  offset: 0, 0
+  index: -1
+effect/quan/1_00006
+  rotate: false
+  xy: 124, 20
+  size: 36, 43
+  orig: 64, 100
+  offset: 11, 49
+  index: -1

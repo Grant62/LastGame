@@ -1,0 +1,55 @@
+
+effect_hit.png
+size: 277,93
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+zhanshichutu/1_00001
+  rotate: false
+  xy: 2, 3
+  size: 92, 88
+  orig: 92, 96
+  offset: 0, 0
+  index: -1
+zhanshichutu/1_00022
+  rotate: false
+  xy: 129, 13
+  size: 73, 78
+  orig: 83, 86
+  offset: 9, 3
+  index: -1
+zhanshichutu/2_00022
+  rotate: true
+  xy: 204, 52
+  size: 39, 70
+  orig: 54, 91
+  offset: 5, 8
+  index: -1
+zhanshichutu/3_00022
+  rotate: false
+  xy: 204, 2
+  size: 51, 48
+  orig: 57, 53
+  offset: 3, 4
+  index: -1
+zhanshichutu/4_00022
+  rotate: false
+  xy: 96, 12
+  size: 31, 79
+  orig: 43, 87
+  offset: 4, 5
+  index: -1
+zhanshichutu/5_00022
+  rotate: true
+  xy: 257, 33
+  size: 17, 18
+  orig: 23, 25
+  offset: 3, 3
+  index: -1
+zhanshichutu/6_00000
+  rotate: true
+  xy: 257, 17
+  size: 14, 16
+  orig: 14, 18
+  offset: 0, 1
+  index: -1

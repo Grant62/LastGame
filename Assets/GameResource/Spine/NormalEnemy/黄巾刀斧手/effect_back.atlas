@@ -1,0 +1,76 @@
+
+effect_back.png
+size: 171,505
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+ciquan_00024
+  rotate: false
+  xy: 2, 45
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+dilie_00024
+  rotate: true
+  xy: 2, 175
+  size: 328, 112
+  orig: 328, 112
+  offset: 0, 0
+  index: -1
+yan/generic_dust_direct_1_sheet_01
+  rotate: true
+  xy: 155, 83
+  size: 31, 14
+  orig: 128, 64
+  offset: 6, 0
+  index: -1
+yan/generic_dust_direct_1_sheet_03
+  rotate: true
+  xy: 116, 327
+  size: 87, 40
+  orig: 128, 64
+  offset: 5, 0
+  index: -1
+yan/generic_dust_direct_1_sheet_05
+  rotate: false
+  xy: 2, 2
+  size: 92, 41
+  orig: 128, 64
+  offset: 9, 0
+  index: -1
+yan/generic_dust_direct_1_sheet_07
+  rotate: true
+  xy: 116, 416
+  size: 87, 42
+  orig: 128, 64
+  offset: 14, 0
+  index: -1
+yan/generic_dust_direct_1_sheet_09
+  rotate: true
+  xy: 116, 245
+  size: 80, 42
+  orig: 128, 64
+  offset: 22, 0
+  index: -1
+yan/generic_dust_direct_1_sheet_11
+  rotate: true
+  xy: 116, 178
+  size: 65, 42
+  orig: 128, 64
+  offset: 37, 0
+  index: -1
+yan/generic_dust_direct_1_sheet_13
+  rotate: true
+  xy: 132, 116
+  size: 60, 33
+  orig: 128, 64
+  offset: 40, 0
+  index: -1
+yan/generic_dust_direct_1_sheet_15
+  rotate: true
+  xy: 132, 63
+  size: 51, 21
+  orig: 128, 64
+  offset: 49, 0
+  index: -1

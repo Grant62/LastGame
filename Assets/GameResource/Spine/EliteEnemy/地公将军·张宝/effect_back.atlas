@@ -1,0 +1,41 @@
+
+effect_back.png
+size: 211,52
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+images/dg3/1_00058
+  rotate: true
+  xy: 149, 2
+  size: 25, 30
+  orig: 77, 76
+  offset: 26, 44
+  index: -1
+images/dg3/1_00060
+  rotate: false
+  xy: 2, 5
+  size: 72, 45
+  orig: 77, 76
+  offset: 3, 1
+  index: -1
+images/dg3/1_00061
+  rotate: false
+  xy: 76, 17
+  size: 71, 33
+  orig: 77, 76
+  offset: 4, 1
+  index: -1
+images/dg3/1_00062
+  rotate: false
+  xy: 149, 29
+  size: 57, 21
+  orig: 77, 76
+  offset: 5, 1
+  index: -1
+images/dg3/1_00063
+  rotate: false
+  xy: 181, 5
+  size: 28, 22
+  orig: 77, 76
+  offset: 6, 1
+  index: -1

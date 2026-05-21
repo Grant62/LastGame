@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 5ab224e1523f7bf41a1bf128e4e1c02a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20000153
+  packageName: Behavior Designer Pro
+  packageVersion: 2.1.2
+  assetPath: Packages/com.opsive.behaviordesigner/Runtime/Tasks/ECSTask.cs
+  uploadId: 0

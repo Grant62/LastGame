@@ -1,0 +1,62 @@
+
+effect_back.png
+size: 245,271
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+effect/glow/1_00000
+  rotate: false
+  xy: 2, 21
+  size: 64, 62
+  orig: 64, 64
+  offset: 0, 1
+  index: -1
+effect/huanxingbo/1_00000
+  rotate: false
+  xy: 56, 234
+  size: 118, 35
+  orig: 190, 55
+  offset: 35, 13
+  index: -1
+effect/huanxingbo/1_00001
+  rotate: false
+  xy: 56, 131
+  size: 184, 49
+  orig: 190, 55
+  offset: 2, 4
+  index: -1
+effect/huanxingbo/1_00002
+  rotate: true
+  xy: 2, 85
+  size: 184, 52
+  orig: 190, 55
+  offset: 2, 2
+  index: -1
+effect/huanxingbo/1_00003
+  rotate: false
+  xy: 68, 80
+  size: 175, 49
+  orig: 190, 55
+  offset: 7, 4
+  index: -1
+effect/huanxingbo/1_00004
+  rotate: false
+  xy: 56, 182
+  size: 180, 50
+  orig: 190, 55
+  offset: 5, 3
+  index: -1
+effect/huanxingbo/1_00005
+  rotate: false
+  xy: 68, 41
+  size: 139, 37
+  orig: 190, 55
+  offset: 26, 12
+  index: -1
+effect/huanxingbo/1_00006
+  rotate: false
+  xy: 68, 2
+  size: 139, 37
+  orig: 190, 55
+  offset: 26, 12
+  index: -1

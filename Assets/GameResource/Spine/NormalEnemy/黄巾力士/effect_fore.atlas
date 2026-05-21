@@ -1,0 +1,76 @@
+
+effect_fore.png
+size: 148,141
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+zhanshichutu/dg2/1_00027
+  rotate: true
+  xy: 86, 20
+  size: 27, 13
+  orig: 95, 49
+  offset: 46, 24
+  index: -1
+zhanshichutu/dg2/1_00028
+  rotate: false
+  xy: 98, 79
+  size: 31, 21
+  orig: 95, 49
+  offset: 63, 25
+  index: -1
+zhanshichutu/dg2/1_00029
+  rotate: false
+  xy: 2, 95
+  size: 94, 44
+  orig: 95, 49
+  offset: 0, 2
+  index: -1
+zhanshichutu/dg2/1_00030
+  rotate: false
+  xy: 2, 49
+  size: 94, 44
+  orig: 95, 49
+  offset: 0, 2
+  index: -1
+zhanshichutu/dg2/1_00031
+  rotate: false
+  xy: 98, 102
+  size: 42, 37
+  orig: 95, 49
+  offset: 0, 2
+  index: -1
+zhanshichutu/dg2/1_00032
+  rotate: true
+  xy: 131, 78
+  size: 22, 15
+  orig: 95, 49
+  offset: 1, 24
+  index: -1
+zhanshichutu/dg3/1_00022
+  rotate: true
+  xy: 101, 23
+  size: 27, 19
+  orig: 62, 59
+  offset: 1, 39
+  index: -1
+zhanshichutu/dg3/1_00023
+  rotate: true
+  xy: 2, 2
+  size: 45, 57
+  orig: 62, 59
+  offset: 15, 1
+  index: -1
+zhanshichutu/dg3/1_00024
+  rotate: false
+  xy: 61, 2
+  size: 23, 45
+  orig: 62, 59
+  offset: 37, 1
+  index: -1
+zhanshichutu/dg3/1_00025
+  rotate: false
+  xy: 98, 52
+  size: 23, 25
+  orig: 62, 59
+  offset: 37, 1
+  index: -1

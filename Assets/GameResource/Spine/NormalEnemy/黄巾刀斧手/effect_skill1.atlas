@@ -1,0 +1,62 @@
+
+effect_skill1.png
+size: 370,513
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+ci2_00019
+  rotate: true
+  xy: 212, 154
+  size: 190, 49
+  orig: 190, 49
+  offset: 0, 0
+  index: -1
+dao(3.2)/dao_00023
+  rotate: false
+  xy: 2, 346
+  size: 228, 165
+  orig: 228, 168
+  offset: 0, 3
+  index: -1
+dao(3.2)/dao_00024
+  rotate: false
+  xy: 2, 176
+  size: 208, 168
+  orig: 228, 168
+  offset: 20, 0
+  index: -1
+dao(3.2)/dao_00025
+  rotate: false
+  xy: 2, 12
+  size: 207, 162
+  orig: 228, 168
+  offset: 18, 2
+  index: -1
+dao(3.2)/dao_00026
+  rotate: false
+  xy: 211, 2
+  size: 157, 150
+  orig: 228, 168
+  offset: 66, 2
+  index: -1
+glow_huang_00019
+  rotate: false
+  xy: 263, 276
+  size: 105, 105
+  orig: 105, 105
+  offset: 0, 0
+  index: -1
+xing_00021
+  rotate: false
+  xy: 263, 242
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+yuanhuan_00019
+  rotate: false
+  xy: 232, 383
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1

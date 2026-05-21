@@ -1,0 +1,16 @@
+{
+  "name": "UIKit",
+  "references": [
+    "QFramework.CoreKit",
+    "QFramework",
+    "JKFrame"
+  ],
+  "optionalUnityReferences": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}

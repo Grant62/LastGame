@@ -1,0 +1,27 @@
+
+effect_bullet.png
+size: 85,79
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+chutu/1_00039
+  rotate: false
+  xy: 2, 21
+  size: 58, 56
+  orig: 68, 58
+  offset: 4, 2
+  index: -1
+chutu/huo/1_00033
+  rotate: false
+  xy: 2, 2
+  size: 29, 17
+  orig: 109, 24
+  offset: 65, 3
+  index: -1
+chutu/jian_00033
+  rotate: true
+  xy: 62, 14
+  size: 63, 21
+  orig: 69, 24
+  offset: 2, 1
+  index: -1

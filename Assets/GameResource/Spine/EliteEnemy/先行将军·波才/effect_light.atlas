@@ -1,0 +1,13 @@
+
+effect_light.png
+size: 68,66
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+effect/glow/1_00000
+  rotate: false
+  xy: 2, 2
+  size: 64, 62
+  orig: 64, 64
+  offset: 0, 1
+  index: -1

@@ -1,0 +1,83 @@
+
+effect_hit.png
+size: 964,239
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+effect/baozhaguang/1_00000
+  rotate: false
+  xy: 871, 20
+  size: 76, 60
+  orig: 205, 130
+  offset: 69, 3
+  index: -1
+effect/baozhaguang/1_00001
+  rotate: true
+  xy: 871, 82
+  size: 155, 91
+  orig: 205, 130
+  offset: 29, 5
+  index: -1
+effect/baozhaguang/1_00002
+  rotate: false
+  xy: 2, 5
+  size: 183, 111
+  orig: 205, 130
+  offset: 14, 5
+  index: -1
+effect/baozhaguang/1_00003
+  rotate: false
+  xy: 203, 5
+  size: 183, 112
+  orig: 205, 130
+  offset: 14, 5
+  index: -1
+effect/baozhaguang/1_00004
+  rotate: false
+  xy: 203, 119
+  size: 200, 118
+  orig: 205, 130
+  offset: 4, 5
+  index: -1
+effect/baozhaguang/1_00005
+  rotate: false
+  xy: 405, 120
+  size: 200, 117
+  orig: 205, 130
+  offset: 4, 6
+  index: -1
+effect/baozhaguang/1_00006
+  rotate: false
+  xy: 2, 118
+  size: 199, 119
+  orig: 205, 130
+  offset: 1, 6
+  index: -1
+effect/baozhaguang/1_00007
+  rotate: false
+  xy: 607, 120
+  size: 199, 117
+  orig: 205, 130
+  offset: 1, 8
+  index: -1
+effect/baozhaguang/1_00008
+  rotate: false
+  xy: 405, 3
+  size: 195, 115
+  orig: 205, 130
+  offset: 3, 10
+  index: -1
+effect/baozhaguang/1_00010
+  rotate: false
+  xy: 602, 10
+  size: 181, 108
+  orig: 205, 130
+  offset: 10, 9
+  index: -1
+effect/chongjiguang/1_00000
+  rotate: false
+  xy: 808, 2
+  size: 61, 235
+  orig: 65, 235
+  offset: 2, 0
+  index: -1

@@ -1,0 +1,69 @@
+
+effect_skill1.png
+size: 403,271
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+effect/1
+  rotate: false
+  xy: 242, 125
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+effect/chongji/1_00000
+  rotate: false
+  xy: 242, 159
+  size: 159, 110
+  orig: 170, 128
+  offset: 1, 8
+  index: -1
+effect/chongji/1_00001
+  rotate: false
+  xy: 155, 3
+  size: 148, 102
+  orig: 170, 128
+  offset: 4, 7
+  index: -1
+effect/chongji/1_00002
+  rotate: false
+  xy: 2, 156
+  size: 153, 113
+  orig: 170, 128
+  offset: 0, 9
+  index: -1
+effect/chongji/1_00003
+  rotate: true
+  xy: 157, 107
+  size: 162, 83
+  orig: 170, 128
+  offset: 8, 9
+  index: -1
+effect/chongji/1_00004
+  rotate: true
+  xy: 305, 9
+  size: 148, 79
+  orig: 170, 128
+  offset: 18, 8
+  index: -1
+effect/chongji/1_00005
+  rotate: true
+  xy: 2, 2
+  size: 152, 99
+  orig: 170, 128
+  offset: 7, 10
+  index: -1
+effect/guangtiao/1_00000
+  rotate: false
+  xy: 103, 13
+  size: 50, 141
+  orig: 50, 150
+  offset: 0, 9
+  index: -1
+effect/shitou
+  rotate: false
+  xy: 276, 131
+  size: 19, 26
+  orig: 32, 32
+  offset: 7, 3
+  index: -1

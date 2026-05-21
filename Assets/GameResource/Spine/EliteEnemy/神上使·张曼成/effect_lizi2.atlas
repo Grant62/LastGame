@@ -1,0 +1,13 @@
+
+effect_lizi2.png
+size: 34,36
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+images/1_00000
+  rotate: false
+  xy: 2, 2
+  size: 30, 32
+  orig: 32, 32
+  offset: 1, 0
+  index: -1

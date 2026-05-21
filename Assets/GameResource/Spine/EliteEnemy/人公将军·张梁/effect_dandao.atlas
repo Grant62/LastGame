@@ -1,0 +1,41 @@
+
+effect_dandao.png
+size: 130,147
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+zb/fu/1_00027
+  rotate: false
+  xy: 2, 62
+  size: 116, 28
+  orig: 135, 35
+  offset: 16, 2
+  index: -1
+zb/fu/1_00029
+  rotate: false
+  xy: 2, 32
+  size: 115, 28
+  orig: 135, 35
+  offset: 17, 3
+  index: -1
+zb/fu/1_00031
+  rotate: false
+  xy: 2, 2
+  size: 126, 28
+  orig: 135, 35
+  offset: 6, 3
+  index: -1
+zb/fu/1_00033
+  rotate: false
+  xy: 2, 92
+  size: 120, 27
+  orig: 135, 35
+  offset: 12, 4
+  index: -1
+zb/fu/1_00035
+  rotate: false
+  xy: 2, 121
+  size: 125, 24
+  orig: 135, 35
+  offset: 7, 5
+  index: -1
