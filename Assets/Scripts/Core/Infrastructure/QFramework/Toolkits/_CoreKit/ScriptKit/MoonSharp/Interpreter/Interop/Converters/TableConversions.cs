@@ -7,10 +7,10 @@ namespace MoonSharp.Interpreter.Interop.Converters
 {
     internal static class TableConversions
     {
-	    /// <summary>
-	    ///     Converts an IList to a Lua table.
-	    /// </summary>
-	    internal static Table ConvertIListToTable(Script script, IList list)
+        /// <summary>
+        ///     Converts an IList to a Lua table.
+        /// </summary>
+        internal static Table ConvertIListToTable(Script script, IList list)
         {
             Table t = new(script);
             for (int i = 0; i < list.Count; i++)
@@ -21,10 +21,10 @@ namespace MoonSharp.Interpreter.Interop.Converters
             return t;
         }
 
-	    /// <summary>
-	    ///     Converts an IDictionary to a Lua table.
-	    /// </summary>
-	    internal static Table ConvertIDictionaryToTable(Script script, IDictionary dict)
+        /// <summary>
+        ///     Converts an IDictionary to a Lua table.
+        /// </summary>
+        internal static Table ConvertIDictionaryToTable(Script script, IDictionary dict)
         {
             Table t = new(script);
 
@@ -38,13 +38,13 @@ namespace MoonSharp.Interpreter.Interop.Converters
             return t;
         }
 
-	    /// <summary>
-	    ///     Determines whether the specified table can be converted to the specified type
-	    /// </summary>
-	    /// <param name="table">The table.</param>
-	    /// <param name="t">The type.</param>
-	    /// <returns></returns>
-	    internal static bool CanConvertTableToType(Table table, Type t)
+        /// <summary>
+        ///     Determines whether the specified table can be converted to the specified type
+        /// </summary>
+        /// <param name="table">The table.</param>
+        /// <param name="t">The type.</param>
+        /// <returns></returns>
+        internal static bool CanConvertTableToType(Table table, Type t)
         {
             if (Framework.Do.IsAssignableFrom(t, typeof(Dictionary<object, object>)))
                 return true;
@@ -85,10 +85,10 @@ namespace MoonSharp.Interpreter.Interop.Converters
         }
 
 
-	    /// <summary>
-	    ///     Converts a table to a CLR object of a given type
-	    /// </summary>
-	    internal static object ConvertTableToType(Table table, Type t)
+        /// <summary>
+        ///     Converts a table to a CLR object of a given type
+        /// </summary>
+        internal static object ConvertTableToType(Table table, Type t)
         {
             if (Framework.Do.IsAssignableFrom(t, typeof(Dictionary<object, object>)))
                 return TableToDictionary(table, v => v.ToObject(), v => v.ToObject());
@@ -129,10 +129,10 @@ namespace MoonSharp.Interpreter.Interop.Converters
         }
 
 
-	    /// <summary>
-	    ///     Converts a table to a <see cref="Dictionary{K,V}" />
-	    /// </summary>
-	    internal static object ConvertTableToDictionaryOfGenericType(Type dictionaryType, Type keyType, Type valueType, Table table)
+        /// <summary>
+        ///     Converts a table to a <see cref="Dictionary{K,V}" />
+        /// </summary>
+        internal static object ConvertTableToDictionaryOfGenericType(Type dictionaryType, Type keyType, Type valueType, Table table)
         {
             if (dictionaryType.GetGenericTypeDefinition() != typeof(Dictionary<,>))
             {
@@ -153,10 +153,10 @@ namespace MoonSharp.Interpreter.Interop.Converters
             return dic;
         }
 
-	    /// <summary>
-	    ///     Converts a table to a T[]
-	    /// </summary>
-	    internal static object ConvertTableToArrayOfGenericType(Type arrayType, Type itemType, Table table)
+        /// <summary>
+        ///     Converts a table to a T[]
+        /// </summary>
+        internal static object ConvertTableToArrayOfGenericType(Type arrayType, Type itemType, Table table)
         {
             List<object> lst = new();
 
@@ -176,10 +176,10 @@ namespace MoonSharp.Interpreter.Interop.Converters
         }
 
 
-	    /// <summary>
-	    ///     Converts a table to a <see cref="List{T}" />
-	    /// </summary>
-	    internal static object ConvertTableToListOfGenericType(Type listType, Type itemType, Table table)
+        /// <summary>
+        ///     Converts a table to a <see cref="List{T}" />
+        /// </summary>
+        internal static object ConvertTableToListOfGenericType(Type listType, Type itemType, Table table)
         {
             if (listType.GetGenericTypeDefinition() != typeof(List<>))
             {
@@ -199,10 +199,10 @@ namespace MoonSharp.Interpreter.Interop.Converters
             return lst;
         }
 
-	    /// <summary>
-	    ///     Converts a table to a <see cref="List{T}" />, known in advance
-	    /// </summary>
-	    internal static List<T> TableToList<T>(Table table, Func<DynValue, T> converter)
+        /// <summary>
+        ///     Converts a table to a <see cref="List{T}" />, known in advance
+        /// </summary>
+        internal static List<T> TableToList<T>(Table table, Func<DynValue, T> converter)
         {
             List<T> lst = new();
 
@@ -216,10 +216,10 @@ namespace MoonSharp.Interpreter.Interop.Converters
             return lst;
         }
 
-	    /// <summary>
-	    ///     Converts a table to a Dictionary, known in advance
-	    /// </summary>
-	    internal static Dictionary<TK, TV> TableToDictionary<TK, TV>(Table table, Func<DynValue, TK> keyconverter, Func<DynValue, TV> valconverter)
+        /// <summary>
+        ///     Converts a table to a Dictionary, known in advance
+        /// </summary>
+        internal static Dictionary<TK, TV> TableToDictionary<TK, TV>(Table table, Func<DynValue, TK> keyconverter, Func<DynValue, TV> valconverter)
         {
             Dictionary<TK, TV> dict = new();
 

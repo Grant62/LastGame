@@ -7,13 +7,13 @@ using MoonSharp.Interpreter.Interop.Converters;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Utility class which may be used to set properties on an object of type T, from values contained in a Lua table.
-	///     Properties must be decorated with the <see cref="MoonSharpPropertyAttribute" />.
-	///     This is a generic version of <see cref="PropertyTableAssigner" />.
-	/// </summary>
-	/// <typeparam name="T">The type of the object.</typeparam>
-	public class PropertyTableAssigner<T> : IPropertyTableAssigner
+    /// <summary>
+    ///     Utility class which may be used to set properties on an object of type T, from values contained in a Lua table.
+    ///     Properties must be decorated with the <see cref="MoonSharpPropertyAttribute" />.
+    ///     This is a generic version of <see cref="PropertyTableAssigner" />.
+    /// </summary>
+    /// <typeparam name="T">The type of the object.</typeparam>
+    public class PropertyTableAssigner<T> : IPropertyTableAssigner
     {
         private readonly PropertyTableAssigner m_InternalAssigner;
 
@@ -96,12 +96,12 @@ namespace MoonSharp.Interpreter.Interop
     }
 
 
-	/// <summary>
-	///     Utility class which may be used to set properties on an object from values contained in a Lua table.
-	///     Properties must be decorated with the <see cref="MoonSharpPropertyAttribute" />.
-	///     See <see cref="PropertyTableAssigner{T}" /> for a generic compile time type-safe version.
-	/// </summary>
-	public class PropertyTableAssigner : IPropertyTableAssigner
+    /// <summary>
+    ///     Utility class which may be used to set properties on an object from values contained in a Lua table.
+    ///     Properties must be decorated with the <see cref="MoonSharpPropertyAttribute" />.
+    ///     See <see cref="PropertyTableAssigner{T}" /> for a generic compile time type-safe version.
+    /// </summary>
+    public class PropertyTableAssigner : IPropertyTableAssigner
     {
         private readonly Type m_Type;
         private readonly Dictionary<string, PropertyInfo> m_PropertyMap = new();
@@ -257,16 +257,16 @@ namespace MoonSharp.Interpreter.Interop
         }
     }
 
-	/// <summary>
-	///     Common interface for property assigners - basically used for sub-assigners
-	/// </summary>
-	public interface IPropertyTableAssigner
+    /// <summary>
+    ///     Common interface for property assigners - basically used for sub-assigners
+    /// </summary>
+    public interface IPropertyTableAssigner
     {
-	    /// <summary>
-	    ///     Assigns the properties of the specified object without checking the type.
-	    /// </summary>
-	    /// <param name="o">The object.</param>
-	    /// <param name="data">The data.</param>
-	    void AssignObjectUnchecked(object o, Table data);
+        /// <summary>
+        ///     Assigns the properties of the specified object without checking the type.
+        /// </summary>
+        /// <param name="o">The object.</param>
+        /// <param name="data">The data.</param>
+        void AssignObjectUnchecked(object o, Table data);
     }
 }

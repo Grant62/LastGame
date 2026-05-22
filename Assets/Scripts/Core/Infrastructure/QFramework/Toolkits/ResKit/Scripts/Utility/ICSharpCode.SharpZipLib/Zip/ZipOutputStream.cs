@@ -7,50 +7,50 @@ using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
 namespace ICSharpCode.SharpZipLib.Zip
 {
-	/// <summary>
-	///     This is a DeflaterOutputStream that writes the files into a zip
-	///     archive one after another.  It has a special method to start a new
-	///     zip entry.  The zip entries contains information about the file name
-	///     size, compressed size, CRC, etc.
-	///     It includes support for Stored and Deflated entries.
-	///     This class is not thread safe.
-	///     <br />
-	///     <br />Author of the original java version : Jochen Hoenicke
-	/// </summary>
-	/// <example>
-	///     This sample shows how to create a zip file
-	///     <code>
-	///  using System;
-	///  using System.IO;
-	/// 
-	///  using ICSharpCode.SharpZipLib.Core;
-	///  using ICSharpCode.SharpZipLib.Zip;
-	/// 
-	///  class MainClass
-	///  {
-	///  	public static void Main(string[] args)
-	///  	{
-	///  		string[] filenames = Directory.GetFiles(args[0]);
-	///  		byte[] buffer = new byte[4096];
-	/// 
-	///  		using ( ZipOutputStream s = new ZipOutputStream(File.Create(args[1])) ) {
-	/// 
-	///  			s.SetLevel(9); // 0 - store only to 9 - means best compression
-	/// 
-	///  			foreach (string file in filenames) {
-	///  				ZipEntry entry = new ZipEntry(file);
-	///  				s.PutNextEntry(entry);
-	/// 
-	///  				using (FileStream fs = File.OpenRead(file)) {
-	/// 						StreamUtils.Copy(fs, s, buffer);
-	///  				}
-	///  			}
-	///  		}
-	///  	}
-	///  }
-	///  </code>
-	/// </example>
-	public class ZipOutputStream : DeflaterOutputStream
+    /// <summary>
+    ///     This is a DeflaterOutputStream that writes the files into a zip
+    ///     archive one after another.  It has a special method to start a new
+    ///     zip entry.  The zip entries contains information about the file name
+    ///     size, compressed size, CRC, etc.
+    ///     It includes support for Stored and Deflated entries.
+    ///     This class is not thread safe.
+    ///     <br />
+    ///     <br />Author of the original java version : Jochen Hoenicke
+    /// </summary>
+    /// <example>
+    ///     This sample shows how to create a zip file
+    ///     <code>
+    ///  using System;
+    ///  using System.IO;
+    /// 
+    ///  using ICSharpCode.SharpZipLib.Core;
+    ///  using ICSharpCode.SharpZipLib.Zip;
+    /// 
+    ///  class MainClass
+    ///  {
+    ///  	public static void Main(string[] args)
+    ///  	{
+    ///  		string[] filenames = Directory.GetFiles(args[0]);
+    ///  		byte[] buffer = new byte[4096];
+    /// 
+    ///  		using ( ZipOutputStream s = new ZipOutputStream(File.Create(args[1])) ) {
+    /// 
+    ///  			s.SetLevel(9); // 0 - store only to 9 - means best compression
+    /// 
+    ///  			foreach (string file in filenames) {
+    ///  				ZipEntry entry = new ZipEntry(file);
+    ///  				s.PutNextEntry(entry);
+    /// 
+    ///  				using (FileStream fs = File.OpenRead(file)) {
+    /// 						StreamUtils.Copy(fs, s, buffer);
+    ///  				}
+    ///  			}
+    ///  		}
+    ///  	}
+    ///  }
+    ///  </code>
+    /// </example>
+    public class ZipOutputStream : DeflaterOutputStream
     {
         #region Constructors
         /// <summary>

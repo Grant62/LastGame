@@ -213,7 +213,7 @@ namespace QFramework
         Color IMGUIView.BackgroundColor { get; set; }
 
 
-        private List<IMGUIView> mChildren { get; set; } = new();
+        private List<IMGUIView> mChildren { get; } = new();
 
         void IMGUIView.RefreshNextFrame() { }
 

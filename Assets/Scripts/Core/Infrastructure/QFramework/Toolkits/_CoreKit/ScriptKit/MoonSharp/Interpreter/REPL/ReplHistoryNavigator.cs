@@ -1,9 +1,9 @@
 ﻿namespace MoonSharp.Interpreter.REPL
 {
-	/// <summary>
-	///     An implementation of <see cref="ReplInterpreter" /> which supports a very basic history of recent input lines.
-	/// </summary>
-	public class ReplHistoryInterpreter : ReplInterpreter
+    /// <summary>
+    ///     An implementation of <see cref="ReplInterpreter" /> which supports a very basic history of recent input lines.
+    /// </summary>
+    public class ReplHistoryInterpreter : ReplInterpreter
     {
         private readonly string[] m_History;
         private int m_Last = -1;

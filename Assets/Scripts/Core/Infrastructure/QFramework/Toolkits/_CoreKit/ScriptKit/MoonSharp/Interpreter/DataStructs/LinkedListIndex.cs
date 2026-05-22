@@ -2,16 +2,16 @@
 
 namespace MoonSharp.Interpreter.DataStructs
 {
-	/// <summary>
-	///     An index to accelerate operations on a LinkedList<typeparamref name="TValue" /> using a single key of type
-	///     <typeparamref name="TKey" />
-	///     More than one LinkedListIndex can index the same linked list, but every node in the linked list must be indexed by
-	///     one and only one
-	///     LinkedListIndex object.
-	/// </summary>
-	/// <typeparam name="TKey">The type of the key. Must implement Equals and GetHashCode appropriately.</typeparam>
-	/// <typeparam name="TValue">The type of the values contained in the linked list.</typeparam>
-	internal class LinkedListIndex<TKey, TValue>
+    /// <summary>
+    ///     An index to accelerate operations on a LinkedList<typeparamref name="TValue" /> using a single key of type
+    ///     <typeparamref name="TKey" />
+    ///     More than one LinkedListIndex can index the same linked list, but every node in the linked list must be indexed by
+    ///     one and only one
+    ///     LinkedListIndex object.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the key. Must implement Equals and GetHashCode appropriately.</typeparam>
+    /// <typeparam name="TValue">The type of the values contained in the linked list.</typeparam>
+    internal class LinkedListIndex<TKey, TValue>
     {
         private readonly LinkedList<TValue> m_LinkedList;
         private Dictionary<TKey, LinkedListNode<TValue>> m_Map;

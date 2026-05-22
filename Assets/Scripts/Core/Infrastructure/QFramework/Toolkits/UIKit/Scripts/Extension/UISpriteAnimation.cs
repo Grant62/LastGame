@@ -29,11 +29,11 @@ using UnityEngine.UI;
 
 namespace QFramework
 {
-	/// <summary>
-	///     动画播放控件
-	///     http://www.cnblogs.com/mrblue/p/5191183.html
-	/// </summary>
-	[RequireComponent(typeof(Image))]
+    /// <summary>
+    ///     动画播放控件
+    ///     http://www.cnblogs.com/mrblue/p/5191183.html
+    /// </summary>
+    [RequireComponent(typeof(Image))]
     public class UISpriteAnimation : MonoBehaviour
     {
         private Image mImageSource;

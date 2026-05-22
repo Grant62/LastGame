@@ -3,10 +3,10 @@ using MoonSharp.Interpreter.Compatibility;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Data descriptor used for proxy objects
-	/// </summary>
-	public sealed class ProxyUserDataDescriptor : IUserDataDescriptor
+    /// <summary>
+    ///     Data descriptor used for proxy objects
+    /// </summary>
+    public sealed class ProxyUserDataDescriptor : IUserDataDescriptor
     {
         private readonly IProxyFactory m_ProxyFactory;
 

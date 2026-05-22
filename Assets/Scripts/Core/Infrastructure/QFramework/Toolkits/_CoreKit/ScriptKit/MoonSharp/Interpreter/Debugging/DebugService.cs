@@ -3,11 +3,11 @@ using MoonSharp.Interpreter.Execution.VM;
 
 namespace MoonSharp.Interpreter.Debugging
 {
-	/// <summary>
-	///     Class providing services specific to debugger implementations.
-	/// </summary>
-	/// <seealso cref="MoonSharp.Interpreter.IScriptPrivateResource" />
-	public sealed class DebugService : IScriptPrivateResource
+    /// <summary>
+    ///     Class providing services specific to debugger implementations.
+    /// </summary>
+    /// <seealso cref="MoonSharp.Interpreter.IScriptPrivateResource" />
+    public sealed class DebugService : IScriptPrivateResource
     {
         private readonly Processor m_Processor;
 

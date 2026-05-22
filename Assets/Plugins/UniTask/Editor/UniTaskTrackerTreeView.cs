@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Cysharp.Threading.Tasks.Editor
 {
-    public class UniTaskTrackerViewItem : TreeViewItem
+    public class UniTaskTrackerViewItem : TreeViewItem<int>
     {
         private static readonly Regex removeHref = new("<a href.+>(.+)</a>", RegexOptions.Compiled);
 
@@ -52,14 +52,14 @@ namespace Cysharp.Threading.Tasks.Editor
         public UniTaskTrackerViewItem(int id) : base(id) { }
     }
 
-    public class UniTaskTrackerTreeView : TreeView
+    public class UniTaskTrackerTreeView : TreeView<int>
     {
         private const string sortedColumnIndexStateKey = "UniTaskTrackerTreeView_sortedColumnIndex";
 
-        public IReadOnlyList<TreeViewItem> CurrentBindingItems;
+        public IReadOnlyList<TreeViewItem<int>> CurrentBindingItems;
 
         public UniTaskTrackerTreeView()
-            : this(new TreeViewState(), new MultiColumnHeader(new MultiColumnHeaderState(new[]
+            : this(new TreeViewState<int>(), new MultiColumnHeader(new MultiColumnHeaderState(new[]
             {
                 new MultiColumnHeaderState.Column { headerContent = new GUIContent("TaskType"), width = 20 },
                 new MultiColumnHeaderState.Column { headerContent = new GUIContent("Elapsed"), width = 10 },
@@ -67,7 +67,7 @@ namespace Cysharp.Threading.Tasks.Editor
                 new MultiColumnHeaderState.Column { headerContent = new GUIContent("Position") }
             }))) { }
 
-        private UniTaskTrackerTreeView(TreeViewState state, MultiColumnHeader header)
+        private UniTaskTrackerTreeView(TreeViewState<int> state, MultiColumnHeader header)
             : base(state, header)
         {
             rowHeight = 20;
@@ -116,16 +116,16 @@ namespace Cysharp.Threading.Tasks.Editor
                     throw new ArgumentOutOfRangeException(nameof(index), index, null);
             }
 
-            CurrentBindingItems = rootItem.children = orderedEnumerable.Cast<TreeViewItem>().ToList();
+            CurrentBindingItems = rootItem.children = orderedEnumerable.Cast<TreeViewItem<int>>().ToList();
             BuildRows(rootItem);
         }
 
-        protected override TreeViewItem BuildRoot()
+        protected override TreeViewItem<int> BuildRoot()
         {
-            TreeViewItem root = new()
+            TreeViewItem<int> root = new()
                 { depth = -1 };
 
-            List<TreeViewItem> children = new();
+            List<TreeViewItem<int>> children = new();
 
             TaskTracker.ForEachActiveTask((trackingId, awaiterType, status, created, stackTrace) =>
             {
@@ -134,11 +134,11 @@ namespace Cysharp.Threading.Tasks.Editor
             });
 
             CurrentBindingItems = children;
-            root.children = CurrentBindingItems as List<TreeViewItem>;
+            root.children = CurrentBindingItems as List<TreeViewItem<int>>;
             return root;
         }
 
-        protected override bool CanMultiSelect(TreeViewItem item)
+        protected override bool CanMultiSelect(TreeViewItem<int> item)
         {
             return false;
         }

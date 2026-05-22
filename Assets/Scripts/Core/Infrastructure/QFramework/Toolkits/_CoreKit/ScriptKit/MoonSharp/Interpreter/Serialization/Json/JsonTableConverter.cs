@@ -3,33 +3,33 @@ using MoonSharp.Interpreter.Tree;
 
 namespace MoonSharp.Interpreter.Serialization.Json
 {
-	/// <summary>
-	///     Class performing conversions between Tables and Json.
-	///     NOTE : the conversions are done respecting json syntax but using Lua constructs. This means mostly that:
-	///     1) Lua string escapes can be accepted while they are not technically valid JSON, and viceversa
-	///     2) Null values are represented using a static userdata of type JsonNull
-	///     3) Do not use it when input cannot be entirely trusted
-	/// </summary>
-	public static class JsonTableConverter
+    /// <summary>
+    ///     Class performing conversions between Tables and Json.
+    ///     NOTE : the conversions are done respecting json syntax but using Lua constructs. This means mostly that:
+    ///     1) Lua string escapes can be accepted while they are not technically valid JSON, and viceversa
+    ///     2) Null values are represented using a static userdata of type JsonNull
+    ///     3) Do not use it when input cannot be entirely trusted
+    /// </summary>
+    public static class JsonTableConverter
     {
-	    /// <summary>
-	    ///     Converts a table to a json string
-	    /// </summary>
-	    /// <param name="table">The table.</param>
-	    /// <returns></returns>
-	    public static string TableToJson(this Table table)
+        /// <summary>
+        ///     Converts a table to a json string
+        /// </summary>
+        /// <param name="table">The table.</param>
+        /// <returns></returns>
+        public static string TableToJson(this Table table)
         {
             StringBuilder sb = new();
             TableToJson(sb, table);
             return sb.ToString();
         }
 
-	    /// <summary>
-	    ///     Tables to json.
-	    /// </summary>
-	    /// <param name="sb">The sb.</param>
-	    /// <param name="table">The table.</param>
-	    private static void TableToJson(StringBuilder sb, Table table)
+        /// <summary>
+        ///     Tables to json.
+        /// </summary>
+        /// <param name="sb">The sb.</param>
+        /// <param name="table">The table.</param>
+        private static void TableToJson(StringBuilder sb, Table table)
         {
             bool first = true;
 
@@ -74,10 +74,10 @@ namespace MoonSharp.Interpreter.Serialization.Json
             }
         }
 
-	    /// <summary>
-	    ///     Converts a generic object to JSON
-	    /// </summary>
-	    public static string ObjectToJson(object obj)
+        /// <summary>
+        ///     Converts a generic object to JSON
+        /// </summary>
+        public static string ObjectToJson(object obj)
         {
             DynValue v = ObjectValueConverter.SerializeObjectToDynValue(null, obj, JsonNull.Create());
             return v.Table.TableToJson();

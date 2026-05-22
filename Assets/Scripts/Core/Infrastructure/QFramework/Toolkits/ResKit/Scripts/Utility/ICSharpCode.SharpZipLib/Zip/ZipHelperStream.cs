@@ -3,25 +3,25 @@ using System.IO;
 
 namespace ICSharpCode.SharpZipLib.Zip
 {
-	/// <summary>
-	///     Holds data pertinent to a data descriptor.
-	/// </summary>
-	public class DescriptorData
+    /// <summary>
+    ///     Holds data pertinent to a data descriptor.
+    /// </summary>
+    public class DescriptorData
     {
-	    /// <summary>
-	    ///     Get /set the compressed size of data.
-	    /// </summary>
-	    public long CompressedSize { get; set; }
+        /// <summary>
+        ///     Get /set the compressed size of data.
+        /// </summary>
+        public long CompressedSize { get; set; }
 
-	    /// <summary>
-	    ///     Get / set the uncompressed size of data
-	    /// </summary>
-	    public long Size { get; set; }
+        /// <summary>
+        ///     Get / set the uncompressed size of data
+        /// </summary>
+        public long Size { get; set; }
 
-	    /// <summary>
-	    ///     Get /set the crc value.
-	    /// </summary>
-	    public long Crc
+        /// <summary>
+        ///     Get /set the crc value.
+        /// </summary>
+        public long Crc
         {
             get => crc;
             set => crc = value & 0xffffffff;
@@ -37,9 +37,6 @@ namespace ICSharpCode.SharpZipLib.Zip
         public long SizePatchOffset { get; set; }
 
         public long CrcPatchOffset { get; set; }
-
-        #region Instance Fields
-        #endregion
     }
 
     /// <summary>

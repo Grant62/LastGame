@@ -7,28 +7,28 @@ using MoonSharp.Interpreter.Compatibility;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Helper extension methods used to simplify some parts of userdata descriptor implementations
-	/// </summary>
-	public static class DescriptorHelpers
+    /// <summary>
+    ///     Helper extension methods used to simplify some parts of userdata descriptor implementations
+    /// </summary>
+    public static class DescriptorHelpers
     {
-	    /// <summary>
-	    ///     Determines whether a
-	    ///     <see cref="MoonSharpVisibleAttribute" /> or a <see cref="MoonSharpHiddenAttribute" />  is changing visibility of a
-	    ///     member
-	    ///     to scripts.
-	    /// </summary>
-	    /// <param name="mi">The member to check.</param>
-	    /// <returns>
-	    ///     <c>true</c> if visibility is forced visible,
-	    ///     <c>false</c> if visibility is forced hidden or the specified MemberInfo is null,
-	    ///     <c>if no attribute was found</c>
-	    /// </returns>
-	    /// <exception cref="System.InvalidOperationException">
-	    ///     If both MoonSharpHiddenAttribute and MoonSharpVisibleAttribute are
-	    ///     specified and they convey different messages.
-	    /// </exception>
-	    public static bool? GetVisibilityFromAttributes(this MemberInfo mi)
+        /// <summary>
+        ///     Determines whether a
+        ///     <see cref="MoonSharpVisibleAttribute" /> or a <see cref="MoonSharpHiddenAttribute" />  is changing visibility of a
+        ///     member
+        ///     to scripts.
+        /// </summary>
+        /// <param name="mi">The member to check.</param>
+        /// <returns>
+        ///     <c>true</c> if visibility is forced visible,
+        ///     <c>false</c> if visibility is forced hidden or the specified MemberInfo is null,
+        ///     <c>if no attribute was found</c>
+        /// </returns>
+        /// <exception cref="System.InvalidOperationException">
+        ///     If both MoonSharpHiddenAttribute and MoonSharpVisibleAttribute are
+        ///     specified and they convey different messages.
+        /// </exception>
+        public static bool? GetVisibilityFromAttributes(this MemberInfo mi)
         {
             if (mi == null)
                 return false;

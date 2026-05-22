@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -30,6 +29,7 @@ namespace QFramework
             {
                 go.transform.SetParent(parent);
             }
+
             return go;
         }
 

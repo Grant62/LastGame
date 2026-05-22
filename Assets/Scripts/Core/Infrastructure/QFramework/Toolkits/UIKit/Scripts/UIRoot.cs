@@ -49,7 +49,7 @@ namespace QFramework
             {
                 if (!mInstance)
                 {
-                    mInstance = FindObjectOfType<UIRoot>();
+                    mInstance = FindAnyObjectByType<UIRoot>();
                 }
 
                 if (!mInstance)

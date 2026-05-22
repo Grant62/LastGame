@@ -4,9 +4,9 @@ using MoonSharp.Interpreter.Tree;
 
 namespace MoonSharp.Interpreter
 {
-	/// <summary>
-	///     Exception for all parsing/lexing errors.
-	/// </summary>
+    /// <summary>
+    ///     Exception for all parsing/lexing errors.
+    /// </summary>
 #if !(PCL || ((!UNITY_EDITOR) && (ENABLE_DOTNET)) || NETFX_CORE)
     [Serializable]
 #endif

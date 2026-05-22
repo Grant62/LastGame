@@ -62,7 +62,8 @@ Unity.exe -quit -batchmode -buildWindowsPlayer "Build/Game.exe" -projectPath "E:
 - `Assets/Scripts/` 下的代码使用与文件夹层级一致的 PascalCase 命名空间。
 - 示例：`Core.Infrastructure.Extensions`、`Editor.Excel`。
 - QFramework 代码使用 `QFramework` 命名空间。
-- 新文件使用文件范围命名空间（file-scoped namespace）。
+- 新文件使用块范围命名空间（block-scoped namespace）。
+- 因项目使用 C# 9.0（Unity 默认），不支持 file-scoped namespace。
 
 ### 导入（using）
 
@@ -149,7 +150,10 @@ Unity.exe -quit -batchmode -buildWindowsPlayer "Build/Game.exe" -projectPath "E:
 
 **Architecture 注册规范：**
 
-- 所有 System、Model、Utility 统一在 `Architecture<T>.Init()` 中注册。
+- **System / Model**：统一在 `Architecture<T>.Init()` 中注册（生命周期固定）。
+- **Utility**：分两类注册：
+  - 无状态/全局的 Utility（如 Logger、Random）在 `Init()` 中注册。
+  - 持有场景引用的 Utility（如 TargetSelector、CursorDisplay）在场景 MonoBehaviour（Controller/Installer）的 Awake 中通过 `GameMain.Interface.RegisterUtility<T>()` 注册。
 - 使用接口注册以支持依赖倒置：`this.RegisterSystem<ISystem>(new SystemImpl())`。
 - Architecture 集中管理模块，可作为项目架构图使用。
 

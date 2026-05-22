@@ -11,25 +11,25 @@ using MoonSharp.Interpreter.Interop.BasicDescriptors;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Class providing easier marshalling of CLR functions
-	/// </summary>
-	public class MethodMemberDescriptor : FunctionMemberDescriptorBase, IOptimizableDescriptor, IWireableDescriptor
+    /// <summary>
+    ///     Class providing easier marshalling of CLR functions
+    /// </summary>
+    public class MethodMemberDescriptor : FunctionMemberDescriptorBase, IOptimizableDescriptor, IWireableDescriptor
     {
-	    /// <summary>
-	    ///     Gets the method information (can be a MethodInfo or ConstructorInfo)
-	    /// </summary>
-	    public MethodBase MethodInfo { get; }
+        /// <summary>
+        ///     Gets the method information (can be a MethodInfo or ConstructorInfo)
+        /// </summary>
+        public MethodBase MethodInfo { get; }
 
-	    /// <summary>
-	    ///     Gets the access mode used for interop
-	    /// </summary>
-	    public InteropAccessMode AccessMode { get; }
+        /// <summary>
+        ///     Gets the access mode used for interop
+        /// </summary>
+        public InteropAccessMode AccessMode { get; }
 
-	    /// <summary>
-	    ///     Gets a value indicating whether the described method is a constructor
-	    /// </summary>
-	    public bool IsConstructor { get; }
+        /// <summary>
+        ///     Gets a value indicating whether the described method is a constructor
+        /// </summary>
+        public bool IsConstructor { get; }
 
 
         private Func<object, object[], object> m_OptimizedFunc;

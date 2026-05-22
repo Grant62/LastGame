@@ -27,8 +27,9 @@
 
 using System;
 using System.Collections;
-// ReSharper disable once CheckNamespace
 using UnityEngine;
+
+// ReSharper disable once CheckNamespace
 
 namespace QFramework
 {

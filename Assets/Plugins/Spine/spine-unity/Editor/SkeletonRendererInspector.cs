@@ -82,7 +82,7 @@ namespace Spine.Unity.Editor
 
         protected virtual void OnEnable()
         {
-            isInspectingPrefab = PrefabUtility.GetPrefabType(target) == PrefabType.Prefab;
+            isInspectingPrefab = PrefabUtility.IsPartOfPrefabAsset(target);
 
             SpineEditorUtilities.ConfirmInitialization();
 

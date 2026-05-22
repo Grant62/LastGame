@@ -4,10 +4,10 @@ using MoonSharp.Interpreter.Interop.Converters;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Member descriptor which allows to define new members which behave similarly to class instance members
-	/// </summary>
-	public class ObjectCallbackMemberDescriptor : FunctionMemberDescriptorBase
+    /// <summary>
+    ///     Member descriptor which allows to define new members which behave similarly to class instance members
+    /// </summary>
+    public class ObjectCallbackMemberDescriptor : FunctionMemberDescriptorBase
     {
         private readonly Func<object, ScriptExecutionContext, CallbackArguments, object> m_CallbackFunc;
 

@@ -3,10 +3,10 @@ using MoonSharp.Interpreter.Interop.Converters;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Wrappers for enumerables as return types
-	/// </summary>
-	internal class EnumerableWrapper : IUserDataType
+    /// <summary>
+    ///     Wrappers for enumerables as return types
+    /// </summary>
+    internal class EnumerableWrapper : IUserDataType
     {
         private readonly IEnumerator m_Enumerator;
         private readonly Script m_Script;

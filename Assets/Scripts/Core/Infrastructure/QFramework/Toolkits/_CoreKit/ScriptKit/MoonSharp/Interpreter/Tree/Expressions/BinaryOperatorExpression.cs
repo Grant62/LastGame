@@ -4,9 +4,9 @@ using MoonSharp.Interpreter.Execution.VM;
 
 namespace MoonSharp.Interpreter.Tree.Expressions
 {
-	/// <summary>
-	/// </summary>
-	internal class BinaryOperatorExpression : Expression
+    /// <summary>
+    /// </summary>
+    internal class BinaryOperatorExpression : Expression
     {
         [Flags]
         private enum Operator

@@ -14,10 +14,10 @@ using Thread = System.Threading.Thread;
 
 namespace MoonSharp.VsCodeDebugger
 {
-	/// <summary>
-	///     Class implementing a debugger allowing attaching from a Visual Studio Code debugging session.
-	/// </summary>
-	public class MoonSharpVsCodeDebugServer : IDisposable
+    /// <summary>
+    ///     Class implementing a debugger allowing attaching from a Visual Studio Code debugging session.
+    /// </summary>
+    public class MoonSharpVsCodeDebugServer : IDisposable
     {
         private readonly object m_Lock = new();
         private readonly List<AsyncDebugger> m_DebuggerList = new();

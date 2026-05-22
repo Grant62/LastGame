@@ -2,12 +2,12 @@
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Implementation of IProxyFactory taking two delegates for simple instancing of proxies.
-	/// </summary>
-	/// <typeparam name="TProxy">The type of the proxy.</typeparam>
-	/// <typeparam name="TTarget">The type of the target.</typeparam>
-	public class DelegateProxyFactory<TProxy, TTarget> : IProxyFactory<TProxy, TTarget>
+    /// <summary>
+    ///     Implementation of IProxyFactory taking two delegates for simple instancing of proxies.
+    /// </summary>
+    /// <typeparam name="TProxy">The type of the proxy.</typeparam>
+    /// <typeparam name="TTarget">The type of the target.</typeparam>
+    public class DelegateProxyFactory<TProxy, TTarget> : IProxyFactory<TProxy, TTarget>
         where TProxy : class
         where TTarget : class
     {

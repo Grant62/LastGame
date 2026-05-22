@@ -1,9 +1,9 @@
 ﻿namespace MoonSharp.Interpreter
 {
-	/// <summary>
-	///     Enumeration of possible data types in MoonSharp
-	/// </summary>
-	public enum DataType
+    /// <summary>
+    ///     Enumeration of possible data types in MoonSharp
+    /// </summary>
+    public enum DataType
     {
         // DO NOT MODIFY ORDER - IT'S SIGNIFICANT
 
@@ -64,10 +64,10 @@
         YieldRequest
     }
 
-	/// <summary>
-	///     Extension methods to DataType
-	/// </summary>
-	public static class LuaTypeExtensions
+    /// <summary>
+    ///     Extension methods to DataType
+    /// </summary>
+    public static class LuaTypeExtensions
     {
         internal const DataType MaxMetaTypes = DataType.Table;
         internal const DataType MaxConvertibleTypes = DataType.ClrFunction;

@@ -123,7 +123,7 @@ namespace QFramework
             // 确保有一个AudioListener
             if (!mAudioListener)
             {
-                mAudioListener = FindObjectOfType<AudioListener>();
+                mAudioListener = FindAnyObjectByType<AudioListener>();
             }
 
             if (!mAudioListener)

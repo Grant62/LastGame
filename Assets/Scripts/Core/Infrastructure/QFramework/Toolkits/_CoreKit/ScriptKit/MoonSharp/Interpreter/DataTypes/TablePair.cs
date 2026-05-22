@@ -1,9 +1,9 @@
 ﻿namespace MoonSharp.Interpreter
 {
-	/// <summary>
-	///     A class representing a key/value pair for Table use
-	/// </summary>
-	public struct TablePair
+    /// <summary>
+    ///     A class representing a key/value pair for Table use
+    /// </summary>
+    public struct TablePair
     {
         private readonly DynValue key;
         private readonly DynValue value;

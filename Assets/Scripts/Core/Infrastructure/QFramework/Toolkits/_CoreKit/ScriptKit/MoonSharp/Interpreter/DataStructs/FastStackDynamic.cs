@@ -12,11 +12,11 @@ namespace MoonSharp.Interpreter.DataStructs
 	}
 #endif
 
-	/// <summary>
-	///     A non preallocated, non_fixed size stack
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	internal class FastStackDynamic<T> : List<T>
+    /// <summary>
+    ///     A non preallocated, non_fixed size stack
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    internal class FastStackDynamic<T> : List<T>
     {
         public FastStackDynamic(int startingCapacity)
             : base(startingCapacity) { }

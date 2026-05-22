@@ -4,10 +4,10 @@ using System.Text;
 
 namespace MoonSharp.Interpreter.IO
 {
-	/// <summary>
-	///     "Optimized" BinaryWriter which shares strings and use a dumb compression for integers
-	/// </summary>
-	public class BinDumpBinaryWriter : BinaryWriter
+    /// <summary>
+    ///     "Optimized" BinaryWriter which shares strings and use a dumb compression for integers
+    /// </summary>
+    public class BinDumpBinaryWriter : BinaryWriter
     {
         private readonly Dictionary<string, int> m_StringMap = new();
 

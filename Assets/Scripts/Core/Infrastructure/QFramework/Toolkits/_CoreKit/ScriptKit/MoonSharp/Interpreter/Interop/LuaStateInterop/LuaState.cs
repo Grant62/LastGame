@@ -6,9 +6,9 @@ using System.Collections.Generic;
 
 namespace MoonSharp.Interpreter.Interop.LuaStateInterop
 {
-	/// <summary>
-	/// </summary>
-	public class LuaState
+    /// <summary>
+    /// </summary>
+    public class LuaState
     {
         private readonly List<DynValue> m_Stack;
 

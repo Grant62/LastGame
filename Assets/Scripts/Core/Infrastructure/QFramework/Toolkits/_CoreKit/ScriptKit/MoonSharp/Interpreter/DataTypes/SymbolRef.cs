@@ -3,10 +3,10 @@ using System.IO;
 
 namespace MoonSharp.Interpreter
 {
-	/// <summary>
-	///     This class stores a possible l-value (that is a potential target of an assignment)
-	/// </summary>
-	public class SymbolRef
+    /// <summary>
+    ///     This class stores a possible l-value (that is a potential target of an assignment)
+    /// </summary>
+    public class SymbolRef
     {
         // Fields are internal - direct access by the executor was a 10% improvement at profiling here!
         internal SymbolRefType i_Type;

@@ -2,10 +2,10 @@
 
 namespace MoonSharp.Interpreter.Loaders
 {
-	/// <summary>
-	///     A script loader used for platforms we cannot initialize in any better way..
-	/// </summary>
-	internal class InvalidScriptLoader : IScriptLoader
+    /// <summary>
+    ///     A script loader used for platforms we cannot initialize in any better way..
+    /// </summary>
+    internal class InvalidScriptLoader : IScriptLoader
     {
         private readonly string m_Error;
 

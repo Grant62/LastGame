@@ -2,10 +2,10 @@
 
 namespace MoonSharp.Interpreter
 {
-	/// <summary>
-	///     Represents a dynamic expression in the script
-	/// </summary>
-	public class DynamicExpression : IScriptPrivateResource
+    /// <summary>
+    ///     Represents a dynamic expression in the script
+    /// </summary>
+    public class DynamicExpression : IScriptPrivateResource
     {
         private readonly DynamicExprExpression m_Exp;
         private readonly DynValue m_Constant;

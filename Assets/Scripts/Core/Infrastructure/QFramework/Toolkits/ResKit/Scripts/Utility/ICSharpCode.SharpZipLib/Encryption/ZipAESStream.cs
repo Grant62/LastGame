@@ -4,22 +4,22 @@ using System.Security.Cryptography;
 
 namespace ICSharpCode.SharpZipLib.Encryption
 {
-	/// <summary>
-	///     Encrypts and decrypts AES ZIP
-	/// </summary>
-	/// <remarks>
-	///     Based on information from http://www.winzip.com/aes_info.htm
-	///     and http://www.gladman.me.uk/cryptography_technology/fileencrypt/
-	/// </remarks>
-	internal class ZipAESStream : CryptoStream
+    /// <summary>
+    ///     Encrypts and decrypts AES ZIP
+    /// </summary>
+    /// <remarks>
+    ///     Based on information from http://www.winzip.com/aes_info.htm
+    ///     and http://www.gladman.me.uk/cryptography_technology/fileencrypt/
+    /// </remarks>
+    internal class ZipAESStream : CryptoStream
     {
-	    /// <summary>
-	    ///     Constructor
-	    /// </summary>
-	    /// <param name="stream">The stream on which to perform the cryptographic transformation.</param>
-	    /// <param name="transform">Instance of ZipAESTransform</param>
-	    /// <param name="mode">Read or Write</param>
-	    public ZipAESStream(Stream stream, ZipAESTransform transform, CryptoStreamMode mode)
+        /// <summary>
+        ///     Constructor
+        /// </summary>
+        /// <param name="stream">The stream on which to perform the cryptographic transformation.</param>
+        /// <param name="transform">Instance of ZipAESTransform</param>
+        /// <param name="mode">Read or Write</param>
+        public ZipAESStream(Stream stream, ZipAESTransform transform, CryptoStreamMode mode)
             : base(stream, transform, mode)
         {
             _stream = stream;

@@ -4,10 +4,10 @@ using System.Reflection;
 
 namespace MoonSharp.Interpreter.Loaders
 {
-	/// <summary>
-	///     A script loader loading scripts from an assembly resources
-	/// </summary>
-	public class EmbeddedResourcesScriptLoader : ScriptLoaderBase
+    /// <summary>
+    ///     A script loader loading scripts from an assembly resources
+    /// </summary>
+    public class EmbeddedResourcesScriptLoader : ScriptLoaderBase
     {
         private readonly Assembly m_ResourceAssembly;
         private readonly HashSet<string> m_ResourceNames;

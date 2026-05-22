@@ -6,35 +6,35 @@ using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
 namespace ICSharpCode.SharpZipLib.GZip
 {
-	/// <summary>
-	///     This filter stream is used to compress a stream into a "GZIP" stream.
-	///     The "GZIP" format is described in RFC 1952.
-	///     author of the original java version : John Leuner
-	/// </summary>
-	/// <example>
-	///     This sample shows how to gzip a file
-	///     <code>
-	/// using System;
-	/// using System.IO;
-	/// 
-	/// using ICSharpCode.SharpZipLib.GZip;
-	/// using ICSharpCode.SharpZipLib.Core;
-	/// 
-	/// class MainClass
-	/// {
-	/// 	public static void Main(string[] args)
-	/// 	{
-	/// 			using (Stream s = new GZipOutputStream(File.Create(args[0] + ".gz")))
-	/// 			using (FileStream fs = File.OpenRead(args[0])) {
-	/// 				byte[] writeData = new byte[4096];
-	/// 				Streamutils.Copy(s, fs, writeData);
-	/// 			}
-	/// 		}
-	/// 	}
-	/// }
-	/// </code>
-	/// </example>
-	public class GZipOutputStream : DeflaterOutputStream
+    /// <summary>
+    ///     This filter stream is used to compress a stream into a "GZIP" stream.
+    ///     The "GZIP" format is described in RFC 1952.
+    ///     author of the original java version : John Leuner
+    /// </summary>
+    /// <example>
+    ///     This sample shows how to gzip a file
+    ///     <code>
+    /// using System;
+    /// using System.IO;
+    /// 
+    /// using ICSharpCode.SharpZipLib.GZip;
+    /// using ICSharpCode.SharpZipLib.Core;
+    /// 
+    /// class MainClass
+    /// {
+    /// 	public static void Main(string[] args)
+    /// 	{
+    /// 			using (Stream s = new GZipOutputStream(File.Create(args[0] + ".gz")))
+    /// 			using (FileStream fs = File.OpenRead(args[0])) {
+    /// 				byte[] writeData = new byte[4096];
+    /// 				Streamutils.Copy(s, fs, writeData);
+    /// 			}
+    /// 		}
+    /// 	}
+    /// }
+    /// </code>
+    /// </example>
+    public class GZipOutputStream : DeflaterOutputStream
     {
         private enum OutputState
         {

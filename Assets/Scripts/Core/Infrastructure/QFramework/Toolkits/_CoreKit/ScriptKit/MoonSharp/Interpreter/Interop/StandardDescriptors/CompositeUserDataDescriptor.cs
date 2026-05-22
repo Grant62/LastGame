@@ -4,13 +4,13 @@ using MoonSharp.Interpreter.Compatibility;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     A user data descriptor which aggregates multiple descriptors and tries dispatching members
-	///     on them, in order.
-	///     Used, for example, for objects implementing multiple interfaces but for which no descriptor is
-	///     specifically registered.
-	/// </summary>
-	public class CompositeUserDataDescriptor : IUserDataDescriptor
+    /// <summary>
+    ///     A user data descriptor which aggregates multiple descriptors and tries dispatching members
+    ///     on them, in order.
+    ///     Used, for example, for objects implementing multiple interfaces but for which no descriptor is
+    ///     specifically registered.
+    /// </summary>
+    public class CompositeUserDataDescriptor : IUserDataDescriptor
     {
         private readonly List<IUserDataDescriptor> m_Descriptors;
 

@@ -2,13 +2,13 @@ using System;
 
 namespace ICSharpCode.SharpZipLib.Zip.Compression
 {
-	/// <summary>
-	///     This is the DeflaterHuffman class.
-	///     This class is <i>not</i> thread safe.  This is inherent in the API, due
-	///     to the split of Deflate and SetInput.
-	///     author of the original java version : Jochen Hoenicke
-	/// </summary>
-	public class DeflaterHuffman
+    /// <summary>
+    ///     This is the DeflaterHuffman class.
+    ///     This class is <i>not</i> thread safe.  This is inherent in the API, due
+    ///     to the split of Deflate and SetInput.
+    ///     author of the original java version : Jochen Hoenicke
+    /// </summary>
+    public class DeflaterHuffman
     {
         private const int BUFSIZE = 1 << DeflaterConstants.DEFAULT_MEM_LEVEL + 6;
         private const int LITERAL_NUM = 286;

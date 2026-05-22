@@ -8,10 +8,10 @@ using System.Text;
 
 namespace MoonSharp.Interpreter.CoreLib
 {
-	/// <summary>
-	///     Class implementing time related Lua functions from the 'os' module.
-	/// </summary>
-	[MoonSharpModule(Namespace = "os")]
+    /// <summary>
+    ///     Class implementing time related Lua functions from the 'os' module.
+    /// </summary>
+    [MoonSharpModule(Namespace = "os")]
     public class OsTimeModule
     {
         private static readonly DateTime Time0 = DateTime.UtcNow;

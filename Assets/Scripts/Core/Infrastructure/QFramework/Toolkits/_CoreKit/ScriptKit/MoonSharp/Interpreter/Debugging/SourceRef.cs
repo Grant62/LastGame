@@ -2,55 +2,55 @@
 
 namespace MoonSharp.Interpreter.Debugging
 {
-	/// <summary>
-	///     Class representing a reference to source code interval
-	/// </summary>
-	public class SourceRef
+    /// <summary>
+    ///     Class representing a reference to source code interval
+    /// </summary>
+    public class SourceRef
     {
-	    /// <summary>
-	    ///     Gets a value indicating whether this location is inside CLR .
-	    /// </summary>
-	    public bool IsClrLocation { get; private set; }
+        /// <summary>
+        ///     Gets a value indicating whether this location is inside CLR .
+        /// </summary>
+        public bool IsClrLocation { get; private set; }
 
-	    /// <summary>
-	    ///     Gets the index of the source.
-	    /// </summary>
-	    public int SourceIdx { get; }
+        /// <summary>
+        ///     Gets the index of the source.
+        /// </summary>
+        public int SourceIdx { get; }
 
-	    /// <summary>
-	    ///     Gets from which column the source code ref starts
-	    /// </summary>
-	    public int FromChar { get; }
+        /// <summary>
+        ///     Gets from which column the source code ref starts
+        /// </summary>
+        public int FromChar { get; }
 
-	    /// <summary>
-	    ///     Gets to which column the source code ref ends
-	    /// </summary>
-	    public int ToChar { get; }
+        /// <summary>
+        ///     Gets to which column the source code ref ends
+        /// </summary>
+        public int ToChar { get; }
 
-	    /// <summary>
-	    ///     Gets from which line the source code ref starts
-	    /// </summary>
-	    public int FromLine { get; }
+        /// <summary>
+        ///     Gets from which line the source code ref starts
+        /// </summary>
+        public int FromLine { get; }
 
-	    /// <summary>
-	    ///     Gets to which line the source code ref ends
-	    /// </summary>
-	    public int ToLine { get; }
+        /// <summary>
+        ///     Gets to which line the source code ref ends
+        /// </summary>
+        public int ToLine { get; }
 
-	    /// <summary>
-	    ///     Gets a value indicating whether this instance is a stop "step" in source mode
-	    /// </summary>
-	    public bool IsStepStop { get; }
+        /// <summary>
+        ///     Gets a value indicating whether this instance is a stop "step" in source mode
+        /// </summary>
+        public bool IsStepStop { get; }
 
-	    /// <summary>
-	    ///     Gets a value indicating whether this instance is a breakpoint
-	    /// </summary>
-	    public bool Breakpoint;
+        /// <summary>
+        ///     Gets a value indicating whether this instance is a breakpoint
+        /// </summary>
+        public bool Breakpoint;
 
-	    /// <summary>
-	    ///     Gets a value indicating whether this instance cannot be set as a breakpoint
-	    /// </summary>
-	    public bool CannotBreakpoint { get; private set; }
+        /// <summary>
+        ///     Gets a value indicating whether this instance cannot be set as a breakpoint
+        /// </summary>
+        public bool CannotBreakpoint { get; private set; }
 
         internal static SourceRef GetClrLocation()
         {

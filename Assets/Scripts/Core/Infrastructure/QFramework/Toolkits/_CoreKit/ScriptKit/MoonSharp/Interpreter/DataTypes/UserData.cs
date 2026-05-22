@@ -11,11 +11,11 @@ using MoonSharp.Interpreter.Serialization.Json;
 
 namespace MoonSharp.Interpreter
 {
-	/// <summary>
-	///     Class exposing C# objects as Lua userdata.
-	///     For efficiency, a global registry of types is maintained, instead of a per-script one.
-	/// </summary>
-	public class UserData : RefIdObject
+    /// <summary>
+    ///     Class exposing C# objects as Lua userdata.
+    ///     For efficiency, a global registry of types is maintained, instead of a per-script one.
+    /// </summary>
+    public class UserData : RefIdObject
     {
         private UserData()
         {

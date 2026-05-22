@@ -4,10 +4,10 @@ using ICSharpCode.SharpZipLib.Checksum;
 
 namespace ICSharpCode.SharpZipLib.BZip2
 {
-	/// <summary>
-	///     An input stream that decompresses files in the BZip2 format
-	/// </summary>
-	public class BZip2InputStream : Stream
+    /// <summary>
+    ///     An input stream that decompresses files in the BZip2 format
+    /// </summary>
+    public class BZip2InputStream : Stream
     {
         #region Constants
         private const int START_BLOCK_STATE = 1;

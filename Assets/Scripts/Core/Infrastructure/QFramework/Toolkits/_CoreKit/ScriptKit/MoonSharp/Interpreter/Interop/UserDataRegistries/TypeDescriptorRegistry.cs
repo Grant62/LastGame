@@ -11,10 +11,10 @@ using MoonSharp.Interpreter.Interop.RegistrationPolicies;
 
 namespace MoonSharp.Interpreter.Interop.UserDataRegistries
 {
-	/// <summary>
-	///     Registry of all type descriptors. Use UserData statics to access these.
-	/// </summary>
-	internal static class TypeDescriptorRegistry
+    /// <summary>
+    ///     Registry of all type descriptors. Use UserData statics to access these.
+    /// </summary>
+    internal static class TypeDescriptorRegistry
     {
         private static readonly object s_Lock = new();
         private static readonly Dictionary<Type, IUserDataDescriptor> s_TypeRegistry = new();

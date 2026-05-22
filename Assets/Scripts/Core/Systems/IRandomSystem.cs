@@ -1,8 +1,9 @@
 using System;
+using QFramework;
 
 namespace Core.Systems
 {
-    public interface IRandomSystem
+    public interface IRandomSystem : ISystem
     {
         void Initialize(int? seed = null);
         Random GetRandomGenerator(int moduleId);

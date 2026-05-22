@@ -315,7 +315,9 @@ namespace Spine.Unity.Editor
                 Object prefab = AssetDatabase.LoadAssetAtPath(prefabPath, typeof(GameObject));
                 if (prefab == null)
                 {
-                    prefab = PrefabUtility.CreateEmptyPrefab(prefabPath);
+                    GameObject temp = new();
+                    prefab = PrefabUtility.SaveAsPrefabAsset(temp, prefabPath);
+                    Object.DestroyImmediate(temp);
                     newPrefab = true;
                 }
 
@@ -484,7 +486,7 @@ namespace Spine.Unity.Editor
 
                 if (newPrefab)
                 {
-                    PrefabUtility.ReplacePrefab(prefabRoot, prefab, ReplacePrefabOptions.ConnectToPrefab);
+                    PrefabUtility.SaveAsPrefabAssetAndConnect(prefabRoot, prefabPath, InteractionMode.AutomatedAction);
                 }
                 else
                 {
@@ -493,7 +495,7 @@ namespace Spine.Unity.Editor
                         Mesh.DestroyImmediate(meshTable[str], true);
                     }
 
-                    PrefabUtility.ReplacePrefab(prefabRoot, prefab, ReplacePrefabOptions.ReplaceNameBased);
+                    PrefabUtility.SaveAsPrefabAsset(prefabRoot, prefabPath);
                 }
 
                 EditorGUIUtility.PingObject(prefab);

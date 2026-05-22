@@ -4,9 +4,9 @@ using System.Text;
 
 namespace MoonSharp.Interpreter.Serialization
 {
-	/// <summary>
-	/// </summary>
-	public static class SerializationExtensions
+    /// <summary>
+    /// </summary>
+    public static class SerializationExtensions
     {
         private static readonly HashSet<string> LUAKEYWORDS = new()
         {

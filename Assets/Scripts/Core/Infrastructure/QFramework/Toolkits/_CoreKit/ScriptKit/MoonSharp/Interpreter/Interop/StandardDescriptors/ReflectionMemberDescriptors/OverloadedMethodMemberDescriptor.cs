@@ -9,15 +9,15 @@ using MoonSharp.Interpreter.Interop.Converters;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Class providing easier marshalling of overloaded CLR functions
-	/// </summary>
-	public class OverloadedMethodMemberDescriptor : IOptimizableDescriptor, IMemberDescriptor, IWireableDescriptor
+    /// <summary>
+    ///     Class providing easier marshalling of overloaded CLR functions
+    /// </summary>
+    public class OverloadedMethodMemberDescriptor : IOptimizableDescriptor, IMemberDescriptor, IWireableDescriptor
     {
-	    /// <summary>
-	    ///     Comparer class for IOverloadableMemberDescriptor
-	    /// </summary>
-	    private class OverloadableMemberDescriptorComparer : IComparer<IOverloadableMemberDescriptor>
+        /// <summary>
+        ///     Comparer class for IOverloadableMemberDescriptor
+        /// </summary>
+        private class OverloadableMemberDescriptorComparer : IComparer<IOverloadableMemberDescriptor>
         {
             public int Compare(IOverloadableMemberDescriptor x, IOverloadableMemberDescriptor y)
             {

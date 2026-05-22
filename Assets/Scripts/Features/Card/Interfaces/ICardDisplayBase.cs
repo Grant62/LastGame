@@ -18,8 +18,5 @@ namespace Features.Card.Interfaces
         void SetRarityColor(Color color);
         void SetImage(Sprite sprite);
         void UpdatePositionRotation(Vector3 pos, Quaternion rot, float duration);
-        void SetUsable(bool usable);
-        void UpdateUsable();
-        void ResetWrapper();
     }
 }

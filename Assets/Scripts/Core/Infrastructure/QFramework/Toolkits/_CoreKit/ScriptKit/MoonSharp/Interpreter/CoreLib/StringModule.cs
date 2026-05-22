@@ -9,10 +9,10 @@ using MoonSharp.Interpreter.CoreLib.StringLib;
 
 namespace MoonSharp.Interpreter.CoreLib
 {
-	/// <summary>
-	///     Class implementing string Lua functions
-	/// </summary>
-	[MoonSharpModule(Namespace = "string")]
+    /// <summary>
+    ///     Class implementing string Lua functions
+    /// </summary>
+    [MoonSharpModule(Namespace = "string")]
     public class StringModule
     {
         public const string BASE64_DUMP_HEADER = "MoonSharp_dump_b64::";

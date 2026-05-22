@@ -45,6 +45,7 @@ namespace QFramework
             {
                 return easyEvent.Register(onEvent);
             }
+
             EasyEvent newEvent = new();
             mEvents.Add(kv, newEvent);
             return newEvent.Register(onEvent);
@@ -57,6 +58,7 @@ namespace QFramework
             {
                 return typed.Register(onEvent);
             }
+
             EasyEvent<T1> newEvent = new();
             mEvents.Add(kv, newEvent);
             return newEvent.Register(onEvent);
@@ -69,6 +71,7 @@ namespace QFramework
             {
                 return typed.Register(onEvent);
             }
+
             EasyEvent<T1, T2> newEvent = new();
             mEvents.Add(kv, newEvent);
             return newEvent.Register(onEvent);

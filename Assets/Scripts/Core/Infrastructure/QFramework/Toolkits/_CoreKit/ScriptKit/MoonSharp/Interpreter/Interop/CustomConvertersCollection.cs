@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     A collection of custom converters between MoonSharp types and CLR types.
-	///     If a converter function is not specified or returns null, the standard conversion path applies.
-	/// </summary>
-	public class CustomConvertersCollection
+    /// <summary>
+    ///     A collection of custom converters between MoonSharp types and CLR types.
+    ///     If a converter function is not specified or returns null, the standard conversion path applies.
+    /// </summary>
+    public class CustomConvertersCollection
     {
         private readonly Dictionary<Type, Func<DynValue, object>>[] m_Script2Clr = new Dictionary<Type, Func<DynValue, object>>[(int)LuaTypeExtensions.MaxConvertibleTypes + 1];
         private readonly Dictionary<Type, Func<Script, object, DynValue>> m_Clr2Script = new();

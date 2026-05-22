@@ -63,7 +63,7 @@ namespace Spine.Unity.Editor
 
             if (!skeletonRenderer.valid) return;
 
-            isPrefab |= PrefabUtility.GetPrefabType(target) == PrefabType.Prefab;
+            isPrefab |= PrefabUtility.IsPartOfPrefabAsset(target);
         }
 
         public override void OnInspectorGUI()

@@ -6,10 +6,10 @@ using System.Collections.Generic;
 
 namespace MoonSharp.Interpreter.CoreLib
 {
-	/// <summary>
-	///     Class implementing coroutine Lua functions
-	/// </summary>
-	[MoonSharpModule(Namespace = "coroutine")]
+    /// <summary>
+    ///     Class implementing coroutine Lua functions
+    /// </summary>
+    [MoonSharpModule(Namespace = "coroutine")]
     public class CoroutineModule
     {
         [MoonSharpModuleMethod]

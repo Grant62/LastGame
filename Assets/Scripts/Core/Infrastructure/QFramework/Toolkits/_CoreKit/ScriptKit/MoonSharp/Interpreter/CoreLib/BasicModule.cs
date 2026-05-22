@@ -9,10 +9,10 @@ using System.Text;
 
 namespace MoonSharp.Interpreter.CoreLib
 {
-	/// <summary>
-	///     Class implementing basic Lua functions (print, type, tostring, etc) as a MoonSharp module.
-	/// </summary>
-	[MoonSharpModule]
+    /// <summary>
+    ///     Class implementing basic Lua functions (print, type, tostring, etc) as a MoonSharp module.
+    /// </summary>
+    [MoonSharpModule]
     public class BasicModule
     {
         //type (v)

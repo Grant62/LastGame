@@ -512,7 +512,7 @@ namespace QFramework.TimeExtend
             {
                 if (null == _instance)
                 {
-                    _instance = FindObjectOfType<TimerDriver>() ?? new GameObject("TimerEntity").AddComponent<TimerDriver>();
+                    _instance = FindAnyObjectByType<TimerDriver>() ?? new GameObject("TimerEntity").AddComponent<TimerDriver>();
                 }
 
                 return _instance;

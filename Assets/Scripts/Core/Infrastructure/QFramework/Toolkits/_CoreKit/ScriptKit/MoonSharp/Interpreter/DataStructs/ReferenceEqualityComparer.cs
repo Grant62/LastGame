@@ -2,10 +2,10 @@
 
 namespace MoonSharp.Interpreter.DataStructs
 {
-	/// <summary>
-	///     Implementation of IEqualityComparer enforcing reference equality
-	/// </summary>
-	internal class ReferenceEqualityComparer : IEqualityComparer<object>
+    /// <summary>
+    ///     Implementation of IEqualityComparer enforcing reference equality
+    /// </summary>
+    internal class ReferenceEqualityComparer : IEqualityComparer<object>
     {
         bool IEqualityComparer<object>.Equals(object x, object y)
         {

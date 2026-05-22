@@ -5,25 +5,25 @@ using MoonSharp.Interpreter.Interop.BasicDescriptors;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Standard descriptor for Enum values
-	/// </summary>
-	public class StandardEnumUserDataDescriptor : DispatchingUserDataDescriptor
+    /// <summary>
+    ///     Standard descriptor for Enum values
+    /// </summary>
+    public class StandardEnumUserDataDescriptor : DispatchingUserDataDescriptor
     {
-	    /// <summary>
-	    ///     Gets the underlying type of the enum.
-	    /// </summary>
-	    public Type UnderlyingType { get; }
+        /// <summary>
+        ///     Gets the underlying type of the enum.
+        /// </summary>
+        public Type UnderlyingType { get; }
 
-	    /// <summary>
-	    ///     Gets a value indicating whether underlying type of the enum is unsigned.
-	    /// </summary>
-	    public bool IsUnsigned { get; }
+        /// <summary>
+        ///     Gets a value indicating whether underlying type of the enum is unsigned.
+        /// </summary>
+        public bool IsUnsigned { get; }
 
-	    /// <summary>
-	    ///     Gets a value indicating whether this instance describes a flags enumeration.
-	    /// </summary>
-	    public bool IsFlags { get; private set; }
+        /// <summary>
+        ///     Gets a value indicating whether this instance describes a flags enumeration.
+        /// </summary>
+        public bool IsFlags { get; private set; }
 
         private Func<object, ulong> m_EnumToULong;
         private Func<ulong, object> m_ULongToEnum;

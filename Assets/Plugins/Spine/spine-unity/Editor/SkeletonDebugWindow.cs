@@ -105,8 +105,8 @@ namespace Spine.Unity.Editor
 
         private void OnSelectionChange()
         {
-            SceneView.onSceneGUIDelegate -= OnSceneGUI;
-            SceneView.onSceneGUIDelegate += OnSceneGUI;
+            SceneView.duringSceneGui -= OnSceneGUI;
+            SceneView.duringSceneGui += OnSceneGUI;
 
             bool noSkeletonRenderer = false;
 
@@ -132,7 +132,7 @@ namespace Spine.Unity.Editor
                     skeletonRenderer.Initialize(false);
                     skeletonRenderer.LateUpdate();
                     skeleton = skeletonRenderer.skeleton;
-                    isPrefab |= PrefabUtility.GetPrefabType(selectedObject) == PrefabType.Prefab;
+                    isPrefab |= PrefabUtility.IsPartOfPrefabAsset(selectedObject);
                     UpdateAttachments();
                 }
             }
@@ -149,7 +149,7 @@ namespace Spine.Unity.Editor
             isPrefab = false;
             boneName = string.Empty;
             bone = null;
-            SceneView.onSceneGUIDelegate -= OnSceneGUI;
+            SceneView.duringSceneGui -= OnSceneGUI;
         }
 
         private void OnDestroy()

@@ -7,23 +7,23 @@ using MoonSharp.Interpreter.Interop.BasicDescriptors;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Standard descriptor for userdata types.
-	/// </summary>
-	public class StandardUserDataDescriptor : DispatchingUserDataDescriptor, IWireableDescriptor
+    /// <summary>
+    ///     Standard descriptor for userdata types.
+    /// </summary>
+    public class StandardUserDataDescriptor : DispatchingUserDataDescriptor, IWireableDescriptor
     {
-	    /// <summary>
-	    ///     Gets the interop access mode this descriptor uses for members access
-	    /// </summary>
-	    public InteropAccessMode AccessMode { get; }
+        /// <summary>
+        ///     Gets the interop access mode this descriptor uses for members access
+        /// </summary>
+        public InteropAccessMode AccessMode { get; }
 
-	    /// <summary>
-	    ///     Initializes a new instance of the <see cref="StandardUserDataDescriptor" /> class.
-	    /// </summary>
-	    /// <param name="type">The type this descriptor refers to.</param>
-	    /// <param name="accessMode">The interop access mode this descriptor uses for members access</param>
-	    /// <param name="friendlyName">A human readable friendly name of the descriptor.</param>
-	    public StandardUserDataDescriptor(Type type, InteropAccessMode accessMode, string friendlyName = null)
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="StandardUserDataDescriptor" /> class.
+        /// </summary>
+        /// <param name="type">The type this descriptor refers to.</param>
+        /// <param name="accessMode">The interop access mode this descriptor uses for members access</param>
+        /// <param name="friendlyName">A human readable friendly name of the descriptor.</param>
+        public StandardUserDataDescriptor(Type type, InteropAccessMode accessMode, string friendlyName = null)
             : base(type, friendlyName)
         {
             if (accessMode == InteropAccessMode.NoReflectionAllowed)
@@ -40,10 +40,10 @@ namespace MoonSharp.Interpreter.Interop
             FillMemberList();
         }
 
-	    /// <summary>
-	    ///     Fills the member list.
-	    /// </summary>
-	    private void FillMemberList()
+        /// <summary>
+        ///     Fills the member list.
+        /// </summary>
+        private void FillMemberList()
         {
             HashSet<string> membersToIgnore = new(
                 Framework.Do.GetCustomAttributes(Type, typeof(MoonSharpHideMemberAttribute), true)

@@ -5,10 +5,10 @@ using MoonSharp.Interpreter.Interop;
 
 namespace MoonSharp.Interpreter
 {
-	/// <summary>
-	///     This class wraps a CLR function
-	/// </summary>
-	public sealed class CallbackFunction : RefIdObject
+    /// <summary>
+    ///     This class wraps a CLR function
+    /// </summary>
+    public sealed class CallbackFunction : RefIdObject
     {
         private static InteropAccessMode m_DefaultAccessMode = InteropAccessMode.LazyOptimized;
 

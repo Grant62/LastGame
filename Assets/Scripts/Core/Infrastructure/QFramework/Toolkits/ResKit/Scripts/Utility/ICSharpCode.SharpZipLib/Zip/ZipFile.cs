@@ -52,9 +52,6 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public byte[] Key { get; set; }
         #endregion
-
-        #region Instance Fields
-        #endregion
     }
     #endregion
 
@@ -64,14 +61,14 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </summary>
     public enum TestStrategy
     {
-	    /// <summary>
-	    ///     Find the first error only.
-	    /// </summary>
-	    FindFirstError,
-	    /// <summary>
-	    ///     Find all possible errors.
-	    /// </summary>
-	    FindAllErrors
+        /// <summary>
+        ///     Find the first error only.
+        /// </summary>
+        FindFirstError,
+        /// <summary>
+        ///     Find all possible errors.
+        /// </summary>
+        FindAllErrors
     }
 
     /// <summary>
@@ -80,35 +77,35 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <seealso cref="ZipFile.TestArchive(bool)">TestArchive</seealso>
     public enum TestOperation
     {
-	    /// <summary>
-	    ///     Setting up testing.
-	    /// </summary>
-	    Initialising,
+        /// <summary>
+        ///     Setting up testing.
+        /// </summary>
+        Initialising,
 
-	    /// <summary>
-	    ///     Testing an individual entries header
-	    /// </summary>
-	    EntryHeader,
+        /// <summary>
+        ///     Testing an individual entries header
+        /// </summary>
+        EntryHeader,
 
-	    /// <summary>
-	    ///     Testing an individual entries data
-	    /// </summary>
-	    EntryData,
+        /// <summary>
+        ///     Testing an individual entries data
+        /// </summary>
+        EntryData,
 
-	    /// <summary>
-	    ///     Testing an individual entry has completed.
-	    /// </summary>
-	    EntryComplete,
+        /// <summary>
+        ///     Testing an individual entry has completed.
+        /// </summary>
+        EntryComplete,
 
-	    /// <summary>
-	    ///     Running miscellaneous tests
-	    /// </summary>
-	    MiscellaneousTests,
+        /// <summary>
+        ///     Running miscellaneous tests
+        /// </summary>
+        MiscellaneousTests,
 
-	    /// <summary>
-	    ///     Testing is complete
-	    /// </summary>
-	    Complete
+        /// <summary>
+        ///     Testing is complete
+        /// </summary>
+        Complete
     }
 
     /// <summary>
@@ -184,9 +181,6 @@ namespace ICSharpCode.SharpZipLib.Zip
             BytesTested = value;
         }
         #endregion
-
-        #region Instance Fields
-        #endregion
     }
 
     /// <summary>
@@ -206,14 +200,14 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </summary>
     public enum FileUpdateMode
     {
-	    /// <summary>
-	    ///     Perform all updates on temporary files ensuring that the original file is saved.
-	    /// </summary>
-	    Safe,
-	    /// <summary>
-	    ///     Update the archive directly, which is faster but less safe.
-	    /// </summary>
-	    Direct
+        /// <summary>
+        ///     Perform all updates on temporary files ensuring that the original file is saved.
+        /// </summary>
+        Safe,
+        /// <summary>
+        ///     Update the archive directly, which is faster but less safe.
+        /// </summary>
+        Direct
     }
     #endregion
 
@@ -2699,14 +2693,14 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         private class UpdateComparer : IComparer<ZipUpdate>
         {
-	        /// <summary>
-	        ///     Compares two objects and returns a value indicating whether one is
-	        ///     less than, equal to or greater than the other.
-	        /// </summary>
-	        /// <param name="x">First object to compare</param>
-	        /// <param name="y">Second object to compare.</param>
-	        /// <returns>Compare result.</returns>
-	        public int Compare(ZipUpdate x, ZipUpdate y)
+            /// <summary>
+            ///     Compares two objects and returns a value indicating whether one is
+            ///     less than, equal to or greater than the other.
+            /// </summary>
+            /// <param name="x">First object to compare</param>
+            /// <param name="y">Second object to compare.</param>
+            /// <returns>Compare result.</returns>
+            public int Compare(ZipUpdate x, ZipUpdate y)
             {
                 int result;
 
@@ -4087,12 +4081,12 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </summary>
     public interface IStaticDataSource
     {
-	    /// <summary>
-	    ///     Get a source of data by creating a new stream.
-	    /// </summary>
-	    /// <returns>Returns a <see cref="Stream" /> to use for compression input.</returns>
-	    /// <remarks>Ideally a new stream is created and opened to achieve this, to avoid locking problems.</remarks>
-	    Stream GetSource();
+        /// <summary>
+        ///     Get a source of data by creating a new stream.
+        /// </summary>
+        /// <returns>Returns a <see cref="Stream" /> to use for compression input.</returns>
+        /// <remarks>Ideally a new stream is created and opened to achieve this, to avoid locking problems.</remarks>
+        Stream GetSource();
     }
 
     /// <summary>
@@ -4101,14 +4095,14 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </summary>
     public interface IDynamicDataSource
     {
-	    /// <summary>
-	    ///     Get a data source.
-	    /// </summary>
-	    /// <param name="entry">The <see cref="ZipEntry" /> to get a source for.</param>
-	    /// <param name="name">The name for data if known.</param>
-	    /// <returns>Returns a <see cref="Stream" /> to use for compression input.</returns>
-	    /// <remarks>Ideally a new stream is created and opened to achieve this, to avoid locking problems.</remarks>
-	    Stream GetSource(ZipEntry entry, string name);
+        /// <summary>
+        ///     Get a data source.
+        /// </summary>
+        /// <param name="entry">The <see cref="ZipEntry" /> to get a source for.</param>
+        /// <param name="name">The name for data if known.</param>
+        /// <returns>Returns a <see cref="Stream" /> to use for compression input.</returns>
+        /// <remarks>Ideally a new stream is created and opened to achieve this, to avoid locking problems.</remarks>
+        Stream GetSource(ZipEntry entry, string name);
     }
 
     /// <summary>
@@ -4116,11 +4110,11 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </summary>
     public class StaticDiskDataSource : IStaticDataSource
     {
-	    /// <summary>
-	    ///     Initialise a new instnace of <see cref="StaticDiskDataSource" />
-	    /// </summary>
-	    /// <param name="fileName">The name of the file to obtain data from.</param>
-	    public StaticDiskDataSource(string fileName)
+        /// <summary>
+        ///     Initialise a new instnace of <see cref="StaticDiskDataSource" />
+        /// </summary>
+        /// <param name="fileName">The name of the file to obtain data from.</param>
+        public StaticDiskDataSource(string fileName)
         {
             fileName_ = fileName;
         }
@@ -4177,44 +4171,44 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </summary>
     public interface IArchiveStorage
     {
-	    /// <summary>
-	    ///     Get the <see cref="FileUpdateMode" /> to apply during updates.
-	    /// </summary>
-	    FileUpdateMode UpdateMode { get; }
+        /// <summary>
+        ///     Get the <see cref="FileUpdateMode" /> to apply during updates.
+        /// </summary>
+        FileUpdateMode UpdateMode { get; }
 
-	    /// <summary>
-	    ///     Get an empty <see cref="Stream" /> that can be used for temporary output.
-	    /// </summary>
-	    /// <returns>Returns a temporary output <see cref="Stream" /></returns>
-	    /// <seealso cref="ConvertTemporaryToFinal"></seealso>
-	    Stream GetTemporaryOutput();
+        /// <summary>
+        ///     Get an empty <see cref="Stream" /> that can be used for temporary output.
+        /// </summary>
+        /// <returns>Returns a temporary output <see cref="Stream" /></returns>
+        /// <seealso cref="ConvertTemporaryToFinal"></seealso>
+        Stream GetTemporaryOutput();
 
-	    /// <summary>
-	    ///     Convert a temporary output stream to a final stream.
-	    /// </summary>
-	    /// <returns>The resulting final <see cref="Stream" /></returns>
-	    /// <seealso cref="GetTemporaryOutput" />
-	    Stream ConvertTemporaryToFinal();
+        /// <summary>
+        ///     Convert a temporary output stream to a final stream.
+        /// </summary>
+        /// <returns>The resulting final <see cref="Stream" /></returns>
+        /// <seealso cref="GetTemporaryOutput" />
+        Stream ConvertTemporaryToFinal();
 
-	    /// <summary>
-	    ///     Make a temporary copy of the original stream.
-	    /// </summary>
-	    /// <param name="stream">The <see cref="Stream" /> to copy.</param>
-	    /// <returns>Returns a temporary output <see cref="Stream" /> that is a copy of the input.</returns>
-	    Stream MakeTemporaryCopy(Stream stream);
+        /// <summary>
+        ///     Make a temporary copy of the original stream.
+        /// </summary>
+        /// <param name="stream">The <see cref="Stream" /> to copy.</param>
+        /// <returns>Returns a temporary output <see cref="Stream" /> that is a copy of the input.</returns>
+        Stream MakeTemporaryCopy(Stream stream);
 
-	    /// <summary>
-	    ///     Return a stream suitable for performing direct updates on the original source.
-	    /// </summary>
-	    /// <param name="stream">The current stream.</param>
-	    /// <returns>Returns a stream suitable for direct updating.</returns>
-	    /// <remarks>This may be the current stream passed.</remarks>
-	    Stream OpenForDirectUpdate(Stream stream);
+        /// <summary>
+        ///     Return a stream suitable for performing direct updates on the original source.
+        /// </summary>
+        /// <param name="stream">The current stream.</param>
+        /// <returns>Returns a stream suitable for direct updating.</returns>
+        /// <remarks>This may be the current stream passed.</remarks>
+        Stream OpenForDirectUpdate(Stream stream);
 
-	    /// <summary>
-	    ///     Dispose of this instance.
-	    /// </summary>
-	    void Dispose();
+        /// <summary>
+        ///     Dispose of this instance.
+        /// </summary>
+        void Dispose();
     }
 
     /// <summary>
@@ -4275,9 +4269,6 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         /// <value>The update mode.</value>
         public FileUpdateMode UpdateMode { get; }
-        #endregion
-
-        #region Instance Fields
         #endregion
     }
 

@@ -4,10 +4,10 @@ using MoonSharp.Interpreter.Interop.Converters;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Member descriptor for indexer of array types
-	/// </summary>
-	public class ArrayMemberDescriptor : ObjectCallbackMemberDescriptor, IWireableDescriptor
+    /// <summary>
+    ///     Member descriptor for indexer of array types
+    /// </summary>
+    public class ArrayMemberDescriptor : ObjectCallbackMemberDescriptor, IWireableDescriptor
     {
         private readonly bool m_IsSetter;
 

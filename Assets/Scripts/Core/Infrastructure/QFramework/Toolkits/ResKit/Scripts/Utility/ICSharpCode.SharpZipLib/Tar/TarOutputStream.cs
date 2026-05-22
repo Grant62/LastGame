@@ -3,13 +3,13 @@ using System.IO;
 
 namespace ICSharpCode.SharpZipLib.Tar
 {
-	/// <summary>
-	///     The TarOutputStream writes a UNIX tar archive as an OutputStream.
-	///     Methods are provided to put entries, and then write their contents
-	///     by writing to this stream using write().
-	/// </summary>
-	/// public
-	public class TarOutputStream : Stream
+    /// <summary>
+    ///     The TarOutputStream writes a UNIX tar archive as an OutputStream.
+    ///     Methods are provided to put entries, and then write their contents
+    ///     by writing to this stream using write().
+    /// </summary>
+    /// public
+    public class TarOutputStream : Stream
     {
         #region Constructors
         /// <summary>

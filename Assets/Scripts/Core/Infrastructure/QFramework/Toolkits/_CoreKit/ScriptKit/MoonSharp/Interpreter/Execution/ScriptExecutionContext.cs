@@ -5,10 +5,10 @@ using MoonSharp.Interpreter.Interop.LuaStateInterop;
 
 namespace MoonSharp.Interpreter
 {
-	/// <summary>
-	///     Class giving access to details of the environment where the script is executing
-	/// </summary>
-	public class ScriptExecutionContext : IScriptPrivateResource
+    /// <summary>
+    ///     Class giving access to details of the environment where the script is executing
+    /// </summary>
+    public class ScriptExecutionContext : IScriptPrivateResource
     {
         private readonly Processor m_Processor;
         private readonly CallbackFunction m_Callback;

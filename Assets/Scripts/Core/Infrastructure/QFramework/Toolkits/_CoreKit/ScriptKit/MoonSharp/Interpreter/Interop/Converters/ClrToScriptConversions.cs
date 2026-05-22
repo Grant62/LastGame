@@ -7,12 +7,12 @@ namespace MoonSharp.Interpreter.Interop.Converters
 {
     internal static class ClrToScriptConversions
     {
-	    /// <summary>
-	    ///     Tries to convert a CLR object to a MoonSharp value, using "trivial" logic.
-	    ///     Skips on custom conversions, etc.
-	    ///     Does NOT throw on failure.
-	    /// </summary>
-	    internal static DynValue TryObjectToTrivialDynValue(Script script, object obj)
+        /// <summary>
+        ///     Tries to convert a CLR object to a MoonSharp value, using "trivial" logic.
+        ///     Skips on custom conversions, etc.
+        ///     Does NOT throw on failure.
+        /// </summary>
+        internal static DynValue TryObjectToTrivialDynValue(Script script, object obj)
         {
             if (obj == null)
                 return DynValue.Nil;
@@ -38,11 +38,11 @@ namespace MoonSharp.Interpreter.Interop.Converters
         }
 
 
-	    /// <summary>
-	    ///     Tries to convert a CLR object to a MoonSharp value, using "simple" logic.
-	    ///     Does NOT throw on failure.
-	    /// </summary>
-	    internal static DynValue TryObjectToSimpleDynValue(Script script, object obj)
+        /// <summary>
+        ///     Tries to convert a CLR object to a MoonSharp value, using "simple" logic.
+        ///     Does NOT throw on failure.
+        /// </summary>
+        internal static DynValue TryObjectToSimpleDynValue(Script script, object obj)
         {
             if (obj == null)
                 return DynValue.Nil;
@@ -98,10 +98,10 @@ namespace MoonSharp.Interpreter.Interop.Converters
         }
 
 
-	    /// <summary>
-	    ///     Tries to convert a CLR object to a MoonSharp value, using more in-depth analysis
-	    /// </summary>
-	    internal static DynValue ObjectToDynValue(Script script, object obj)
+        /// <summary>
+        ///     Tries to convert a CLR object to a MoonSharp value, using more in-depth analysis
+        /// </summary>
+        internal static DynValue ObjectToDynValue(Script script, object obj)
         {
             DynValue v = TryObjectToSimpleDynValue(script, obj);
 
@@ -151,13 +151,13 @@ namespace MoonSharp.Interpreter.Interop.Converters
             throw ScriptRuntimeException.ConvertObjectFailed(obj);
         }
 
-	    /// <summary>
-	    ///     Converts an IEnumerable or IEnumerator to a DynValue
-	    /// </summary>
-	    /// <param name="script">The script.</param>
-	    /// <param name="obj">The object.</param>
-	    /// <returns></returns>
-	    public static DynValue EnumerationToDynValue(Script script, object obj)
+        /// <summary>
+        ///     Converts an IEnumerable or IEnumerator to a DynValue
+        /// </summary>
+        /// <param name="script">The script.</param>
+        /// <param name="obj">The object.</param>
+        /// <returns></returns>
+        public static DynValue EnumerationToDynValue(Script script, object obj)
         {
             if (obj is IEnumerable)
             {

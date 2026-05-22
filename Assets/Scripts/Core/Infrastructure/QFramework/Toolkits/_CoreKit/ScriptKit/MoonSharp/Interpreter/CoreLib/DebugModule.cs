@@ -10,10 +10,10 @@ using MoonSharp.Interpreter.REPL;
 
 namespace MoonSharp.Interpreter.CoreLib
 {
-	/// <summary>
-	///     Class implementing debug Lua functions. Support for the debug module is partial.
-	/// </summary>
-	[MoonSharpModule(Namespace = "debug")]
+    /// <summary>
+    ///     Class implementing debug Lua functions. Support for the debug module is partial.
+    /// </summary>
+    [MoonSharpModule(Namespace = "debug")]
     public class DebugModule
     {
         [MoonSharpModuleMethod]

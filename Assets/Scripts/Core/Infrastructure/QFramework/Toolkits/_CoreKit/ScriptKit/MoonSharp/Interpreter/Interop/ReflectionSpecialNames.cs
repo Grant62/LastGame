@@ -1,9 +1,9 @@
 ﻿namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Helps identifying a reflection special name
-	/// </summary>
-	public enum ReflectionSpecialNameType
+    /// <summary>
+    ///     Helps identifying a reflection special name
+    /// </summary>
+    public enum ReflectionSpecialNameType
     {
         IndexGetter,
         IndexSetter,
@@ -40,10 +40,10 @@
         OperatorUnaryPlus
     }
 
-	/// <summary>
-	///     Class helping identifying special names found with reflection
-	/// </summary>
-	public struct ReflectionSpecialName
+    /// <summary>
+    ///     Class helping identifying special names found with reflection
+    /// </summary>
+    public struct ReflectionSpecialName
     {
         public ReflectionSpecialNameType Type { get; private set; }
         public string Argument { get; private set; }

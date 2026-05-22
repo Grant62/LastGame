@@ -3,10 +3,10 @@ using MoonSharp.Interpreter.DataStructs;
 
 namespace MoonSharp.Interpreter
 {
-	/// <summary>
-	///     This class is a container for arguments received by a CallbackFunction
-	/// </summary>
-	public class CallbackArguments
+    /// <summary>
+    ///     This class is a container for arguments received by a CallbackFunction
+    /// </summary>
+    public class CallbackArguments
     {
         private readonly IList<DynValue> m_Args;
         private readonly bool m_LastIsTuple;

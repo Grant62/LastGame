@@ -3,10 +3,10 @@ using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
 namespace ICSharpCode.SharpZipLib.Zip.Compression
 {
-	/// <summary>
-	///     Huffman tree used for inflation
-	/// </summary>
-	public class InflaterHuffmanTree
+    /// <summary>
+    ///     Huffman tree used for inflation
+    /// </summary>
+    public class InflaterHuffmanTree
     {
         #region Constants
         private const int MAX_BITLEN = 15;

@@ -4,10 +4,10 @@ using MoonSharp.Interpreter.Diagnostics.PerformanceCounters;
 
 namespace MoonSharp.Interpreter.Diagnostics
 {
-	/// <summary>
-	///     A single object of this type exists for every script and gives access to performance statistics.
-	/// </summary>
-	public class PerformanceStatistics
+    /// <summary>
+    ///     A single object of this type exists for every script and gives access to performance statistics.
+    /// </summary>
+    public class PerformanceStatistics
     {
         private IPerformanceStopwatch[] m_Stopwatches = new IPerformanceStopwatch[(int)PerformanceCounter.LastValue];
         private static IPerformanceStopwatch[] m_GlobalStopwatches = new IPerformanceStopwatch[(int)PerformanceCounter.LastValue];

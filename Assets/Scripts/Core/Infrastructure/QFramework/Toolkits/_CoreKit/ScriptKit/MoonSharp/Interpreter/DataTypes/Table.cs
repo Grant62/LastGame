@@ -4,10 +4,10 @@ using MoonSharp.Interpreter.DataStructs;
 
 namespace MoonSharp.Interpreter
 {
-	/// <summary>
-	///     A class representing a Lua table.
-	/// </summary>
-	public class Table : RefIdObject, IScriptPrivateResource
+    /// <summary>
+    ///     A class representing a Lua table.
+    /// </summary>
+    public class Table : RefIdObject, IScriptPrivateResource
     {
         private readonly LinkedList<TablePair> m_Values;
         private readonly LinkedListIndex<DynValue, TablePair> m_ValueMap;

@@ -9,10 +9,10 @@ using MoonSharp.Interpreter.Interop.BasicDescriptors;
 
 namespace MoonSharp.Interpreter.Interop.UserDataRegistries
 {
-	/// <summary>
-	///     Registry of all extension methods. Use UserData statics to access these.
-	/// </summary>
-	internal class ExtensionMethodsRegistry
+    /// <summary>
+    ///     Registry of all extension methods. Use UserData statics to access these.
+    /// </summary>
+    internal class ExtensionMethodsRegistry
     {
         private static readonly object s_Lock = new();
         private static readonly MultiDictionary<string, IOverloadableMemberDescriptor> s_Registry = new();

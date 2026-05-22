@@ -5,16 +5,16 @@ using ICSharpCode.SharpZipLib.Core;
 
 namespace ICSharpCode.SharpZipLib.Zip
 {
-	/// <summary>
-	///     WindowsNameTransform transforms <see cref="ZipFile" /> names to windows compatible ones.
-	/// </summary>
-	public class WindowsNameTransform : INameTransform
+    /// <summary>
+    ///     WindowsNameTransform transforms <see cref="ZipFile" /> names to windows compatible ones.
+    /// </summary>
+    public class WindowsNameTransform : INameTransform
     {
-	    /// <summary>
-	    ///     The maximum windows path name permitted.
-	    /// </summary>
-	    /// <remarks>This may not valid for all windows systems - CE?, etc but I cant find the equivalent in the CLR.</remarks>
-	    private const int MaxPath = 260;
+        /// <summary>
+        ///     The maximum windows path name permitted.
+        /// </summary>
+        /// <remarks>This may not valid for all windows systems - CE?, etc but I cant find the equivalent in the CLR.</remarks>
+        private const int MaxPath = 260;
 
         private string _baseDirectory;
         private char _replacementChar = '_';

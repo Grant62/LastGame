@@ -14,22 +14,22 @@ using MoonSharp.Interpreter.Tree.Fast_Interface;
 
 namespace MoonSharp.Interpreter
 {
-	/// <summary>
-	///     This class implements a MoonSharp scripting session. Multiple Script objects can coexist in the same program but
-	///     cannot share
-	///     data among themselves unless some mechanism is put in place.
-	/// </summary>
-	public class Script : IScriptPrivateResource
+    /// <summary>
+    ///     This class implements a MoonSharp scripting session. Multiple Script objects can coexist in the same program but
+    ///     cannot share
+    ///     data among themselves unless some mechanism is put in place.
+    /// </summary>
+    public class Script : IScriptPrivateResource
     {
-	    /// <summary>
-	    ///     The version of the MoonSharp engine
-	    /// </summary>
-	    public const string VERSION = "2.0.0.0";
+        /// <summary>
+        ///     The version of the MoonSharp engine
+        /// </summary>
+        public const string VERSION = "2.0.0.0";
 
-	    /// <summary>
-	    ///     The Lua version being supported
-	    /// </summary>
-	    public const string LUA_VERSION = "5.2";
+        /// <summary>
+        ///     The Lua version being supported
+        /// </summary>
+        public const string LUA_VERSION = "5.2";
 
         private readonly Processor m_MainProcessor;
         private readonly ByteCode m_ByteCode;

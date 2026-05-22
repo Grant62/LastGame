@@ -4,11 +4,11 @@ using ICSharpCode.SharpZipLib.Checksum;
 
 namespace ICSharpCode.SharpZipLib.BZip2
 {
-	/// <summary>
-	///     An output stream that compresses into the BZip2 format
-	///     including file header chars into another stream.
-	/// </summary>
-	public class BZip2OutputStream : Stream
+    /// <summary>
+    ///     An output stream that compresses into the BZip2 format
+    ///     including file header chars into another stream.
+    /// </summary>
+    public class BZip2OutputStream : Stream
     {
         #region Constants
         private const int SETMASK = 1 << 21;

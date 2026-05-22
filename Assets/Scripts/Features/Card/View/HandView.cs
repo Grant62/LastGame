@@ -1,15 +1,13 @@
 using System.Collections.Generic;
 using System.Threading;
-using Core.Architecture;
 using Cysharp.Threading.Tasks;
 using Features.Card.Data;
-using QFramework;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Features.Card.View
 {
-    public class HandView : MonoBehaviour, IController
+    public class HandView : MonoBehaviour
     {
         [LabelText("卡牌横向布局/弧形布局")]
         public bool isHorizontal;
@@ -33,11 +31,6 @@ namespace Features.Card.View
 
         private const int BaseSortingOrder = 5;
         private const float ZOffset = 0.1f;
-
-        public IArchitecture GetArchitecture()
-        {
-            return GameMain.Interface;
-        }
 
         private void Awake()
         {
@@ -104,12 +97,6 @@ namespace Features.Card.View
                 await UniTask.Delay((int)(duration * 1000), cancellationToken: cancellationToken);
         }
 
-        public void ResetWrappers()
-        {
-            foreach (CardView cardView in mCardViews)
-                cardView.ResetWrapper();
-        }
-
         private CardView GetCardView(CardData card)
         {
             for (int i = 0; i < mCardViews.Count; i++)
@@ -127,12 +114,6 @@ namespace Features.Card.View
                 return;
 
             mCardViews[cardIndex]?.Setup(cardData);
-        }
-
-        public void UpdateCardsUsable()
-        {
-            foreach (CardView cardView in mCardViews)
-                cardView.UpdateUsable();
         }
 
         private void CalculatePosition(int numberOfCards, bool horizontal)

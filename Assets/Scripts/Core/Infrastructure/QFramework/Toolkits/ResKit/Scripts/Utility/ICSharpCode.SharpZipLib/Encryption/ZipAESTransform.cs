@@ -3,10 +3,10 @@ using System.Security.Cryptography;
 
 namespace ICSharpCode.SharpZipLib.Encryption
 {
-	/// <summary>
-	///     Transforms stream using AES in CTR mode
-	/// </summary>
-	internal class ZipAESTransform : ICryptoTransform
+    /// <summary>
+    ///     Transforms stream using AES in CTR mode
+    /// </summary>
+    internal class ZipAESTransform : ICryptoTransform
     {
         private class IncrementalHash : HMACSHA1
         {

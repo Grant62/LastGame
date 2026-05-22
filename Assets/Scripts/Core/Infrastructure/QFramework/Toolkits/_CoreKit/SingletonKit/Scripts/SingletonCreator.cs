@@ -124,7 +124,7 @@ namespace QFramework
                 return instance;
 
             //判断当前场景中是否存在T实例
-            instance = Object.FindObjectOfType(type) as T;
+            instance = Object.FindAnyObjectByType(type, FindObjectsInactive.Exclude) as T;
             if (instance != null)
             {
                 instance.OnSingletonInit();

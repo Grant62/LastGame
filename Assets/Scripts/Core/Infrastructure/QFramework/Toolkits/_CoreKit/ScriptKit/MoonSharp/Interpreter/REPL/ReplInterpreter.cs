@@ -2,10 +2,10 @@
 
 namespace MoonSharp.Interpreter.REPL
 {
-	/// <summary>
-	///     This class provides a simple REPL intepreter ready to be reused in a simple way.
-	/// </summary>
-	public class ReplInterpreter
+    /// <summary>
+    ///     This class provides a simple REPL intepreter ready to be reused in a simple way.
+    /// </summary>
+    public class ReplInterpreter
     {
         private readonly Script m_Script;
         private string m_CurrentCommand = string.Empty;

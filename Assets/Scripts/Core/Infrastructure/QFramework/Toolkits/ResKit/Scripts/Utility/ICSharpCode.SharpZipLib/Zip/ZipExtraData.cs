@@ -11,24 +11,24 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </summary>
     public interface ITaggedData
     {
-	    /// <summary>
-	    ///     Get the ID for this tagged data value.
-	    /// </summary>
-	    short TagID { get; }
+        /// <summary>
+        ///     Get the ID for this tagged data value.
+        /// </summary>
+        short TagID { get; }
 
-	    /// <summary>
-	    ///     Set the contents of this instance from the data passed.
-	    /// </summary>
-	    /// <param name="data">The data to extract contents from.</param>
-	    /// <param name="offset">The offset to begin extracting data from.</param>
-	    /// <param name="count">The number of bytes to extract.</param>
-	    void SetData(byte[] data, int offset, int count);
+        /// <summary>
+        ///     Set the contents of this instance from the data passed.
+        /// </summary>
+        /// <param name="data">The data to extract contents from.</param>
+        /// <param name="offset">The offset to begin extracting data from.</param>
+        /// <param name="count">The number of bytes to extract.</param>
+        void SetData(byte[] data, int offset, int count);
 
-	    /// <summary>
-	    ///     Get the data representing this instance.
-	    /// </summary>
-	    /// <returns>Returns the data for this instance.</returns>
-	    byte[] GetData();
+        /// <summary>
+        ///     Get the data representing this instance.
+        /// </summary>
+        /// <returns>Returns the data for this instance.</returns>
+        byte[] GetData();
     }
 
     /// <summary>
@@ -36,11 +36,11 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </summary>
     public class RawTaggedData : ITaggedData
     {
-	    /// <summary>
-	    ///     Initialise a new instance.
-	    /// </summary>
-	    /// <param name="tag">The tag ID.</param>
-	    public RawTaggedData(short tag)
+        /// <summary>
+        ///     Initialise a new instance.
+        /// </summary>
+        /// <param name="tag">The tag ID.</param>
+        public RawTaggedData(short tag)
         {
             _tag = tag;
         }
@@ -101,26 +101,26 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </summary>
     public class ExtendedUnixData : ITaggedData
     {
-	    /// <summary>
-	    ///     Flags indicate which values are included in this instance.
-	    /// </summary>
-	    [Flags]
+        /// <summary>
+        ///     Flags indicate which values are included in this instance.
+        /// </summary>
+        [Flags]
         public enum Flags : byte
         {
-	        /// <summary>
-	        ///     The modification time is included
-	        /// </summary>
-	        ModificationTime = 0x01,
+            /// <summary>
+            ///     The modification time is included
+            /// </summary>
+            ModificationTime = 0x01,
 
-	        /// <summary>
-	        ///     The access time is included
-	        /// </summary>
-	        AccessTime = 0x02,
+            /// <summary>
+            ///     The access time is included
+            /// </summary>
+            AccessTime = 0x02,
 
-	        /// <summary>
-	        ///     The create time is included.
-	        /// </summary>
-	        CreateTime = 0x04
+            /// <summary>
+            ///     The create time is included.
+            /// </summary>
+            CreateTime = 0x04
         }
 
         #region ITaggedData Members
@@ -309,21 +309,21 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </summary>
     public class NTTaggedData : ITaggedData
     {
-	    /// <summary>
-	    ///     Get the ID for this tagged data value.
-	    /// </summary>
-	    public short TagID
+        /// <summary>
+        ///     Get the ID for this tagged data value.
+        /// </summary>
+        public short TagID
         {
             get => 10;
         }
 
-	    /// <summary>
-	    ///     Set the data from the raw values provided.
-	    /// </summary>
-	    /// <param name="data">The raw data to extract values from.</param>
-	    /// <param name="index">The index to start extracting values from.</param>
-	    /// <param name="count">The number of bytes available.</param>
-	    public void SetData(byte[] data, int index, int count)
+        /// <summary>
+        ///     Set the data from the raw values provided.
+        /// </summary>
+        /// <param name="data">The raw data to extract values from.</param>
+        /// <param name="index">The index to start extracting values from.</param>
+        /// <param name="count">The number of bytes available.</param>
+        public void SetData(byte[] data, int index, int count)
         {
             using (MemoryStream ms = new(data, index, count, false))
             using (ZipHelperStream helperStream = new(ms))
@@ -356,11 +356,11 @@ namespace ICSharpCode.SharpZipLib.Zip
             }
         }
 
-	    /// <summary>
-	    ///     Get the binary data representing this instance.
-	    /// </summary>
-	    /// <returns>The raw binary data representing this instance.</returns>
-	    public byte[] GetData()
+        /// <summary>
+        ///     Get the binary data representing this instance.
+        /// </summary>
+        /// <returns>The raw binary data representing this instance.</returns>
+        public byte[] GetData()
         {
             using (MemoryStream ms = new())
             using (ZipHelperStream helperStream = new(ms))
@@ -376,18 +376,18 @@ namespace ICSharpCode.SharpZipLib.Zip
             }
         }
 
-	    /// <summary>
-	    ///     Test a <see cref="DateTime"> valuie to see if is valid and can be represented here.</see>
-	    /// </summary>
-	    /// <param name="value">The <see cref="DateTime">value</see> to test.</param>
-	    /// <returns>Returns true if the value is valid and can be represented; false if not.</returns>
-	    /// <remarks>
-	    ///     NTFS filetimes are 64-bit unsigned integers, stored in Intel
-	    ///     (least significant byte first) byte order. They determine the
-	    ///     number of 1.0E-07 seconds (1/10th microseconds!) past WinNT "epoch",
-	    ///     which is "01-Jan-1601 00:00:00 UTC". 28 May 60056 is the upper limit
-	    /// </remarks>
-	    public static bool IsValidValue(DateTime value)
+        /// <summary>
+        ///     Test a <see cref="DateTime"> valuie to see if is valid and can be represented here.</see>
+        /// </summary>
+        /// <param name="value">The <see cref="DateTime">value</see> to test.</param>
+        /// <returns>Returns true if the value is valid and can be represented; false if not.</returns>
+        /// <remarks>
+        ///     NTFS filetimes are 64-bit unsigned integers, stored in Intel
+        ///     (least significant byte first) byte order. They determine the
+        ///     number of 1.0E-07 seconds (1/10th microseconds!) past WinNT "epoch",
+        ///     which is "01-Jan-1601 00:00:00 UTC". 28 May 60056 is the upper limit
+        /// </remarks>
+        public static bool IsValidValue(DateTime value)
         {
             bool result = true;
             try
@@ -402,10 +402,10 @@ namespace ICSharpCode.SharpZipLib.Zip
             return result;
         }
 
-	    /// <summary>
-	    ///     Get/set the <see cref="DateTime">last modification time</see>.
-	    /// </summary>
-	    public DateTime LastModificationTime
+        /// <summary>
+        ///     Get/set the <see cref="DateTime">last modification time</see>.
+        /// </summary>
+        public DateTime LastModificationTime
         {
             get => _lastModificationTime;
             set
@@ -419,10 +419,10 @@ namespace ICSharpCode.SharpZipLib.Zip
             }
         }
 
-	    /// <summary>
-	    ///     Get /set the <see cref="DateTime">create time</see>
-	    /// </summary>
-	    public DateTime CreateTime
+        /// <summary>
+        ///     Get /set the <see cref="DateTime">create time</see>
+        /// </summary>
+        public DateTime CreateTime
         {
             get => _createTime;
             set
@@ -436,10 +436,10 @@ namespace ICSharpCode.SharpZipLib.Zip
             }
         }
 
-	    /// <summary>
-	    ///     Get /set the <see cref="DateTime">last access time</see>.
-	    /// </summary>
-	    public DateTime LastAccessTime
+        /// <summary>
+        ///     Get /set the <see cref="DateTime">last access time</see>.
+        /// </summary>
+        public DateTime LastAccessTime
         {
             get => _lastAccessTime;
             set
@@ -465,15 +465,15 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </summary>
     internal interface ITaggedDataFactory
     {
-	    /// <summary>
-	    ///     Get data for a specific tag value.
-	    /// </summary>
-	    /// <param name="tag">The tag ID to find.</param>
-	    /// <param name="data">The data to search.</param>
-	    /// <param name="offset">The offset to begin extracting data from.</param>
-	    /// <param name="count">The number of bytes to extract.</param>
-	    /// <returns>The located <see cref="ITaggedData">value found</see>, or null if not found.</returns>
-	    ITaggedData Create(short tag, byte[] data, int offset, int count);
+        /// <summary>
+        ///     Get data for a specific tag value.
+        /// </summary>
+        /// <param name="tag">The tag ID to find.</param>
+        /// <param name="data">The data to search.</param>
+        /// <param name="offset">The offset to begin extracting data from.</param>
+        /// <param name="count">The number of bytes to extract.</param>
+        /// <returns>The located <see cref="ITaggedData">value found</see>, or null if not found.</returns>
+        ITaggedData Create(short tag, byte[] data, int offset, int count);
     }
 
     /// <summary>

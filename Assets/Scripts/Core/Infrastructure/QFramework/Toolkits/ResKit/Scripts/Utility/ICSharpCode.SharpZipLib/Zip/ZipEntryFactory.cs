@@ -4,10 +4,10 @@ using ICSharpCode.SharpZipLib.Core;
 
 namespace ICSharpCode.SharpZipLib.Zip
 {
-	/// <summary>
-	///     Basic implementation of <see cref="IEntryFactory"></see>
-	/// </summary>
-	public class ZipEntryFactory : IEntryFactory
+    /// <summary>
+    ///     Basic implementation of <see cref="IEntryFactory"></see>
+    /// </summary>
+    public class ZipEntryFactory : IEntryFactory
     {
         #region Enumerations
         /// <summary>
@@ -15,41 +15,41 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public enum TimeSetting
         {
-	        /// <summary>
-	        ///     Use the recorded LastWriteTime value for the file.
-	        /// </summary>
-	        LastWriteTime,
-	        /// <summary>
-	        ///     Use the recorded LastWriteTimeUtc value for the file
-	        /// </summary>
-	        LastWriteTimeUtc,
-	        /// <summary>
-	        ///     Use the recorded CreateTime value for the file.
-	        /// </summary>
-	        CreateTime,
-	        /// <summary>
-	        ///     Use the recorded CreateTimeUtc value for the file.
-	        /// </summary>
-	        CreateTimeUtc,
-	        /// <summary>
-	        ///     Use the recorded LastAccessTime value for the file.
-	        /// </summary>
-	        LastAccessTime,
-	        /// <summary>
-	        ///     Use the recorded LastAccessTimeUtc value for the file.
-	        /// </summary>
-	        LastAccessTimeUtc,
-	        /// <summary>
-	        ///     Use a fixed value.
-	        /// </summary>
-	        /// <remarks>
-	        ///     The actual <see cref="DateTime" /> value used can be
-	        ///     specified via the <see cref="ZipEntryFactory(DateTime)" /> constructor or
-	        ///     using the <see cref="ZipEntryFactory(TimeSetting)" /> with the setting set
-	        ///     to <see cref="TimeSetting.Fixed" /> which will use the <see cref="DateTime" /> when this class was constructed.
-	        ///     The <see cref="FixedDateTime" /> property can also be used to set this value.
-	        /// </remarks>
-	        Fixed
+            /// <summary>
+            ///     Use the recorded LastWriteTime value for the file.
+            /// </summary>
+            LastWriteTime,
+            /// <summary>
+            ///     Use the recorded LastWriteTimeUtc value for the file
+            /// </summary>
+            LastWriteTimeUtc,
+            /// <summary>
+            ///     Use the recorded CreateTime value for the file.
+            /// </summary>
+            CreateTime,
+            /// <summary>
+            ///     Use the recorded CreateTimeUtc value for the file.
+            /// </summary>
+            CreateTimeUtc,
+            /// <summary>
+            ///     Use the recorded LastAccessTime value for the file.
+            /// </summary>
+            LastAccessTime,
+            /// <summary>
+            ///     Use the recorded LastAccessTimeUtc value for the file.
+            /// </summary>
+            LastAccessTimeUtc,
+            /// <summary>
+            ///     Use a fixed value.
+            /// </summary>
+            /// <remarks>
+            ///     The actual <see cref="DateTime" /> value used can be
+            ///     specified via the <see cref="ZipEntryFactory(DateTime)" /> constructor or
+            ///     using the <see cref="ZipEntryFactory(TimeSetting)" /> with the setting set
+            ///     to <see cref="TimeSetting.Fixed" /> which will use the <see cref="DateTime" /> when this class was constructed.
+            ///     The <see cref="FixedDateTime" /> property can also be used to set this value.
+            /// </remarks>
+            Fixed
         }
         #endregion
 

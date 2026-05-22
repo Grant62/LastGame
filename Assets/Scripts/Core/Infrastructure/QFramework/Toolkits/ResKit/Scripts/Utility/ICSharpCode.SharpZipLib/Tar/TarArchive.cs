@@ -4,43 +4,43 @@ using System.Text;
 
 namespace ICSharpCode.SharpZipLib.Tar
 {
-	/// <summary>
-	///     Used to advise clients of 'events' while processing archives
-	/// </summary>
-	public delegate void ProgressMessageHandler(TarArchive archive, TarEntry entry, string message);
+    /// <summary>
+    ///     Used to advise clients of 'events' while processing archives
+    /// </summary>
+    public delegate void ProgressMessageHandler(TarArchive archive, TarEntry entry, string message);
 
-	/// <summary>
-	///     The TarArchive class implements the concept of a
-	///     'Tape Archive'. A tar archive is a series of entries, each of
-	///     which represents a file system object. Each entry in
-	///     the archive consists of a header block followed by 0 or more data blocks.
-	///     Directory entries consist only of the header block, and are followed by entries
-	///     for the directory's contents. File entries consist of a
-	///     header followed by the number of blocks needed to
-	///     contain the file's contents. All entries are written on
-	///     block boundaries. Blocks are 512 bytes long.
-	///     TarArchives are instantiated in either read or write mode,
-	///     based upon whether they are instantiated with an InputStream
-	///     or an OutputStream. Once instantiated TarArchives read/write
-	///     mode can not be changed.
-	///     There is currently no support for random access to tar archives.
-	///     However, it seems that subclassing TarArchive, and using the
-	///     TarBuffer.CurrentRecord and TarBuffer.CurrentBlock
-	///     properties, this would be rather trivial.
-	/// </summary>
-	public class TarArchive : IDisposable
+    /// <summary>
+    ///     The TarArchive class implements the concept of a
+    ///     'Tape Archive'. A tar archive is a series of entries, each of
+    ///     which represents a file system object. Each entry in
+    ///     the archive consists of a header block followed by 0 or more data blocks.
+    ///     Directory entries consist only of the header block, and are followed by entries
+    ///     for the directory's contents. File entries consist of a
+    ///     header followed by the number of blocks needed to
+    ///     contain the file's contents. All entries are written on
+    ///     block boundaries. Blocks are 512 bytes long.
+    ///     TarArchives are instantiated in either read or write mode,
+    ///     based upon whether they are instantiated with an InputStream
+    ///     or an OutputStream. Once instantiated TarArchives read/write
+    ///     mode can not be changed.
+    ///     There is currently no support for random access to tar archives.
+    ///     However, it seems that subclassing TarArchive, and using the
+    ///     TarBuffer.CurrentRecord and TarBuffer.CurrentBlock
+    ///     properties, this would be rather trivial.
+    /// </summary>
+    public class TarArchive : IDisposable
     {
-	    /// <summary>
-	    ///     Client hook allowing detailed information to be reported during processing
-	    /// </summary>
-	    public event ProgressMessageHandler ProgressMessageEvent;
+        /// <summary>
+        ///     Client hook allowing detailed information to be reported during processing
+        /// </summary>
+        public event ProgressMessageHandler ProgressMessageEvent;
 
-	    /// <summary>
-	    ///     Raises the ProgressMessage event
-	    /// </summary>
-	    /// <param name="entry">The <see cref="TarEntry">TarEntry</see> for this event</param>
-	    /// <param name="message">message for this event.  Null is no message</param>
-	    protected virtual void OnProgressMessageEvent(TarEntry entry, string message)
+        /// <summary>
+        ///     Raises the ProgressMessage event
+        /// </summary>
+        /// <param name="entry">The <see cref="TarEntry">TarEntry</see> for this event</param>
+        /// <param name="message">message for this event.  Null is no message</param>
+        protected virtual void OnProgressMessageEvent(TarEntry entry, string message)
         {
             ProgressMessageHandler handler = ProgressMessageEvent;
             if (handler != null)

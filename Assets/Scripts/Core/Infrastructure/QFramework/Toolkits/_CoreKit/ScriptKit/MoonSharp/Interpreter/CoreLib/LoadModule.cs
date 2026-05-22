@@ -7,10 +7,10 @@ using System.IO;
 
 namespace MoonSharp.Interpreter.CoreLib
 {
-	/// <summary>
-	///     Class implementing loading Lua functions like 'require', 'load', etc.
-	/// </summary>
-	[MoonSharpModule]
+    /// <summary>
+    ///     Class implementing loading Lua functions like 'require', 'load', etc.
+    /// </summary>
+    [MoonSharpModule]
     public class LoadModule
     {
         public static void MoonSharpInit(Table globalTable, Table ioTable)

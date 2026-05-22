@@ -2,12 +2,12 @@
 
 namespace MoonSharp.Interpreter.DataStructs
 {
-	/// <summary>
-	///     A Dictionary where multiple values can be associated to the same key
-	/// </summary>
-	/// <typeparam name="K">The key type</typeparam>
-	/// <typeparam name="V">The value type</typeparam>
-	internal class MultiDictionary<K, V>
+    /// <summary>
+    ///     A Dictionary where multiple values can be associated to the same key
+    /// </summary>
+    /// <typeparam name="K">The key type</typeparam>
+    /// <typeparam name="V">The value type</typeparam>
+    internal class MultiDictionary<K, V>
     {
         private readonly Dictionary<K, List<V>> m_Map;
         private readonly V[] m_DefaultRet = new V[0];

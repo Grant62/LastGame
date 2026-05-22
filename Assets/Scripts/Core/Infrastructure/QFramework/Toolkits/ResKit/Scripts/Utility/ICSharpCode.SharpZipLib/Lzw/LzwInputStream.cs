@@ -3,67 +3,67 @@ using System.IO;
 
 namespace ICSharpCode.SharpZipLib.Lzw
 {
-	/// <summary>
-	///     This filter stream is used to decompress a LZW format stream.
-	///     Specifically, a stream that uses the LZC compression method.
-	///     This file format is usually associated with the .Z file extension.
-	///     See http://en.wikipedia.org/wiki/Compress
-	///     See http://wiki.wxwidgets.org/Development:_Z_File_Format
-	///     The file header consists of 3 (or optionally 4) bytes. The first two bytes
-	///     contain the magic marker "0x1f 0x9d", followed by a byte of flags.
-	///     Based on Java code by Ronald Tschalar, which in turn was based on the unlzw.c
-	///     code in the gzip package.
-	/// </summary>
-	/// <example>
-	///     This sample shows how to unzip a compressed file
-	///     <code>
-	///  using System;
-	///  using System.IO;
-	/// 
-	///  using ICSharpCode.SharpZipLib.Core;
-	///  using ICSharpCode.SharpZipLib.LZW;
-	/// 
-	///  class MainClass
-	///  {
-	///  	public static void Main(string[] args)
-	///  	{
-	/// 			using (Stream inStream = new LzwInputStream(File.OpenRead(args[0])))
-	/// 			using (FileStream outStream = File.Create(Path.GetFileNameWithoutExtension(args[0]))) {
-	/// 				byte[] buffer = new byte[4096];
-	/// 				StreamUtils.Copy(inStream, outStream, buffer);
-	///                          // OR
-	///                          inStream.Read(buffer, 0, buffer.Length);
-	///                          // now do something with the buffer
-	///  		}
-	///  	}
-	///  }
-	///  </code>
-	/// </example>
-	public class LzwInputStream : Stream
+    /// <summary>
+    ///     This filter stream is used to decompress a LZW format stream.
+    ///     Specifically, a stream that uses the LZC compression method.
+    ///     This file format is usually associated with the .Z file extension.
+    ///     See http://en.wikipedia.org/wiki/Compress
+    ///     See http://wiki.wxwidgets.org/Development:_Z_File_Format
+    ///     The file header consists of 3 (or optionally 4) bytes. The first two bytes
+    ///     contain the magic marker "0x1f 0x9d", followed by a byte of flags.
+    ///     Based on Java code by Ronald Tschalar, which in turn was based on the unlzw.c
+    ///     code in the gzip package.
+    /// </summary>
+    /// <example>
+    ///     This sample shows how to unzip a compressed file
+    ///     <code>
+    ///  using System;
+    ///  using System.IO;
+    /// 
+    ///  using ICSharpCode.SharpZipLib.Core;
+    ///  using ICSharpCode.SharpZipLib.LZW;
+    /// 
+    ///  class MainClass
+    ///  {
+    ///  	public static void Main(string[] args)
+    ///  	{
+    /// 			using (Stream inStream = new LzwInputStream(File.OpenRead(args[0])))
+    /// 			using (FileStream outStream = File.Create(Path.GetFileNameWithoutExtension(args[0]))) {
+    /// 				byte[] buffer = new byte[4096];
+    /// 				StreamUtils.Copy(inStream, outStream, buffer);
+    ///                          // OR
+    ///                          inStream.Read(buffer, 0, buffer.Length);
+    ///                          // now do something with the buffer
+    ///  		}
+    ///  	}
+    ///  }
+    ///  </code>
+    /// </example>
+    public class LzwInputStream : Stream
     {
-	    /// <summary>
-	    ///     Gets or sets a flag indicating ownership of underlying stream.
-	    ///     When the flag is true <see cref="Stream.Dispose()" /> will close the underlying stream also.
-	    /// </summary>
-	    /// <remarks>The default value is true.</remarks>
-	    public bool IsStreamOwner { get; set; } = true;
+        /// <summary>
+        ///     Gets or sets a flag indicating ownership of underlying stream.
+        ///     When the flag is true <see cref="Stream.Dispose()" /> will close the underlying stream also.
+        /// </summary>
+        /// <remarks>The default value is true.</remarks>
+        public bool IsStreamOwner { get; set; } = true;
 
-	    /// <summary>
-	    ///     Creates a LzwInputStream
-	    /// </summary>
-	    /// <param name="baseInputStream">
-	    ///     The stream to read compressed data from (baseInputStream LZW format)
-	    /// </param>
-	    public LzwInputStream(Stream baseInputStream)
+        /// <summary>
+        ///     Creates a LzwInputStream
+        /// </summary>
+        /// <param name="baseInputStream">
+        ///     The stream to read compressed data from (baseInputStream LZW format)
+        /// </param>
+        public LzwInputStream(Stream baseInputStream)
         {
             this.baseInputStream = baseInputStream;
         }
 
-	    /// <summary>
-	    ///     See <see cref="System.IO.Stream.ReadByte" />
-	    /// </summary>
-	    /// <returns></returns>
-	    public override int ReadByte()
+        /// <summary>
+        ///     See <see cref="System.IO.Stream.ReadByte" />
+        /// </summary>
+        /// <returns></returns>
+        public override int ReadByte()
         {
             int b = Read(one, 0, 1);
             if (b == 1)
@@ -71,20 +71,20 @@ namespace ICSharpCode.SharpZipLib.Lzw
             return -1;
         }
 
-	    /// <summary>
-	    ///     Reads decompressed data into the provided buffer byte array
-	    /// </summary>
-	    /// <param name="buffer">
-	    ///     The array to read and decompress data into
-	    /// </param>
-	    /// <param name="offset">
-	    ///     The offset indicating where the data should be placed
-	    /// </param>
-	    /// <param name="count">
-	    ///     The number of bytes to decompress
-	    /// </param>
-	    /// <returns>The number of bytes read. Zero signals the end of stream</returns>
-	    public override int Read(byte[] buffer, int offset, int count)
+        /// <summary>
+        ///     Reads decompressed data into the provided buffer byte array
+        /// </summary>
+        /// <param name="buffer">
+        ///     The array to read and decompress data into
+        /// </param>
+        /// <param name="offset">
+        ///     The offset indicating where the data should be placed
+        /// </param>
+        /// <param name="count">
+        ///     The number of bytes to decompress
+        /// </param>
+        /// <returns>The number of bytes read. Zero signals the end of stream</returns>
+        public override int Read(byte[] buffer, int offset, int count)
         {
             if (!headerParsed)
                 ParseHeader();
@@ -300,13 +300,13 @@ namespace ICSharpCode.SharpZipLib.Lzw
             return offset - start;
         }
 
-	    /// <summary>
-	    ///     Moves the unread data in the buffer to the beginning and resets
-	    ///     the pointers.
-	    /// </summary>
-	    /// <param name="bitPosition"></param>
-	    /// <returns></returns>
-	    private int ResetBuf(int bitPosition)
+        /// <summary>
+        ///     Moves the unread data in the buffer to the beginning and resets
+        ///     the pointers.
+        /// </summary>
+        /// <param name="bitPosition"></param>
+        /// <returns></returns>
+        private int ResetBuf(int bitPosition)
         {
             int pos = bitPosition >> 3;
             Array.Copy(data, pos, data, 0, end - pos);

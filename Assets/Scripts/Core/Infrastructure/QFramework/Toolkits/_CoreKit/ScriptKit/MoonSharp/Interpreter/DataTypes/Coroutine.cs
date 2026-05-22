@@ -7,34 +7,34 @@ using MoonSharp.Interpreter.Execution.VM;
 
 namespace MoonSharp.Interpreter
 {
-	/// <summary>
-	///     A class representing a script coroutine
-	/// </summary>
-	public class Coroutine : RefIdObject, IScriptPrivateResource
+    /// <summary>
+    ///     A class representing a script coroutine
+    /// </summary>
+    public class Coroutine : RefIdObject, IScriptPrivateResource
     {
-	    /// <summary>
-	    ///     Possible types of coroutine
-	    /// </summary>
-	    public enum CoroutineType
+        /// <summary>
+        ///     Possible types of coroutine
+        /// </summary>
+        public enum CoroutineType
         {
-	        /// <summary>
-	        ///     A valid coroutine
-	        /// </summary>
-	        Coroutine,
-	        /// <summary>
-	        ///     A CLR callback assigned to a coroutine.
-	        /// </summary>
-	        ClrCallback,
-	        /// <summary>
-	        ///     A CLR callback assigned to a coroutine and already executed.
-	        /// </summary>
-	        ClrCallbackDead
+            /// <summary>
+            ///     A valid coroutine
+            /// </summary>
+            Coroutine,
+            /// <summary>
+            ///     A CLR callback assigned to a coroutine.
+            /// </summary>
+            ClrCallback,
+            /// <summary>
+            ///     A CLR callback assigned to a coroutine and already executed.
+            /// </summary>
+            ClrCallbackDead
         }
 
-	    /// <summary>
-	    ///     Gets the type of coroutine
-	    /// </summary>
-	    public CoroutineType Type { get; private set; }
+        /// <summary>
+        ///     Gets the type of coroutine
+        /// </summary>
+        public CoroutineType Type { get; private set; }
 
         private readonly CallbackFunction m_ClrCallback;
         private readonly Processor m_Processor;

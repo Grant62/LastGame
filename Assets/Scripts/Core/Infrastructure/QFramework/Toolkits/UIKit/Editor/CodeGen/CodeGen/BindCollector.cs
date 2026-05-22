@@ -6,12 +6,12 @@ namespace QFramework
 {
     public class BindCollector
     {
-	    /// <summary>
-	    /// </summary>
-	    /// <param name="rootTrans"></param>
-	    /// <param name="curTrans"></param>
-	    /// <param name="transFullName"></param>
-	    public static void SearchBinds(Transform curTrans, string transFullName, PanelCodeInfo panelCodeInfo = null, ElementCodeInfo parentElementCodeInfo = null, Type leafPanelType = null)
+        /// <summary>
+        /// </summary>
+        /// <param name="rootTrans"></param>
+        /// <param name="curTrans"></param>
+        /// <param name="transFullName"></param>
+        public static void SearchBinds(Transform curTrans, string transFullName, PanelCodeInfo panelCodeInfo = null, ElementCodeInfo parentElementCodeInfo = null, Type leafPanelType = null)
         {
             foreach (Transform childTrans in curTrans)
             {

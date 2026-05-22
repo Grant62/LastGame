@@ -3,12 +3,12 @@ using System.IO;
 
 namespace MoonSharp.Interpreter.IO
 {
-	/// <summary>
-	///     An adapter over Stream which bypasses the Dispose and Close methods.
-	///     Used to work around the pesky wrappers .NET has over Stream (BinaryReader, StreamWriter, etc.) which think they
-	///     own the Stream and close them when they shouldn't. Damn.
-	/// </summary>
-	public class UndisposableStream : Stream
+    /// <summary>
+    ///     An adapter over Stream which bypasses the Dispose and Close methods.
+    ///     Used to work around the pesky wrappers .NET has over Stream (BinaryReader, StreamWriter, etc.) which think they
+    ///     own the Stream and close them when they shouldn't. Damn.
+    /// </summary>
+    public class UndisposableStream : Stream
     {
         private readonly Stream m_Stream;
 

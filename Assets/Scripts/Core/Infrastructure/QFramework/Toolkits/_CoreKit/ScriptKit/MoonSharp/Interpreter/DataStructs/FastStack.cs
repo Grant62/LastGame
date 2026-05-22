@@ -6,11 +6,11 @@ using System.Collections.Generic;
 
 namespace MoonSharp.Interpreter.DataStructs
 {
-	/// <summary>
-	///     A preallocated, non-resizable, stack
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	internal class FastStack<T> : IList<T>
+    /// <summary>
+    ///     A preallocated, non-resizable, stack
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    internal class FastStack<T> : IList<T>
     {
         private readonly T[] m_Storage;
 

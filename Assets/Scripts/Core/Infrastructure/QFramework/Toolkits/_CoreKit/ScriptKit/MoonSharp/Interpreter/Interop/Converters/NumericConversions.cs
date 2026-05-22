@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace MoonSharp.Interpreter.Interop.Converters
 {
-	/// <summary>
-	///     Static functions to handle conversions of numeric types
-	/// </summary>
-	internal static class NumericConversions
+    /// <summary>
+    ///     Static functions to handle conversions of numeric types
+    /// </summary>
+    internal static class NumericConversions
     {
         static NumericConversions()
         {

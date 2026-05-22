@@ -6,10 +6,10 @@ using MoonSharp.Interpreter.Loaders;
 
 namespace MoonSharp.Interpreter.Platforms
 {
-	/// <summary>
-	///     A static class offering properties for autodetection of system/platform details
-	/// </summary>
-	public static class PlatformAutoDetector
+    /// <summary>
+    ///     A static class offering properties for autodetection of system/platform details
+    /// </summary>
+    public static class PlatformAutoDetector
     {
         private static bool? m_IsRunningOnAOT;
 

@@ -27,7 +27,7 @@ namespace QFramework
             }
             else
             {
-                var pool = new GameObjectPool();
+                GameObjectPool pool = new();
                 pool.Init(prefab, maxCount, initCount);
                 mPools[key] = pool;
             }
@@ -44,8 +44,10 @@ namespace QFramework
                 {
                     go.transform.SetParent(null);
                 }
+
                 return go;
             }
+
             return null;
         }
 
@@ -65,7 +67,7 @@ namespace QFramework
                 return pool.Recycle(obj);
             }
 
-            var newPool = new GameObjectPool();
+            GameObjectPool newPool = new();
             newPool.Init(null, -1);
             obj.transform.SetParent(mPoolRoot);
             newPool.Recycle(obj);
@@ -92,6 +94,7 @@ namespace QFramework
             {
                 pool.Clear(Object.Destroy);
             }
+
             mPools.Clear();
         }
 

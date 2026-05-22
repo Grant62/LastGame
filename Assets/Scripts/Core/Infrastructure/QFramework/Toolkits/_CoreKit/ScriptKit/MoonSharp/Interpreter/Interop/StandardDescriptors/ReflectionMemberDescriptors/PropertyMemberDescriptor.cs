@@ -9,47 +9,47 @@ using MoonSharp.Interpreter.Interop.Converters;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Class providing easier marshalling of CLR properties
-	/// </summary>
-	public class PropertyMemberDescriptor : IMemberDescriptor, IOptimizableDescriptor,
+    /// <summary>
+    ///     Class providing easier marshalling of CLR properties
+    /// </summary>
+    public class PropertyMemberDescriptor : IMemberDescriptor, IOptimizableDescriptor,
         IWireableDescriptor
     {
-	    /// <summary>
-	    ///     Gets the PropertyInfo got by reflection
-	    /// </summary>
-	    public PropertyInfo PropertyInfo { get; }
+        /// <summary>
+        ///     Gets the PropertyInfo got by reflection
+        /// </summary>
+        public PropertyInfo PropertyInfo { get; }
 
-	    /// <summary>
-	    ///     Gets the <see cref="InteropAccessMode" />
-	    /// </summary>
-	    public InteropAccessMode AccessMode { get; }
+        /// <summary>
+        ///     Gets the <see cref="InteropAccessMode" />
+        /// </summary>
+        public InteropAccessMode AccessMode { get; }
 
-	    /// <summary>
-	    ///     Gets a value indicating whether the described property is static.
-	    /// </summary>
-	    public bool IsStatic { get; }
+        /// <summary>
+        ///     Gets a value indicating whether the described property is static.
+        /// </summary>
+        public bool IsStatic { get; }
 
-	    /// <summary>
-	    ///     Gets the name of the property
-	    /// </summary>
-	    public string Name { get; }
+        /// <summary>
+        ///     Gets the name of the property
+        /// </summary>
+        public string Name { get; }
 
-	    /// <summary>
-	    ///     Gets a value indicating whether this instance can be read from
-	    /// </summary>
-	    /// <value>
-	    ///     <c>true</c> if this instance can be read from; otherwise, <c>false</c>.
-	    /// </value>
-	    public bool CanRead { get => m_Getter != null; }
+        /// <summary>
+        ///     Gets a value indicating whether this instance can be read from
+        /// </summary>
+        /// <value>
+        ///     <c>true</c> if this instance can be read from; otherwise, <c>false</c>.
+        /// </value>
+        public bool CanRead { get => m_Getter != null; }
 
-	    /// <summary>
-	    ///     Gets a value indicating whether this instance can be written to.
-	    /// </summary>
-	    /// <value>
-	    ///     <c>true</c> if this instance can be written to; otherwise, <c>false</c>.
-	    /// </value>
-	    public bool CanWrite { get => m_Setter != null; }
+        /// <summary>
+        ///     Gets a value indicating whether this instance can be written to.
+        /// </summary>
+        /// <value>
+        ///     <c>true</c> if this instance can be written to; otherwise, <c>false</c>.
+        /// </value>
+        public bool CanWrite { get => m_Setter != null; }
 
 
         private readonly MethodInfo m_Getter;

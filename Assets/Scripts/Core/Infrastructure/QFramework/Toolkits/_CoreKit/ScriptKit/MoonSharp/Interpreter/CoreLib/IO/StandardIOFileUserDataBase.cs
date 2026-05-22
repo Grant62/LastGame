@@ -2,10 +2,10 @@
 
 namespace MoonSharp.Interpreter.CoreLib.IO
 {
-	/// <summary>
-	///     Abstract class implementing an unclosable file Lua userdata. Methods are meant to be called by Lua code.
-	/// </summary>
-	internal class StandardIOFileUserDataBase : StreamFileUserDataBase
+    /// <summary>
+    ///     Abstract class implementing an unclosable file Lua userdata. Methods are meant to be called by Lua code.
+    /// </summary>
+    internal class StandardIOFileUserDataBase : StreamFileUserDataBase
     {
         protected override string Close()
         {

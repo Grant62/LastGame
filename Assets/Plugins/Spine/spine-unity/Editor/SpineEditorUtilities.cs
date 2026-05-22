@@ -41,6 +41,7 @@ using System.Reflection;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
+using UnityEditor.Build;
 using Object = UnityEngine.Object;
 
 namespace Spine.Unity.Editor
@@ -233,8 +234,8 @@ namespace Spine.Unity.Editor
             Icons.Initialize();
 
             // Drag and Drop
-            SceneView.onSceneGUIDelegate -= SceneViewDragAndDrop;
-            SceneView.onSceneGUIDelegate += SceneViewDragAndDrop;
+            SceneView.duringSceneGui -= SceneViewDragAndDrop;
+            SceneView.duringSceneGui += SceneViewDragAndDrop;
             EditorApplication.hierarchyWindowItemOnGUI -= SpineEditorHierarchyHandler.HierarchyDragAndDrop;
             EditorApplication.hierarchyWindowItemOnGUI += SpineEditorHierarchyHandler.HierarchyDragAndDrop;
 
@@ -262,86 +263,89 @@ namespace Spine.Unity.Editor
         #region Spine Preferences and Defaults
         private static bool preferencesLoaded;
 
-        [PreferenceItem("Spine")]
-        private static void PreferencesGUI()
+        [SettingsProvider]
+        private static SettingsProvider SpineSettingsProvider()
         {
-            if (!preferencesLoaded)
-                LoadPreferences();
-
-            EditorGUI.BeginChangeCheck();
-            showHierarchyIcons =
-                EditorGUILayout.Toggle(
-                    new GUIContent("Show Hierarchy Icons", "Show relevant icons on GameObjects with Spine Components on them. Disable this if you have large, complex scenes."),
-                    showHierarchyIcons);
-            if (EditorGUI.EndChangeCheck())
+            return new SettingsProvider("Preferences/Spine", SettingsScope.User)
             {
-                EditorPrefs.SetBool(SHOW_HIERARCHY_ICONS_KEY, showHierarchyIcons);
-#if UNITY_2017_2_OR_NEWER
-                SpineEditorHierarchyHandler.HierarchyIconsOnPlaymodeStateChanged(PlayModeStateChange.EnteredEditMode);
-#else
-				SpineEditorHierarchyHandler.HierarchyIconsOnPlaymodeStateChanged();
-#endif
-            }
+                label = "Spine",
+                guiHandler = searchContext =>
+                {
+                    if (!preferencesLoaded)
+                        LoadPreferences();
 
-            EditorGUILayout.Separator();
+                    EditorGUI.BeginChangeCheck();
+                    showHierarchyIcons =
+                        EditorGUILayout.Toggle(
+                            new GUIContent("Show Hierarchy Icons", "Show relevant icons on GameObjects with Spine Components on them. Disable this if you have large, complex scenes."),
+                            showHierarchyIcons);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        EditorPrefs.SetBool(SHOW_HIERARCHY_ICONS_KEY, showHierarchyIcons);
+                        SpineEditorHierarchyHandler.HierarchyIconsOnPlaymodeStateChanged(PlayModeStateChange.EnteredEditMode);
+                    }
 
-            EditorGUILayout.LabelField("Auto-Import Settings", EditorStyles.boldLabel);
+                    EditorGUILayout.Separator();
 
-            EditorGUI.BeginChangeCheck();
-            defaultMix = EditorGUILayout.FloatField("Default Mix", defaultMix);
-            if (EditorGUI.EndChangeCheck())
-                EditorPrefs.SetFloat(DEFAULT_MIX_KEY, defaultMix);
+                    EditorGUILayout.LabelField("Auto-Import Settings", EditorStyles.boldLabel);
 
-            EditorGUI.BeginChangeCheck();
-            defaultScale = EditorGUILayout.FloatField("Default SkeletonData Scale", defaultScale);
-            if (EditorGUI.EndChangeCheck())
-                EditorPrefs.SetFloat(DEFAULT_SCALE_KEY, defaultScale);
+                    EditorGUI.BeginChangeCheck();
+                    defaultMix = EditorGUILayout.FloatField("Default Mix", defaultMix);
+                    if (EditorGUI.EndChangeCheck())
+                        EditorPrefs.SetFloat(DEFAULT_MIX_KEY, defaultMix);
 
-            EditorGUI.BeginChangeCheck();
-            Shader shader = EditorGUILayout.ObjectField("Default Shader", Shader.Find(defaultShader), typeof(Shader), false) as Shader;
-            defaultShader = shader != null ? shader.name : DEFAULT_DEFAULT_SHADER;
-            if (EditorGUI.EndChangeCheck())
-                EditorPrefs.SetString(DEFAULT_SHADER_KEY, defaultShader);
+                    EditorGUI.BeginChangeCheck();
+                    defaultScale = EditorGUILayout.FloatField("Default SkeletonData Scale", defaultScale);
+                    if (EditorGUI.EndChangeCheck())
+                        EditorPrefs.SetFloat(DEFAULT_SCALE_KEY, defaultScale);
 
-            EditorGUI.BeginChangeCheck();
-            setTextureImporterSettings =
-                EditorGUILayout.Toggle(new GUIContent("Apply Atlas Texture Settings", "Apply the recommended settings for Texture Importers."), setTextureImporterSettings);
-            if (EditorGUI.EndChangeCheck())
-            {
-                EditorPrefs.SetBool(SET_TEXTUREIMPORTER_SETTINGS_KEY, setTextureImporterSettings);
-            }
+                    EditorGUI.BeginChangeCheck();
+                    Shader shader = EditorGUILayout.ObjectField("Default Shader", Shader.Find(defaultShader), typeof(Shader), false) as Shader;
+                    defaultShader = shader != null ? shader.name : DEFAULT_DEFAULT_SHADER;
+                    if (EditorGUI.EndChangeCheck())
+                        EditorPrefs.SetString(DEFAULT_SHADER_KEY, defaultShader);
 
-            EditorGUILayout.Space();
+                    EditorGUI.BeginChangeCheck();
+                    setTextureImporterSettings =
+                        EditorGUILayout.Toggle(new GUIContent("Apply Atlas Texture Settings", "Apply the recommended settings for Texture Importers."), setTextureImporterSettings);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        EditorPrefs.SetBool(SET_TEXTUREIMPORTER_SETTINGS_KEY, setTextureImporterSettings);
+                    }
 
-            EditorGUILayout.LabelField("Editor Instantiation", EditorStyles.boldLabel);
-            EditorGUI.BeginChangeCheck();
-            defaultZSpacing = EditorGUILayout.Slider("Default Slot Z-Spacing", defaultZSpacing, -0.1f, 0f);
-            if (EditorGUI.EndChangeCheck())
-                EditorPrefs.SetFloat(DEFAULT_ZSPACING_KEY, defaultZSpacing);
+                    EditorGUILayout.Space();
 
-
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Handles and Gizmos", EditorStyles.boldLabel);
-            EditorGUI.BeginChangeCheck();
-            SpineHandles.handleScale = EditorGUILayout.Slider("Editor Bone Scale", SpineHandles.handleScale, 0.01f, 2f);
-            SpineHandles.handleScale = Mathf.Max(0.01f, SpineHandles.handleScale);
-            if (EditorGUI.EndChangeCheck())
-            {
-                EditorPrefs.SetFloat(SCENE_ICONS_SCALE_KEY, SpineHandles.handleScale);
-                SceneView.RepaintAll();
-            }
+                    EditorGUILayout.LabelField("Editor Instantiation", EditorStyles.boldLabel);
+                    EditorGUI.BeginChangeCheck();
+                    defaultZSpacing = EditorGUILayout.Slider("Default Slot Z-Spacing", defaultZSpacing, -0.1f, 0f);
+                    if (EditorGUI.EndChangeCheck())
+                        EditorPrefs.SetFloat(DEFAULT_ZSPACING_KEY, defaultZSpacing);
 
 
-            GUILayout.Space(20);
-            EditorGUILayout.LabelField("3rd Party Settings", EditorStyles.boldLabel);
-            using (new GUILayout.HorizontalScope())
-            {
-                EditorGUILayout.PrefixLabel("Define TK2D");
-                if (GUILayout.Button("Enable", GUILayout.Width(64)))
-                    SpineTK2DEditorUtility.EnableTK2D();
-                if (GUILayout.Button("Disable", GUILayout.Width(64)))
-                    SpineTK2DEditorUtility.DisableTK2D();
-            }
+                    EditorGUILayout.Space();
+                    EditorGUILayout.LabelField("Handles and Gizmos", EditorStyles.boldLabel);
+                    EditorGUI.BeginChangeCheck();
+                    SpineHandles.handleScale = EditorGUILayout.Slider("Editor Bone Scale", SpineHandles.handleScale, 0.01f, 2f);
+                    SpineHandles.handleScale = Mathf.Max(0.01f, SpineHandles.handleScale);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        EditorPrefs.SetFloat(SCENE_ICONS_SCALE_KEY, SpineHandles.handleScale);
+                        SceneView.RepaintAll();
+                    }
+
+
+                    GUILayout.Space(20);
+                    EditorGUILayout.LabelField("3rd Party Settings", EditorStyles.boldLabel);
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        EditorGUILayout.PrefixLabel("Define TK2D");
+                        if (GUILayout.Button("Enable", GUILayout.Width(64)))
+                            SpineTK2DEditorUtility.EnableTK2D();
+                        if (GUILayout.Button("Disable", GUILayout.Width(64)))
+                            SpineTK2DEditorUtility.DisableTK2D();
+                    }
+                }
+            };
         }
         #endregion
 
@@ -526,20 +530,12 @@ namespace Spine.Unity.Editor
                 skeletonUtilityBoneTable.Clear();
                 boundingBoxFollowerTable.Clear();
 
-#if UNITY_2018
-				EditorApplication.hierarchyChanged -= HierarchyIconsOnChanged;
-#else
-                EditorApplication.hierarchyWindowChanged -= HierarchyIconsOnChanged;
-#endif
+                EditorApplication.hierarchyChanged -= HierarchyIconsOnChanged;
                 EditorApplication.hierarchyWindowItemOnGUI -= HierarchyIconsOnGUI;
 
                 if (!Application.isPlaying && showHierarchyIcons)
                 {
-#if UNITY_2018
-					EditorApplication.hierarchyChanged += HierarchyIconsOnChanged;
-#else
-                    EditorApplication.hierarchyWindowChanged += HierarchyIconsOnChanged;
-#endif
+                    EditorApplication.hierarchyChanged += HierarchyIconsOnChanged;
                     EditorApplication.hierarchyWindowItemOnGUI += HierarchyIconsOnGUI;
                     HierarchyIconsOnChanged();
                 }
@@ -551,15 +547,15 @@ namespace Spine.Unity.Editor
                 skeletonUtilityBoneTable.Clear();
                 boundingBoxFollowerTable.Clear();
 
-                SkeletonRenderer[] arr = Object.FindObjectsOfType<SkeletonRenderer>();
+                SkeletonRenderer[] arr = Object.FindObjectsByType<SkeletonRenderer>(FindObjectsSortMode.None);
                 foreach (SkeletonRenderer r in arr)
                     skeletonRendererTable[r.gameObject.GetInstanceID()] = r.gameObject;
 
-                SkeletonUtilityBone[] boneArr = Object.FindObjectsOfType<SkeletonUtilityBone>();
+                SkeletonUtilityBone[] boneArr = Object.FindObjectsByType<SkeletonUtilityBone>(FindObjectsSortMode.None);
                 foreach (SkeletonUtilityBone b in boneArr)
                     skeletonUtilityBoneTable[b.gameObject.GetInstanceID()] = b;
 
-                BoundingBoxFollower[] bbfArr = Object.FindObjectsOfType<BoundingBoxFollower>();
+                BoundingBoxFollower[] bbfArr = Object.FindObjectsByType<BoundingBoxFollower>(FindObjectsSortMode.None);
                 foreach (BoundingBoxFollower bbf in bbfArr)
                     boundingBoxFollowerTable[bbf.gameObject.GetInstanceID()] = bbf;
             }
@@ -1296,7 +1292,7 @@ namespace Spine.Unity.Editor
             if (prefab == null)
             {
                 root = new GameObject("temp", typeof(MeshFilter), typeof(MeshRenderer));
-                prefab = PrefabUtility.CreatePrefab(bakedPrefabPath, root);
+                prefab = PrefabUtility.SaveAsPrefabAsset(root, bakedPrefabPath);
                 isNewPrefab = true;
                 Object.DestroyImmediate(root);
             }
@@ -1704,7 +1700,7 @@ namespace Spine.Unity.Editor
                     if (IsInvalidGroup(group))
                         continue;
 
-                    string defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
+                    string defines = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(group));
                     if (!defines.Contains(SPINE_TK2D_DEFINE))
                     {
                         added = true;
@@ -1713,7 +1709,7 @@ namespace Spine.Unity.Editor
                         else
                             defines = defines + ";" + SPINE_TK2D_DEFINE;
 
-                        PlayerSettings.SetScriptingDefineSymbolsForGroup(group, defines);
+                        PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(group), defines);
                     }
                 }
 
@@ -1736,7 +1732,7 @@ namespace Spine.Unity.Editor
                     if (IsInvalidGroup(group))
                         continue;
 
-                    string defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
+                    string defines = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(group));
                     if (defines.Contains(SPINE_TK2D_DEFINE))
                     {
                         removed = true;
@@ -1745,7 +1741,7 @@ namespace Spine.Unity.Editor
                         else
                             defines = defines.Replace(SPINE_TK2D_DEFINE, "");
 
-                        PlayerSettings.SetScriptingDefineSymbolsForGroup(group, defines);
+                        PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(group), defines);
                     }
                 }
 

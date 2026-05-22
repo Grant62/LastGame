@@ -69,7 +69,7 @@ namespace Spine.Unity.Editor
 
         public override void OnInspectorGUI()
         {
-            bool isInspectingPrefab = PrefabUtility.GetPrefabType(target) == PrefabType.Prefab;
+            bool isInspectingPrefab = PrefabUtility.IsPartOfPrefabAsset(target);
 
             // Try to auto-assign SkeletonRenderer field.
             if (skeletonRenderer.objectReferenceValue == null)

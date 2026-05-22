@@ -7,18 +7,18 @@ using MoonSharp.Interpreter.Platforms;
 
 namespace MoonSharp.Interpreter
 {
-	/// <summary>
-	///     Class managing modules (mostly as extension methods)
-	/// </summary>
-	public static class ModuleRegister
+    /// <summary>
+    ///     Class managing modules (mostly as extension methods)
+    /// </summary>
+    public static class ModuleRegister
     {
-	    /// <summary>
-	    ///     Register the core modules to a table
-	    /// </summary>
-	    /// <param name="table">The table.</param>
-	    /// <param name="modules">The modules.</param>
-	    /// <returns></returns>
-	    public static Table RegisterCoreModules(this Table table, CoreModules modules)
+        /// <summary>
+        ///     Register the core modules to a table
+        /// </summary>
+        /// <param name="table">The table.</param>
+        /// <param name="modules">The modules.</param>
+        /// <returns></returns>
+        public static Table RegisterCoreModules(this Table table, CoreModules modules)
         {
             modules = Script.GlobalOptions.Platform.FilterSupportedCoreModules(modules);
 
@@ -45,12 +45,12 @@ namespace MoonSharp.Interpreter
         }
 
 
-	    /// <summary>
-	    ///     Registers the standard constants (_G, _VERSION, _MOONSHARP) to a table
-	    /// </summary>
-	    /// <param name="table">The table.</param>
-	    /// <returns></returns>
-	    public static Table RegisterConstants(this Table table)
+        /// <summary>
+        ///     Registers the standard constants (_G, _VERSION, _MOONSHARP) to a table
+        /// </summary>
+        /// <param name="table">The table.</param>
+        /// <returns></returns>
+        public static Table RegisterConstants(this Table table)
         {
             DynValue moonsharp_table = DynValue.NewTable(table.OwnerScript);
             Table m = moonsharp_table.Table;
@@ -73,14 +73,14 @@ namespace MoonSharp.Interpreter
         }
 
 
-	    /// <summary>
-	    ///     Registers a module type to the specified table
-	    /// </summary>
-	    /// <param name="gtable">The table.</param>
-	    /// <param name="t">The type</param>
-	    /// <returns></returns>
-	    /// <exception cref="System.ArgumentException">If the module contains some incompatibility</exception>
-	    public static Table RegisterModuleType(this Table gtable, Type t)
+        /// <summary>
+        ///     Registers a module type to the specified table
+        /// </summary>
+        /// <param name="gtable">The table.</param>
+        /// <param name="t">The type</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentException">If the module contains some incompatibility</exception>
+        public static Table RegisterModuleType(this Table gtable, Type t)
         {
             Table table = CreateModuleNamespace(gtable, t);
 

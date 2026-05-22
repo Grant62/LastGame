@@ -5,10 +5,10 @@
 
 namespace MoonSharp.Interpreter.CoreLib
 {
-	/// <summary>
-	///     Class implementing metatable related Lua functions (xxxmetatable and rawxxx).
-	/// </summary>
-	[MoonSharpModule]
+    /// <summary>
+    ///     Class implementing metatable related Lua functions (xxxmetatable and rawxxx).
+    /// </summary>
+    [MoonSharpModule]
     public class MetaTableModule
     {
         // setmetatable (table, metatable)

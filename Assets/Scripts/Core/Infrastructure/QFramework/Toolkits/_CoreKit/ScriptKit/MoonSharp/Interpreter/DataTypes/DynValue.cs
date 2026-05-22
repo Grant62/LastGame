@@ -7,10 +7,10 @@ using MoonSharp.Interpreter.Interop.Converters;
 
 namespace MoonSharp.Interpreter
 {
-	/// <summary>
-	///     A class representing a value in a Lua/MoonSharp script.
-	/// </summary>
-	public sealed class DynValue
+    /// <summary>
+    ///     A class representing a value in a Lua/MoonSharp script.
+    /// </summary>
+    public sealed class DynValue
     {
         private static int s_RefIDCounter;
 
@@ -898,22 +898,22 @@ namespace MoonSharp.Interpreter
 		}
 #endif
 
-	    /// <summary>
-	    ///     Checks the type of this value corresponds to the desired type. A propert ScriptRuntimeException is thrown
-	    ///     if the value is not of the specified type or - considering the TypeValidationFlags - is not convertible
-	    ///     to the specified type.
-	    /// </summary>
-	    /// <param name="funcName">Name of the function requesting the value, for error message purposes.</param>
-	    /// <param name="desiredType">The desired data type.</param>
-	    /// <param name="argNum">The argument number, for error message purposes.</param>
-	    /// <param name="flags">The TypeValidationFlags.</param>
-	    /// <returns></returns>
-	    /// <exception cref="ScriptRuntimeException">
-	    ///     Thrown
-	    ///     if the value is not of the specified type or - considering the TypeValidationFlags - is not convertible
-	    ///     to the specified type.
-	    /// </exception>
-	    public DynValue CheckType(string funcName, DataType desiredType, int argNum = -1, TypeValidationFlags flags = TypeValidationFlags.Default)
+        /// <summary>
+        ///     Checks the type of this value corresponds to the desired type. A propert ScriptRuntimeException is thrown
+        ///     if the value is not of the specified type or - considering the TypeValidationFlags - is not convertible
+        ///     to the specified type.
+        /// </summary>
+        /// <param name="funcName">Name of the function requesting the value, for error message purposes.</param>
+        /// <param name="desiredType">The desired data type.</param>
+        /// <param name="argNum">The argument number, for error message purposes.</param>
+        /// <param name="flags">The TypeValidationFlags.</param>
+        /// <returns></returns>
+        /// <exception cref="ScriptRuntimeException">
+        ///     Thrown
+        ///     if the value is not of the specified type or - considering the TypeValidationFlags - is not convertible
+        ///     to the specified type.
+        /// </exception>
+        public DynValue CheckType(string funcName, DataType desiredType, int argNum = -1, TypeValidationFlags flags = TypeValidationFlags.Default)
         {
             if (Type == desiredType)
                 return this;
@@ -951,15 +951,15 @@ namespace MoonSharp.Interpreter
             throw ScriptRuntimeException.BadArgument(argNum, funcName, desiredType, Type, allowNil);
         }
 
-	    /// <summary>
-	    ///     Checks if the type is a specific userdata type, and returns it or throws.
-	    /// </summary>
-	    /// <typeparam name="T"></typeparam>
-	    /// <param name="funcName">Name of the function.</param>
-	    /// <param name="argNum">The argument number.</param>
-	    /// <param name="flags">The flags.</param>
-	    /// <returns></returns>
-	    public T CheckUserDataType<T>(string funcName, int argNum = -1, TypeValidationFlags flags = TypeValidationFlags.Default)
+        /// <summary>
+        ///     Checks if the type is a specific userdata type, and returns it or throws.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="funcName">Name of the function.</param>
+        /// <param name="argNum">The argument number.</param>
+        /// <param name="flags">The flags.</param>
+        /// <returns></returns>
+        public T CheckUserDataType<T>(string funcName, int argNum = -1, TypeValidationFlags flags = TypeValidationFlags.Default)
         {
             DynValue v = CheckType(funcName, DataType.UserData, argNum, flags);
             bool allowNil = (int)(flags & TypeValidationFlags.AllowNil) != 0;

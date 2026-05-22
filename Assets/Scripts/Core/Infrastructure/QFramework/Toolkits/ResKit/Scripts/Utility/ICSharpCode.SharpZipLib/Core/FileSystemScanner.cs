@@ -29,9 +29,6 @@ namespace ICSharpCode.SharpZipLib.Core
         ///     Get set a value indicating if scanning should continue or not.
         /// </summary>
         public bool ContinueRunning { get; set; } = true;
-
-        #region Instance Fields
-        #endregion
     }
 
     /// <summary>
@@ -96,9 +93,6 @@ namespace ICSharpCode.SharpZipLib.Core
         /// </summary>
         /// <remarks>Target may be 0 or negative if the value isnt known.</remarks>
         public long Target { get; }
-
-        #region Instance Fields
-        #endregion
     }
 
     /// <summary>
@@ -158,9 +152,6 @@ namespace ICSharpCode.SharpZipLib.Core
         ///     Get / set a value indicating wether scanning should continue.
         /// </summary>
         public bool ContinueRunning { get; set; }
-
-        #region Instance Fields
-        #endregion
     }
     #endregion
 

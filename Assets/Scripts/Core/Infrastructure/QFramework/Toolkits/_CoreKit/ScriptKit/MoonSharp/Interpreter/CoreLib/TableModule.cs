@@ -8,10 +8,10 @@ using System.Text;
 
 namespace MoonSharp.Interpreter.CoreLib
 {
-	/// <summary>
-	///     Class implementing table Lua functions
-	/// </summary>
-	[MoonSharpModule(Namespace = "table")]
+    /// <summary>
+    ///     Class implementing table Lua functions
+    /// </summary>
+    [MoonSharpModule(Namespace = "table")]
     public class TableModule
     {
         [MoonSharpModuleMethod]
@@ -263,11 +263,11 @@ namespace MoonSharp.Interpreter.CoreLib
     }
 
 
-	/// <summary>
-	///     Class exposing table.unpack and table.pack in the global namespace (to work around the most common Lua 5.1
-	///     compatibility issue).
-	/// </summary>
-	[MoonSharpModule]
+    /// <summary>
+    ///     Class exposing table.unpack and table.pack in the global namespace (to work around the most common Lua 5.1
+    ///     compatibility issue).
+    /// </summary>
+    [MoonSharpModule]
     public class TableModule_Globals
     {
         [MoonSharpModuleMethod]

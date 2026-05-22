@@ -3,11 +3,11 @@ using System.Diagnostics;
 
 namespace MoonSharp.Interpreter.Diagnostics.PerformanceCounters
 {
-	/// <summary>
-	///     This class is not *really* IDisposable.. it's just use to have a RAII like pattern.
-	///     You are free to reuse this instance after calling Dispose.
-	/// </summary>
-	internal class PerformanceStopwatch : IDisposable, IPerformanceStopwatch
+    /// <summary>
+    ///     This class is not *really* IDisposable.. it's just use to have a RAII like pattern.
+    ///     You are free to reuse this instance after calling Dispose.
+    /// </summary>
+    internal class PerformanceStopwatch : IDisposable, IPerformanceStopwatch
     {
         private readonly Stopwatch m_Stopwatch = new();
         private int m_Count;

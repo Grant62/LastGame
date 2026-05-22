@@ -4,19 +4,19 @@ using ICSharpCode.SharpZipLib.Core;
 
 namespace ICSharpCode.SharpZipLib.GZip
 {
-	/// <summary>
-	///     An example class to demonstrate compression and decompression of GZip streams.
-	/// </summary>
-	public static class GZip
+    /// <summary>
+    ///     An example class to demonstrate compression and decompression of GZip streams.
+    /// </summary>
+    public static class GZip
     {
-	    /// <summary>
-	    ///     Decompress the <paramref name="inStream">input</paramref> writing
-	    ///     uncompressed data to the <paramref name="outStream">output stream</paramref>
-	    /// </summary>
-	    /// <param name="inStream">The readable stream containing data to decompress.</param>
-	    /// <param name="outStream">The output stream to receive the decompressed data.</param>
-	    /// <param name="isStreamOwner">Both streams are closed on completion if true.</param>
-	    public static void Decompress(Stream inStream, Stream outStream, bool isStreamOwner)
+        /// <summary>
+        ///     Decompress the <paramref name="inStream">input</paramref> writing
+        ///     uncompressed data to the <paramref name="outStream">output stream</paramref>
+        /// </summary>
+        /// <param name="inStream">The readable stream containing data to decompress.</param>
+        /// <param name="outStream">The output stream to receive the decompressed data.</param>
+        /// <param name="isStreamOwner">Both streams are closed on completion if true.</param>
+        public static void Decompress(Stream inStream, Stream outStream, bool isStreamOwner)
         {
             if (inStream == null || outStream == null)
             {
@@ -41,18 +41,18 @@ namespace ICSharpCode.SharpZipLib.GZip
             }
         }
 
-	    /// <summary>
-	    ///     Compress the <paramref name="inStream">input stream</paramref> sending
-	    ///     result data to <paramref name="outStream">output stream</paramref>
-	    /// </summary>
-	    /// <param name="inStream">The readable stream to compress.</param>
-	    /// <param name="outStream">The output stream to receive the compressed data.</param>
-	    /// <param name="isStreamOwner">Both streams are closed on completion if true.</param>
-	    /// <param name="level">
-	    ///     Block size acts as compression level (1 to 9) with 1 giving
-	    ///     the lowest compression and 9 the highest.
-	    /// </param>
-	    public static void Compress(Stream inStream, Stream outStream, bool isStreamOwner, int level)
+        /// <summary>
+        ///     Compress the <paramref name="inStream">input stream</paramref> sending
+        ///     result data to <paramref name="outStream">output stream</paramref>
+        /// </summary>
+        /// <param name="inStream">The readable stream to compress.</param>
+        /// <param name="outStream">The output stream to receive the compressed data.</param>
+        /// <param name="isStreamOwner">Both streams are closed on completion if true.</param>
+        /// <param name="level">
+        ///     Block size acts as compression level (1 to 9) with 1 giving
+        ///     the lowest compression and 9 the highest.
+        /// </param>
+        public static void Compress(Stream inStream, Stream outStream, bool isStreamOwner, int level)
         {
             if (inStream == null || outStream == null)
             {

@@ -6,48 +6,48 @@ using ICSharpCode.SharpZipLib.Zip.Compression;
 
 namespace ICSharpCode.SharpZipLib.Zip
 {
-	/// <summary>
-	///     FastZipEvents supports all events applicable to <see cref="FastZip">FastZip</see> operations.
-	/// </summary>
-	public class FastZipEvents
+    /// <summary>
+    ///     FastZipEvents supports all events applicable to <see cref="FastZip">FastZip</see> operations.
+    /// </summary>
+    public class FastZipEvents
     {
-	    /// <summary>
-	    ///     Delegate to invoke when processing directories.
-	    /// </summary>
-	    public event EventHandler<DirectoryEventArgs> ProcessDirectory;
+        /// <summary>
+        ///     Delegate to invoke when processing directories.
+        /// </summary>
+        public event EventHandler<DirectoryEventArgs> ProcessDirectory;
 
-	    /// <summary>
-	    ///     Delegate to invoke when processing files.
-	    /// </summary>
-	    public ProcessFileHandler ProcessFile;
+        /// <summary>
+        ///     Delegate to invoke when processing files.
+        /// </summary>
+        public ProcessFileHandler ProcessFile;
 
-	    /// <summary>
-	    ///     Delegate to invoke during processing of files.
-	    /// </summary>
-	    public ProgressHandler Progress;
+        /// <summary>
+        ///     Delegate to invoke during processing of files.
+        /// </summary>
+        public ProgressHandler Progress;
 
-	    /// <summary>
-	    ///     Delegate to invoke when processing for a file has been completed.
-	    /// </summary>
-	    public CompletedFileHandler CompletedFile;
+        /// <summary>
+        ///     Delegate to invoke when processing for a file has been completed.
+        /// </summary>
+        public CompletedFileHandler CompletedFile;
 
-	    /// <summary>
-	    ///     Delegate to invoke when processing directory failures.
-	    /// </summary>
-	    public DirectoryFailureHandler DirectoryFailure;
+        /// <summary>
+        ///     Delegate to invoke when processing directory failures.
+        /// </summary>
+        public DirectoryFailureHandler DirectoryFailure;
 
-	    /// <summary>
-	    ///     Delegate to invoke when processing file failures.
-	    /// </summary>
-	    public FileFailureHandler FileFailure;
+        /// <summary>
+        ///     Delegate to invoke when processing file failures.
+        /// </summary>
+        public FileFailureHandler FileFailure;
 
-	    /// <summary>
-	    ///     Raise the <see cref="DirectoryFailure">directory failure</see> event.
-	    /// </summary>
-	    /// <param name="directory">The directory causing the failure.</param>
-	    /// <param name="e">The exception for this event.</param>
-	    /// <returns>A boolean indicating if execution should continue or not.</returns>
-	    public bool OnDirectoryFailure(string directory, Exception e)
+        /// <summary>
+        ///     Raise the <see cref="DirectoryFailure">directory failure</see> event.
+        /// </summary>
+        /// <param name="directory">The directory causing the failure.</param>
+        /// <param name="e">The exception for this event.</param>
+        /// <returns>A boolean indicating if execution should continue or not.</returns>
+        public bool OnDirectoryFailure(string directory, Exception e)
         {
             bool result = false;
             DirectoryFailureHandler handler = DirectoryFailure;
@@ -62,13 +62,13 @@ namespace ICSharpCode.SharpZipLib.Zip
             return result;
         }
 
-	    /// <summary>
-	    ///     Fires the <see cref="FileFailure"> file failure handler delegate</see>.
-	    /// </summary>
-	    /// <param name="file">The file causing the failure.</param>
-	    /// <param name="e">The exception for this failure.</param>
-	    /// <returns>A boolean indicating if execution should continue or not.</returns>
-	    public bool OnFileFailure(string file, Exception e)
+        /// <summary>
+        ///     Fires the <see cref="FileFailure"> file failure handler delegate</see>.
+        /// </summary>
+        /// <param name="file">The file causing the failure.</param>
+        /// <param name="e">The exception for this failure.</param>
+        /// <returns>A boolean indicating if execution should continue or not.</returns>
+        public bool OnFileFailure(string file, Exception e)
         {
             FileFailureHandler handler = FileFailure;
             bool result = handler != null;
@@ -83,12 +83,12 @@ namespace ICSharpCode.SharpZipLib.Zip
             return result;
         }
 
-	    /// <summary>
-	    ///     Fires the <see cref="ProcessFile">ProcessFile delegate</see>.
-	    /// </summary>
-	    /// <param name="file">The file being processed.</param>
-	    /// <returns>A boolean indicating if execution should continue or not.</returns>
-	    public bool OnProcessFile(string file)
+        /// <summary>
+        ///     Fires the <see cref="ProcessFile">ProcessFile delegate</see>.
+        /// </summary>
+        /// <param name="file">The file being processed.</param>
+        /// <returns>A boolean indicating if execution should continue or not.</returns>
+        public bool OnProcessFile(string file)
         {
             bool result = true;
             ProcessFileHandler handler = ProcessFile;
@@ -103,12 +103,12 @@ namespace ICSharpCode.SharpZipLib.Zip
             return result;
         }
 
-	    /// <summary>
-	    ///     Fires the <see cref="CompletedFile" /> delegate
-	    /// </summary>
-	    /// <param name="file">The file whose processing has been completed.</param>
-	    /// <returns>A boolean indicating if execution should continue or not.</returns>
-	    public bool OnCompletedFile(string file)
+        /// <summary>
+        ///     Fires the <see cref="CompletedFile" /> delegate
+        /// </summary>
+        /// <param name="file">The file whose processing has been completed.</param>
+        /// <returns>A boolean indicating if execution should continue or not.</returns>
+        public bool OnCompletedFile(string file)
         {
             bool result = true;
             CompletedFileHandler handler = CompletedFile;
@@ -122,13 +122,13 @@ namespace ICSharpCode.SharpZipLib.Zip
             return result;
         }
 
-	    /// <summary>
-	    ///     Fires the <see cref="ProcessDirectory">process directory</see> delegate.
-	    /// </summary>
-	    /// <param name="directory">The directory being processed.</param>
-	    /// <param name="hasMatchingFiles">Flag indicating if the directory has matching files as determined by the current filter.</param>
-	    /// <returns>A <see cref="bool" /> of true if the operation should continue; false otherwise.</returns>
-	    public bool OnProcessDirectory(string directory, bool hasMatchingFiles)
+        /// <summary>
+        ///     Fires the <see cref="ProcessDirectory">process directory</see> delegate.
+        /// </summary>
+        /// <param name="directory">The directory being processed.</param>
+        /// <param name="hasMatchingFiles">Flag indicating if the directory has matching files as determined by the current filter.</param>
+        /// <returns>A <see cref="bool" /> of true if the operation should continue; false otherwise.</returns>
+        public bool OnProcessDirectory(string directory, bool hasMatchingFiles)
         {
             bool result = true;
             EventHandler<DirectoryEventArgs> handler = ProcessDirectory;
@@ -142,22 +142,19 @@ namespace ICSharpCode.SharpZipLib.Zip
             return result;
         }
 
-	    /// <summary>
-	    ///     The minimum timespan between <see cref="Progress" /> events.
-	    /// </summary>
-	    /// <value>The minimum period of time between <see cref="Progress" /> events.</value>
-	    /// <seealso cref="Progress" />
-	    /// <remarks>The default interval is three seconds.</remarks>
-	    public TimeSpan ProgressInterval { get; set; } = TimeSpan.FromSeconds(3);
-
-        #region Instance Fields
-        #endregion
+        /// <summary>
+        ///     The minimum timespan between <see cref="Progress" /> events.
+        /// </summary>
+        /// <value>The minimum period of time between <see cref="Progress" /> events.</value>
+        /// <seealso cref="Progress" />
+        /// <remarks>The default interval is three seconds.</remarks>
+        public TimeSpan ProgressInterval { get; set; } = TimeSpan.FromSeconds(3);
     }
 
-	/// <summary>
-	///     FastZip provides facilities for creating and extracting zip files.
-	/// </summary>
-	public class FastZip
+    /// <summary>
+    ///     FastZip provides facilities for creating and extracting zip files.
+    /// </summary>
+    public class FastZip
     {
         #region Enumerations
         /// <summary>
@@ -165,18 +162,18 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public enum Overwrite
         {
-	        /// <summary>
-	        ///     Prompt the user to confirm overwriting
-	        /// </summary>
-	        Prompt,
-	        /// <summary>
-	        ///     Never overwrite files.
-	        /// </summary>
-	        Never,
-	        /// <summary>
-	        ///     Always overwrite files.
-	        /// </summary>
-	        Always
+            /// <summary>
+            ///     Prompt the user to confirm overwriting
+            /// </summary>
+            Prompt,
+            /// <summary>
+            ///     Never overwrite files.
+            /// </summary>
+            Never,
+            /// <summary>
+            ///     Always overwrite files.
+            /// </summary>
+            Always
         }
         #endregion
 

@@ -9,17 +9,17 @@ using MoonSharp.Interpreter.Interop.StandardDescriptors;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Class providing easier marshalling of CLR events. Handling is limited to a narrow range of handler signatures,
-	///     which,
-	///     however, covers in practice most of all available events.
-	/// </summary>
-	public class EventMemberDescriptor : IMemberDescriptor
+    /// <summary>
+    ///     Class providing easier marshalling of CLR events. Handling is limited to a narrow range of handler signatures,
+    ///     which,
+    ///     however, covers in practice most of all available events.
+    /// </summary>
+    public class EventMemberDescriptor : IMemberDescriptor
     {
-	    /// <summary>
-	    ///     The maximum number of arguments supported in an event handler delegate
-	    /// </summary>
-	    public const int MAX_ARGS_IN_DELEGATE = 16;
+        /// <summary>
+        ///     The maximum number of arguments supported in an event handler delegate
+        /// </summary>
+        public const int MAX_ARGS_IN_DELEGATE = 16;
 
 
         private readonly object m_Lock = new();

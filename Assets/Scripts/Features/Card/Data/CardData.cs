@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Features.Combat.Targeting;
 using Sirenix.OdinInspector;
 
 namespace Features.Card.Data
@@ -57,6 +59,9 @@ namespace Features.Card.Data
         public bool IsTemp { get; set; }
         public bool SkipConsumePile { get; set; }
         public string IconAddress { get; }
+
+        public List<Effect> ManualTargetEffect { get; set; } = new();
+        public List<AutoTargetEffect> OtherEffects { get; set; } = new();
 
         public CardData(
             int cardId,

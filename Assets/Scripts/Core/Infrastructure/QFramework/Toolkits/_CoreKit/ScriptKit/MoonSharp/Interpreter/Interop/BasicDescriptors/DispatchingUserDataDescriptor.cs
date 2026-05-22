@@ -6,13 +6,13 @@ using MoonSharp.Interpreter.Interop.Converters;
 
 namespace MoonSharp.Interpreter.Interop.BasicDescriptors
 {
-	/// <summary>
-	///     An abstract user data descriptor which accepts members described by <see cref="IMemberDescriptor" /> objects and
-	///     correctly dispatches to them.
-	///     Metamethods are also by default dispatched to operator overloads and other similar methods - see
-	///     <see cref="MetaIndex" /> .
-	/// </summary>
-	public abstract class DispatchingUserDataDescriptor : IUserDataDescriptor, IOptimizableDescriptor
+    /// <summary>
+    ///     An abstract user data descriptor which accepts members described by <see cref="IMemberDescriptor" /> objects and
+    ///     correctly dispatches to them.
+    ///     Metamethods are also by default dispatched to operator overloads and other similar methods - see
+    ///     <see cref="MetaIndex" /> .
+    /// </summary>
+    public abstract class DispatchingUserDataDescriptor : IUserDataDescriptor, IOptimizableDescriptor
     {
         private int m_ExtMethodsVersion;
         private readonly Dictionary<string, IMemberDescriptor> m_MetaMembers = new();

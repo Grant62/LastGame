@@ -3,13 +3,13 @@ using System.IO;
 
 namespace ICSharpCode.SharpZipLib.Core
 {
-	/// <summary>
-	///     PathFilter filters directories and files using a form of
-	///     <see cref="System.Text.RegularExpressions.Regex">regular expressions</see>
-	///     by full path name.
-	///     See <see cref="NameFilter">NameFilter</see> for more detail on filtering.
-	/// </summary>
-	public class PathFilter : IScanFilter
+    /// <summary>
+    ///     PathFilter filters directories and files using a form of
+    ///     <see cref="System.Text.RegularExpressions.Regex">regular expressions</see>
+    ///     by full path name.
+    ///     See <see cref="NameFilter">NameFilter</see> for more detail on filtering.
+    /// </summary>
+    public class PathFilter : IScanFilter
     {
         #region Constructors
         /// <summary>
@@ -50,11 +50,11 @@ namespace ICSharpCode.SharpZipLib.Core
         #endregion
     }
 
-	/// <summary>
-	///     ExtendedPathFilter filters based on name, file size, and the last write time of the file.
-	/// </summary>
-	/// <remarks>Provides an example of how to customise filtering.</remarks>
-	public class ExtendedPathFilter : PathFilter
+    /// <summary>
+    ///     ExtendedPathFilter filters based on name, file size, and the last write time of the file.
+    /// </summary>
+    /// <remarks>Provides an example of how to customise filtering.</remarks>
+    public class ExtendedPathFilter : PathFilter
     {
         #region Constructors
         /// <summary>
@@ -215,32 +215,32 @@ namespace ICSharpCode.SharpZipLib.Core
         #endregion
     }
 
-	/// <summary>
-	///     NameAndSizeFilter filters based on name and file size.
-	/// </summary>
-	/// <remarks>A sample showing how filters might be extended.</remarks>
-	[Obsolete("Use ExtendedPathFilter instead")]
+    /// <summary>
+    ///     NameAndSizeFilter filters based on name and file size.
+    /// </summary>
+    /// <remarks>A sample showing how filters might be extended.</remarks>
+    [Obsolete("Use ExtendedPathFilter instead")]
     public class NameAndSizeFilter : PathFilter
     {
-	    /// <summary>
-	    ///     Initialise a new instance of NameAndSizeFilter.
-	    /// </summary>
-	    /// <param name="filter">The filter to apply.</param>
-	    /// <param name="minSize">The minimum file size to include.</param>
-	    /// <param name="maxSize">The maximum file size to include.</param>
-	    public NameAndSizeFilter(string filter, long minSize, long maxSize)
+        /// <summary>
+        ///     Initialise a new instance of NameAndSizeFilter.
+        /// </summary>
+        /// <param name="filter">The filter to apply.</param>
+        /// <param name="minSize">The minimum file size to include.</param>
+        /// <param name="maxSize">The maximum file size to include.</param>
+        public NameAndSizeFilter(string filter, long minSize, long maxSize)
             : base(filter)
         {
             MinSize = minSize;
             MaxSize = maxSize;
         }
 
-	    /// <summary>
-	    ///     Test a filename to see if it matches the filter.
-	    /// </summary>
-	    /// <param name="name">The filename to test.</param>
-	    /// <returns>True if the filter matches, false otherwise.</returns>
-	    public override bool IsMatch(string name)
+        /// <summary>
+        ///     Test a filename to see if it matches the filter.
+        /// </summary>
+        /// <param name="name">The filename to test.</param>
+        /// <returns>True if the filter matches, false otherwise.</returns>
+        public override bool IsMatch(string name)
         {
             bool result = base.IsMatch(name);
 
@@ -256,10 +256,10 @@ namespace ICSharpCode.SharpZipLib.Core
             return result;
         }
 
-	    /// <summary>
-	    ///     Get/set the minimum size for a file that will match this filter.
-	    /// </summary>
-	    public long MinSize
+        /// <summary>
+        ///     Get/set the minimum size for a file that will match this filter.
+        /// </summary>
+        public long MinSize
         {
             get => minSize_;
             set
@@ -273,10 +273,10 @@ namespace ICSharpCode.SharpZipLib.Core
             }
         }
 
-	    /// <summary>
-	    ///     Get/set the maximum size for a file that will match this filter.
-	    /// </summary>
-	    public long MaxSize
+        /// <summary>
+        ///     Get/set the maximum size for a file that will match this filter.
+        /// </summary>
+        public long MaxSize
         {
             get => maxSize_;
             set

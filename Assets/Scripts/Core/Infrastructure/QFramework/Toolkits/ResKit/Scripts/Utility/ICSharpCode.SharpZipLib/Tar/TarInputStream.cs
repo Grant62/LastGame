@@ -4,13 +4,13 @@ using System.Text;
 
 namespace ICSharpCode.SharpZipLib.Tar
 {
-	/// <summary>
-	///     The TarInputStream reads a UNIX tar archive as an InputStream.
-	///     methods are provided to position at each successive entry in
-	///     the archive, and the read each entry as a normal input stream
-	///     using read().
-	/// </summary>
-	public class TarInputStream : Stream
+    /// <summary>
+    ///     The TarInputStream reads a UNIX tar archive as an InputStream.
+    ///     methods are provided to position at each successive entry in
+    ///     the archive, and the read each entry as a normal input stream
+    ///     using read().
+    /// </summary>
+    public class TarInputStream : Stream
     {
         #region Constructors
         /// <summary>
@@ -551,36 +551,36 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </summary>
         public interface IEntryFactory
         {
-	        /// <summary>
-	        ///     Create an entry based on name alone
-	        /// </summary>
-	        /// <param name="name">
-	        ///     Name of the new EntryPointNotFoundException to create
-	        /// </param>
-	        /// <returns>created TarEntry or descendant class</returns>
-	        TarEntry CreateEntry(string name);
+            /// <summary>
+            ///     Create an entry based on name alone
+            /// </summary>
+            /// <param name="name">
+            ///     Name of the new EntryPointNotFoundException to create
+            /// </param>
+            /// <returns>created TarEntry or descendant class</returns>
+            TarEntry CreateEntry(string name);
 
-	        /// <summary>
-	        ///     Create an instance based on an actual file
-	        /// </summary>
-	        /// <param name="fileName">
-	        ///     Name of file to represent in the entry
-	        /// </param>
-	        /// <returns>
-	        ///     Created TarEntry or descendant class
-	        /// </returns>
-	        TarEntry CreateEntryFromFile(string fileName);
+            /// <summary>
+            ///     Create an instance based on an actual file
+            /// </summary>
+            /// <param name="fileName">
+            ///     Name of file to represent in the entry
+            /// </param>
+            /// <returns>
+            ///     Created TarEntry or descendant class
+            /// </returns>
+            TarEntry CreateEntryFromFile(string fileName);
 
-	        /// <summary>
-	        ///     Create a tar entry based on the header information passed
-	        /// </summary>
-	        /// <param name="headerBuffer">
-	        ///     Buffer containing header information to create an an entry from.
-	        /// </param>
-	        /// <returns>
-	        ///     Created TarEntry or descendant class
-	        /// </returns>
-	        TarEntry CreateEntry(byte[] headerBuffer);
+            /// <summary>
+            ///     Create a tar entry based on the header information passed
+            /// </summary>
+            /// <param name="headerBuffer">
+            ///     Buffer containing header information to create an an entry from.
+            /// </param>
+            /// <returns>
+            ///     Created TarEntry or descendant class
+            /// </returns>
+            TarEntry CreateEntry(byte[] headerBuffer);
         }
 
         /// <summary>
@@ -588,32 +588,32 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </summary>
         public class EntryFactoryAdapter : IEntryFactory
         {
-	        /// <summary>
-	        ///     Create a <see cref="TarEntry" /> based on named
-	        /// </summary>
-	        /// <param name="name">The name to use for the entry</param>
-	        /// <returns>A new <see cref="TarEntry" /></returns>
-	        public TarEntry CreateEntry(string name)
+            /// <summary>
+            ///     Create a <see cref="TarEntry" /> based on named
+            /// </summary>
+            /// <param name="name">The name to use for the entry</param>
+            /// <returns>A new <see cref="TarEntry" /></returns>
+            public TarEntry CreateEntry(string name)
             {
                 return TarEntry.CreateTarEntry(name);
             }
 
-	        /// <summary>
-	        ///     Create a tar entry with details obtained from <paramref name="fileName">file</paramref>
-	        /// </summary>
-	        /// <param name="fileName">The name of the file to retrieve details from.</param>
-	        /// <returns>A new <see cref="TarEntry" /></returns>
-	        public TarEntry CreateEntryFromFile(string fileName)
+            /// <summary>
+            ///     Create a tar entry with details obtained from <paramref name="fileName">file</paramref>
+            /// </summary>
+            /// <param name="fileName">The name of the file to retrieve details from.</param>
+            /// <returns>A new <see cref="TarEntry" /></returns>
+            public TarEntry CreateEntryFromFile(string fileName)
             {
                 return TarEntry.CreateEntryFromFile(fileName);
             }
 
-	        /// <summary>
-	        ///     Create an entry based on details in <paramref name="headerBuffer">header</paramref>
-	        /// </summary>
-	        /// <param name="headerBuffer">The buffer containing entry details.</param>
-	        /// <returns>A new <see cref="TarEntry" /></returns>
-	        public TarEntry CreateEntry(byte[] headerBuffer)
+            /// <summary>
+            ///     Create an entry based on details in <paramref name="headerBuffer">header</paramref>
+            /// </summary>
+            /// <param name="headerBuffer">The buffer containing entry details.</param>
+            /// <returns>A new <see cref="TarEntry" /></returns>
+            public TarEntry CreateEntry(byte[] headerBuffer)
             {
                 return new TarEntry(headerBuffer);
             }

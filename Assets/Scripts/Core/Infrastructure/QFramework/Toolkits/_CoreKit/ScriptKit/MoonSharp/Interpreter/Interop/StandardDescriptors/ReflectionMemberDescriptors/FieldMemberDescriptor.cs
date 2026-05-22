@@ -9,40 +9,40 @@ using MoonSharp.Interpreter.Interop.Converters;
 
 namespace MoonSharp.Interpreter.Interop
 {
-	/// <summary>
-	///     Class providing easier marshalling of CLR fields
-	/// </summary>
-	public class FieldMemberDescriptor : IMemberDescriptor, IOptimizableDescriptor, IWireableDescriptor
+    /// <summary>
+    ///     Class providing easier marshalling of CLR fields
+    /// </summary>
+    public class FieldMemberDescriptor : IMemberDescriptor, IOptimizableDescriptor, IWireableDescriptor
     {
-	    /// <summary>
-	    ///     Gets the FieldInfo got by reflection
-	    /// </summary>
-	    public FieldInfo FieldInfo { get; }
+        /// <summary>
+        ///     Gets the FieldInfo got by reflection
+        /// </summary>
+        public FieldInfo FieldInfo { get; }
 
-	    /// <summary>
-	    ///     Gets the <see cref="InteropAccessMode" />
-	    /// </summary>
-	    public InteropAccessMode AccessMode { get; }
+        /// <summary>
+        ///     Gets the <see cref="InteropAccessMode" />
+        /// </summary>
+        public InteropAccessMode AccessMode { get; }
 
-	    /// <summary>
-	    ///     Gets a value indicating whether the described property is static.
-	    /// </summary>
-	    public bool IsStatic { get; }
+        /// <summary>
+        ///     Gets a value indicating whether the described property is static.
+        /// </summary>
+        public bool IsStatic { get; }
 
-	    /// <summary>
-	    ///     Gets the name of the property
-	    /// </summary>
-	    public string Name { get; }
+        /// <summary>
+        ///     Gets the name of the property
+        /// </summary>
+        public string Name { get; }
 
-	    /// <summary>
-	    ///     Gets a value indicating whether this instance is a constant
-	    /// </summary>
-	    public bool IsConst { get; }
+        /// <summary>
+        ///     Gets a value indicating whether this instance is a constant
+        /// </summary>
+        public bool IsConst { get; }
 
-	    /// <summary>
-	    ///     Gets a value indicating whether this instance is readonly
-	    /// </summary>
-	    public bool IsReadonly { get; }
+        /// <summary>
+        ///     Gets a value indicating whether this instance is readonly
+        /// </summary>
+        public bool IsReadonly { get; }
 
 
         private readonly object m_ConstValue;
