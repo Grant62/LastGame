@@ -42,26 +42,26 @@ namespace Features.Card.System
 
                 CardData drawn = model.DrawPile[0];
                 model.DrawPile.RemoveAt(0);
-                model.Hand.Add(drawn);
+                model.HandPile.Add(drawn);
             }
 
             model.OnDrawPileChanged.Trigger();
-            model.OnHandChanged.Trigger();
+            model.OnHandPileChanged.Trigger();
         }
 
         public void RemoveFromHand(CardData card)
         {
             ICardModel model = this.GetModel<ICardModel>();
-            model.Hand.Remove(card);
-            model.OnHandChanged.Trigger();
+            model.HandPile.Remove(card);
+            model.OnHandPileChanged.Trigger();
         }
 
         public void DiscardFromHand(CardData card)
         {
             ICardModel model = this.GetModel<ICardModel>();
-            model.Hand.Remove(card);
+            model.HandPile.Remove(card);
             model.DiscardPile.Add(card);
-            model.OnHandChanged.Trigger();
+            model.OnHandPileChanged.Trigger();
             model.OnDiscardPileChanged.Trigger();
         }
 

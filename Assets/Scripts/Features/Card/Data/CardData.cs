@@ -57,7 +57,6 @@ namespace Features.Card.Data
         public int UpgradeId { get; }
         public string CardParam { get; }
         public bool IsTemp { get; set; }
-        public bool SkipConsumePile { get; set; }
         public string IconAddress { get; }
 
         public List<Effect> ManualTargetEffect { get; set; } = new();

@@ -1,13 +1,17 @@
 using System.Collections.Generic;
 using System.Threading;
+using Core.Architecture;
 using Cysharp.Threading.Tasks;
 using Features.Card.Data;
+using Features.Card.Interfaces;
+using Features.Card.Model;
+using QFramework;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Features.Card.View
 {
-    public class HandView : MonoBehaviour
+    public class HandView : MonoBehaviour, IController
     {
         [LabelText("卡牌横向布局/弧形布局")]
         public bool isHorizontal;
@@ -28,13 +32,65 @@ namespace Features.Card.View
         [SerializeField] private List<Vector3> mCardPositions = new();
         private readonly List<Quaternion> mCardRotations = new();
         private readonly List<CardView> mCardViews = new();
+        private ICardViewPool mCardViewPool;
 
         private const int BaseSortingOrder = 5;
         private const float ZOffset = 0.1f;
 
+        public IArchitecture GetArchitecture()
+        {
+            return GameMain.Interface;
+        }
+
         private void Awake()
         {
             centerPoint = isHorizontal ? Vector3.up * -4.5f : Vector3.up * centerPointY;
+        }
+
+        public void SetCardViewPool(ICardViewPool pool)
+        {
+            mCardViewPool = pool;
+        }
+
+        private void Start()
+        {
+            ICardModel model = this.GetModel<ICardModel>();
+            model.OnHandPileChanged.Register(OnHandPileChanged)
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+            model.OnDrawPileChanged.Register(() => { })
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+        }
+
+        private void OnHandPileChanged()
+        {
+            SyncHandAsync().Forget();
+        }
+
+        private async UniTaskVoid SyncHandAsync()
+        {
+            ICardModel model = this.GetModel<ICardModel>();
+
+            foreach (CardView cv in mCardViews.ToArray())
+            {
+                if (!model.HandPile.Contains(cv.CardData))
+                {
+                    mCardViews.Remove(cv);
+                    mCardViewPool.Return(cv);
+                }
+            }
+
+            foreach (CardData card in model.HandPile)
+            {
+                if (!mCardViews.Exists(cv => cv.CardData == card))
+                {
+                    CardView newView = mCardViewPool.Get(card, transform);
+                    newView.transform.localPosition = Vector3.zero;
+                    newView.transform.localRotation = Quaternion.identity;
+                    mCardViews.Add(newView);
+                }
+            }
+
+            await SetCardLayoutAsync(0.15f);
         }
 
         public async UniTask AddCardAsync(CardView cardView)

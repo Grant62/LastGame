@@ -6,7 +6,7 @@ namespace Features.Resource.Model
     {
         public BindableProperty<int> Current { get; } = new();
         public BindableProperty<int> Max { get; } = new();
-        public int PerTurnIncome { get; set; } = 1;
+        public int PerTurnIncome { get; set; } = 3;
 
         protected override void OnInit() { }
     }

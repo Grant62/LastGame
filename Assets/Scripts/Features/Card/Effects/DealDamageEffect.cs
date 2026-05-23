@@ -15,11 +15,8 @@ namespace Features.Card.Effects
         {
             foreach (ITargetable target in targets)
             {
-                if (target != null && target.IsValidTarget)
-                {
-                    // 由项目方实现具体伤害逻辑
-                    // 示例: target.TakeDamage(mAmount);
-                }
+                if (target is IDamageable damagable && damagable.IsValidTarget)
+                    damagable.TakeDamage(mAmount);
             }
         }
     }

@@ -7,11 +7,11 @@ namespace Features.Card.Model
     public interface ICardModel : IModel
     {
         List<CardData> DrawPile { get; }
-        List<CardData> Hand { get; }
+        List<CardData> HandPile { get; }
         List<CardData> DiscardPile { get; }
 
         EasyEvent OnDrawPileChanged { get; }
-        EasyEvent OnHandChanged { get; }
+        EasyEvent OnHandPileChanged { get; }
         EasyEvent OnDiscardPileChanged { get; }
     }
 }

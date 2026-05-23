@@ -1,13 +1,12 @@
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Features.Card.Data;
-using Features.Card.Interfaces;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace Features.Card.View
 {
-    public partial class CardView : MonoBehaviour, ICardDisplayBase
+    public partial class CardView : MonoBehaviour
     {
         public CardData CardData { get; private set; }
 

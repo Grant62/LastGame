@@ -1,6 +1,9 @@
 using Core.Architecture;
 using Features.Card.Command;
 using Features.Card.Event;
+using Features.Combat.Interaction;
+using Features.Combat.Targeting;
+using Features.Combat.Targeting.Command;
 using QFramework;
 using UnityEngine;
 
@@ -70,6 +73,9 @@ namespace Features.Card.View
             if (mIsTweening)
                 return;
 
+            if (!this.GetSystem<IInteractionSystem>().CanHover())
+                return;
+
             CardView.Wrapper.gameObject.SetActive(false);
 
             Vector3 pos = new(CardView.transform.position.x, -2.8f, 0);
@@ -87,12 +93,18 @@ namespace Features.Card.View
             if (mIsTweening)
                 return;
 
+            if (!this.GetSystem<IInteractionSystem>().CanInteract())
+                return;
+
             mIsDragging = true;
+            this.SendEvent<DragStartEvent>();
             CardView.Wrapper.gameObject.SetActive(true);
             this.SendEvent(new CardHoverEndEvent());
 
             mDragStartPos = CardView.transform.position;
             mDragStartRot = CardView.transform.rotation;
+
+            this.SendCommand(new StartTargetingCommand(mDragStartPos));
 
             CardView.transform.rotation = Quaternion.Euler(0, 0, 0);
             CardView.transform.position = GetMouseWorldPosition();
@@ -112,12 +124,20 @@ namespace Features.Card.View
                 return;
 
             mIsDragging = false;
+            this.SendEvent<DragEndEvent>();
+            this.SendCommand<EndTargetingCommand>();
 
             Vector3 mousePos = GetMouseWorldPosition();
 
             if (Physics.Raycast(mousePos, Vector3.forward, out RaycastHit hit, 10f, mDropLayer))
             {
-                this.SendCommand(new PlayCardCommand(CardView.CardData));
+                IDamageable target = hit.collider.GetComponent<IDamageable>();
+                this.SendCommand(new PlayCardCommand(CardView.CardData, target));
+            }
+            else if (Physics.Raycast(mousePos, Vector3.forward, out RaycastHit enemyHit, 10f, mEnemyLayer))
+            {
+                IDamageable target = enemyHit.collider.GetComponent<IDamageable>();
+                this.SendCommand(new PlayCardCommand(CardView.CardData, target));
             }
             else
             {

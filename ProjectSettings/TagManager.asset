@@ -41,6 +41,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Hover
+    uniqueID: 1535898775
+    locked: 0
+  - name: UI
+    uniqueID: 3354142853
+    locked: 0
+  - name: Tips
+    uniqueID: 2090487735
+    locked: 0
   m_RenderingLayers:
   - Default
   - Light Layer 1

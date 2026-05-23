@@ -9,11 +9,13 @@ namespace Features.Card.Pool
     public class CardViewPool : ICardViewPool
     {
         private readonly CardView mPrefab;
+        private readonly Vector3 mPrefabScale;
         private readonly SimpleObjectPool<CardView> mPool;
 
         public CardViewPool(CardView prefab)
         {
             mPrefab = prefab;
+            mPrefabScale = prefab.transform.localScale;
             mPool = new SimpleObjectPool<CardView>(
                 () => Object.Instantiate(mPrefab),
                 view => view.gameObject.SetActive(false)
@@ -24,7 +26,7 @@ namespace Features.Card.Pool
         {
             CardView view = mPool.Allocate();
             view.transform.SetParent(parent);
-            view.transform.localScale = Vector3.one;
+            view.transform.localScale = mPrefabScale;
             view.gameObject.SetActive(true);
             view.Setup(data);
             return view;

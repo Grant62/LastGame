@@ -1,4 +1,4 @@
-// Generate Id:952531a2-cff5-41e8-a623-654951efff93
+// Generate Id:15a073eb-6477-4eaa-94de-08f6063eaf60
 using UnityEngine;
 
 // 1.请在菜单 编辑器扩展/Namespace Settings 里设置命名空间
@@ -9,6 +9,8 @@ namespace Features.Hero.View
 	{
 
 		public SpriteRenderer Fill;
+
+		public TMPro.TextMeshPro HealthText;
 
 	}
 }

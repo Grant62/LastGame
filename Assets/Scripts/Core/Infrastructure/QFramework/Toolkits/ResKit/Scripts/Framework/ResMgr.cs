@@ -237,7 +237,9 @@ namespace QFramework
 
         private void OnGUI()
         {
+#if ENABLE_LEGACY_INPUT_MANAGER
             if (PlatformCheck.IsEditor && Input.GetKey(KeyCode.F1))
+#endif
             {
                 GUILayout.BeginVertical("box");
 
