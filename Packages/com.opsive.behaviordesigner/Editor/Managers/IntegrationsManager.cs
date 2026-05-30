@@ -3,16 +3,17 @@
 /// Copyright (c) Opsive. All Rights Reserved.
 /// https://www.opsive.com
 /// ---------------------------------------------
+
+using Opsive.Shared.Editor.Managers;
+
 namespace Opsive.BehaviorDesigner.Editor.Managers
 {
-    using Opsive.Shared.Editor.Managers;
-
     /// <summary>
-    /// Draws a list of all of the available integrations.
+    ///     Draws a list of all of the available integrations.
     /// </summary>
     [OrderedEditorItem("Integrations", 11)]
-    public class IntegrationsManager : Opsive.Shared.Editor.Managers.IntegrationsManager
+    public class IntegrationsManager : Shared.Editor.Managers.IntegrationsManager
     {
-        protected override string IntegrationsURL => "https://opsive.com/asset/BehaviorDesigner/IntegrationsList.txt";
+        protected override string IntegrationsURL { get => "https://opsive.com/asset/BehaviorDesigner/IntegrationsList.txt"; }
     }
 }

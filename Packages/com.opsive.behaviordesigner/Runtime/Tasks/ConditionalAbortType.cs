@@ -7,7 +7,7 @@
 namespace Opsive.BehaviorDesigner.Runtime.Tasks
 {
     /// <summary>
-    /// Specifies that the task can interrupt using conditional aborts.
+    ///     Specifies that the task can interrupt using conditional aborts.
     /// </summary>
     public interface IConditionalAbortParent
     {
@@ -15,14 +15,14 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks
     }
 
     /// <summary>
-    /// The type of conditional abort.
+    ///     The type of conditional abort.
     /// </summary>
     public enum ConditionalAbortType : byte
     {
-        None,           // No abort specified.
-        LowerPriority,  // Any task to the right of the current branch can be aborted.
-        Self,           // Any task within the current branch can be aborted.
-        Both            // A combination of LowerPriority and Self.
+        None, // No abort specified.
+        LowerPriority, // Any task to the right of the current branch can be aborted.
+        Self, // Any task within the current branch can be aborted.
+        Both // A combination of LowerPriority and Self.
     }
 }
 #endif

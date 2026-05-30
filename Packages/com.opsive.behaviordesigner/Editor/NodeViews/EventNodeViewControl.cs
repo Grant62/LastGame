@@ -1,4 +1,19 @@
-﻿#if GRAPH_DESIGNER
+﻿using Opsive.BehaviorDesigner.Runtime;
+using Opsive.BehaviorDesigner.Runtime.Components;
+using Opsive.BehaviorDesigner.Runtime.Tasks;
+using Opsive.GraphDesigner.Editor;
+using Opsive.GraphDesigner.Editor.Controls.NodeViews;
+using Opsive.GraphDesigner.Editor.Elements;
+using Opsive.GraphDesigner.Editor.Events;
+using Opsive.GraphDesigner.Runtime;
+using Opsive.Shared.Editor.UIElements.Controls;
+using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UIElements;
+using EditorUtility = Opsive.Shared.Editor.Utility.EditorUtility;
+
+#if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
 /// Copyright (c) Opsive. All Rights Reserved.
@@ -6,22 +21,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Editor.Controls.NodeViews
 {
-    using Opsive.Shared.Editor.UIElements.Controls;
-    using Opsive.BehaviorDesigner.Runtime;
-    using Opsive.BehaviorDesigner.Runtime.Components;
-    using Opsive.BehaviorDesigner.Runtime.Tasks;
-    using Opsive.GraphDesigner.Editor;
-    using Opsive.GraphDesigner.Editor.Controls.NodeViews;
-    using Opsive.GraphDesigner.Editor.Elements;
-    using Opsive.GraphDesigner.Editor.Events;
-    using Opsive.GraphDesigner.Runtime;
-    using Unity.Entities;
-    using UnityEngine.UIElements;
-    using UnityEngine;
-    using UnityEditor;
-
     /// <summary>
-    /// Adds UI elements within the event node.
+    ///     Adds UI elements within the event node.
     /// </summary>
     [ControlType(typeof(IEventNode))]
     public class EventNodeViewControl : NodeViewBase
@@ -41,7 +42,7 @@ namespace Opsive.BehaviorDesigner.Editor.Controls.NodeViews
         private Texture m_FailureIcon;
 
         /// <summary>
-        /// Addes the UIElements for the specified runtime node to the editor Node within the graph.
+        ///     Addes the UIElements for the specified runtime node to the editor Node within the graph.
         /// </summary>
         /// <param name="graphWindow">A reference to the GraphWindow.</param>
         /// <param name="parent">The parent UIElement that should contain the node UIElements.</param>
@@ -54,56 +55,62 @@ namespace Opsive.BehaviorDesigner.Editor.Controls.NodeViews
             m_EventNode = parent.GetFirstAncestorOfType<EventNode>();
 
             // AddNodeView can be called multiple times. Ensure there is only one execution status image.
-            var previousExecutionStatus = m_EventNode.Q("event-execution-status");
-            if (previousExecutionStatus != null) {
+            VisualElement previousExecutionStatus = m_EventNode.Q("event-execution-status");
+            if (previousExecutionStatus != null)
+            {
                 previousExecutionStatus.parent.Remove(previousExecutionStatus);
             }
+
             m_ExecutionStatusIcon = new Image();
             m_ExecutionStatusIcon.name = "event-execution-status";
             parent.parent.Add(m_ExecutionStatusIcon); // The execution status icon should be placed behind every node element.
             m_ExecutionStatusIcon.SendToBack();
 
-            m_SuccessIcon = Shared.Editor.Utility.EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkSuccessIconGUID : c_LightSuccessIconGUID);
-            m_FailureIcon = Shared.Editor.Utility.EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkFailureIconGUID : c_LightFailureIconGUID);
+            m_SuccessIcon = EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkSuccessIconGUID : c_LightSuccessIconGUID);
+            m_FailureIcon = EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkFailureIconGUID : c_LightFailureIconGUID);
 
-            m_ExecutionStatusIcon.RegisterCallback<AttachToPanelEvent>(c =>
-            {
-                GraphEventHandler.RegisterEvent(GraphEventType.WindowUpdate, UpdateNode);
-            });
-            m_ExecutionStatusIcon.RegisterCallback<DetachFromPanelEvent>(c =>
-            {
-                GraphEventHandler.UnregisterEvent(GraphEventType.WindowUpdate, UpdateNode);
-            });
+            m_ExecutionStatusIcon.RegisterCallback<AttachToPanelEvent>(c => { GraphEventHandler.RegisterEvent(GraphEventType.WindowUpdate, UpdateNode); });
+            m_ExecutionStatusIcon.RegisterCallback<DetachFromPanelEvent>(c => { GraphEventHandler.UnregisterEvent(GraphEventType.WindowUpdate, UpdateNode); });
         }
 
         /// <summary>
-        /// Updates the node with the current execution status icon.
+        ///     Updates the node with the current execution status icon.
         /// </summary>
         private void UpdateNode()
         {
-            if (m_BehaviorTree == null || m_BehaviorTree.Entity == Entity.Null || m_Node.ConnectedIndex == ushort.MaxValue || !m_BehaviorTree.World.EntityManager.Exists(m_BehaviorTree.Entity)) {
+            if (m_BehaviorTree == null || m_BehaviorTree.Entity == Entity.Null || m_Node.ConnectedIndex == ushort.MaxValue || !m_BehaviorTree.World.EntityManager.Exists(m_BehaviorTree.Entity))
+            {
                 return;
             }
 
-            var connectedNode = m_GraphWindow.Graph.LogicNodes[m_Node.ConnectedIndex];
-            var taskComponents = m_BehaviorTree.World.EntityManager.GetBuffer<TaskComponent>(m_BehaviorTree.Entity);
-            var taskComponent = taskComponents[connectedNode.RuntimeIndex];
-            if (taskComponent.Status == TaskStatus.Success) {
+            ILogicNode connectedNode = m_GraphWindow.Graph.LogicNodes[m_Node.ConnectedIndex];
+            DynamicBuffer<TaskComponent> taskComponents = m_BehaviorTree.World.EntityManager.GetBuffer<TaskComponent>(m_BehaviorTree.Entity);
+            TaskComponent taskComponent = taskComponents[connectedNode.RuntimeIndex];
+            if (taskComponent.Status == TaskStatus.Success)
+            {
                 m_ExecutionStatusIcon.image = m_SuccessIcon;
-            } else if (taskComponent.Status == TaskStatus.Failure) {
+            }
+            else if (taskComponent.Status == TaskStatus.Failure)
+            {
                 m_ExecutionStatusIcon.image = m_FailureIcon;
-            } else if (m_ExecutionStatusIcon.image != null) {
+            }
+            else if (m_ExecutionStatusIcon.image != null)
+            {
                 m_ExecutionStatusIcon.image = null;
             }
 
-            if (m_ExecutionStatusIcon.image != null) {
+            if (m_ExecutionStatusIcon.image != null)
+            {
                 m_ExecutionStatusIcon.style.width = m_ExecutionStatusIcon.image.width;
             }
 
-            if (taskComponent.Status == TaskStatus.Running || taskComponent.Status == TaskStatus.Queued) {
-                m_EventNode.SetColorState(ColorState.Active, 0);
-            } else {
-                var nodeIndex = m_GraphWindow.GraphEditor.GetNodeIndex(m_Node);
+            if (taskComponent.Status == TaskStatus.Running || taskComponent.Status == TaskStatus.Queued)
+            {
+                m_EventNode.SetColorState(ColorState.Active);
+            }
+            else
+            {
+                ushort nodeIndex = m_GraphWindow.GraphEditor.GetNodeIndex(m_Node);
                 m_EventNode.SetColorState(m_GraphWindow.Graph.IsNodeEnabled(false, nodeIndex) ? ColorState.Default : ColorState.Disabled, 0.5f);
             }
         }

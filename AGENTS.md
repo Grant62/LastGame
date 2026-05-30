@@ -93,13 +93,16 @@ Unity.exe -quit -batchmode -buildWindowsPlayer "Build/Game.exe" -projectPath "E:
 
 | 类别 | 规范 | 示例 |
 |---|---|---|
-| 私有字段 | `m` 前缀（QFramework 惯例） | `private int mCount;` |
+| 私有字段（非序列化） | `m` 前缀 + PascalCase | `private int mCount;` |
+| 私有字段（序列化） | `[SerializeField] private` + camelCase | `[SerializeField] private float moveSpeed;` |
 | 公有字段 | PascalCase，优先使用属性 | `public int Health { get; set; }` |
 | 局部变量 | camelCase | `playerCount` |
 | 方法参数 | camelCase | `playerData` |
 | 常量 | PascalCase | `public const int MaxCount = 10;` |
 | 静态只读 | PascalCase | `public static readonly string Path;` |
 | `var` | 右侧类型明显时可用，原始类型不用 | `var list = new List<int>();`（不用 `var i = 0;`） |
+
+> **序列化字段 vs 私有字段：** `[SerializeField] private` 字段用 camelCase（无 `m` 前缀），普通 `private` 字段用 `m` + PascalCase。区分标准：Inspector 可见 vs 不可见。
 
 ### 命名规范
 
@@ -109,14 +112,14 @@ Unity.exe -quit -batchmode -buildWindowsPlayer "Build/Game.exe" -projectPath "E:
 | 接口 | PascalCase，`I` 前缀 | `ISaveable`、`IController` |
 | 方法 | PascalCase | `OnInit()`、`Execute()` |
 | 属性 | PascalCase | `Instance`、`Health` |
-| 私有字段 | `m` + PascalCase | `mInstance`、`mDataList` |
+| 私有字段（非序列化） | `m` + PascalCase | `mInstance`、`mDataList` |
+| 私有字段（序列化） | `[SerializeField] private` + camelCase | `[SerializeField] private float moveSpeed;` |
 | 局部变量 | camelCase | `playerCount` |
 | 方法参数 | camelCase | `playerData` |
 | 常量 | PascalCase | `MaxHealth` |
 | 枚举 | PascalCase，单数 | `PlayerState`、`DamageType` |
 | 枚举值 | PascalCase | `Idle`、`Walking` |
 | 事件 / 委托 | PascalCase | `OnHealthChanged` |
-| 序列化字段 | `[SerializeField] private` + camelCase | `[SerializeField] private float moveSpeed` |
 
 ---
 

@@ -38,7 +38,7 @@ namespace Cysharp.Threading.Tasks.Linq
         {
             private readonly int start;
             private readonly int end;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             public _Range(int start, int end, CancellationToken cancellationToken)
             {

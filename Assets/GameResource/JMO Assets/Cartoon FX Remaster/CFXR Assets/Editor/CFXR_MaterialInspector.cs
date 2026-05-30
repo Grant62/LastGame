@@ -9,6 +9,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
 // Custom material inspector for Stylized FX shaders
@@ -241,7 +242,7 @@ namespace CartoonFX
                 if (ShowNextProperty)
                 {
 #if UNITY_6000_1_OR_NEWER
-					if((properties[i].propertyFlags & (UnityEngine.Rendering.ShaderPropertyFlags.HideInInspector | UnityEngine.Rendering.ShaderPropertyFlags.PerRendererData)) == UnityEngine.Rendering.ShaderPropertyFlags.None)
+                    if ((properties[i].propertyFlags & (ShaderPropertyFlags.HideInInspector | ShaderPropertyFlags.PerRendererData)) == ShaderPropertyFlags.None)
 #else
                     if ((properties[i].flags & (MaterialProperty.PropFlags.HideInInspector | MaterialProperty.PropFlags.PerRendererData)) == MaterialProperty.PropFlags.None)
 #endif
@@ -282,7 +283,7 @@ namespace CartoonFX
         private static bool IsPropertyTypeSuitable(MaterialProperty prop)
         {
 #if UNITY_6000_1_OR_NEWER
-			return prop.propertyType == UnityEngine.Rendering.ShaderPropertyType.Float || prop.propertyType == UnityEngine.Rendering.ShaderPropertyType.Range;
+            return prop.propertyType == ShaderPropertyType.Float || prop.propertyType == ShaderPropertyType.Range;
 #else
             return prop.type == MaterialProperty.PropType.Float || prop.type == MaterialProperty.PropType.Range;
 #endif
@@ -357,7 +358,7 @@ namespace CartoonFX
         private static bool IsPropertyTypeSuitable(MaterialProperty prop)
         {
 #if UNITY_6000_1_OR_NEWER
-			return prop.propertyType == UnityEngine.Rendering.ShaderPropertyType.Float || prop.propertyType == UnityEngine.Rendering.ShaderPropertyType.Range;
+            return prop.propertyType == ShaderPropertyType.Float || prop.propertyType == ShaderPropertyType.Range;
 #else
             return prop.type == MaterialProperty.PropType.Float || prop.type == MaterialProperty.PropType.Range;
 #endif

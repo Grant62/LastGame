@@ -61,7 +61,7 @@ namespace Cysharp.Threading.Tasks.Triggers
             private static readonly Action<object> cancellationCallback = CancellationCallback;
 
             private readonly AsyncTriggerBase<T> parent;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
             private CancellationTokenRegistration registration;
             private bool called;
             private bool isDisposed;
@@ -183,7 +183,7 @@ namespace Cysharp.Threading.Tasks.Triggers
         private readonly AsyncTriggerBase<T> trigger;
 
         private readonly CancellationToken cancellationToken;
-        private CancellationTokenRegistration registration;
+        private readonly CancellationTokenRegistration registration;
         private bool isDisposed;
         private readonly bool callOnce;
 

@@ -1,3 +1,7 @@
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,12 +10,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.Math
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
-    [Opsive.Shared.Utility.Description("Set the Vector2 value.")]
-    [Shared.Utility.Category("Math")]
+    [Description("Set the Vector2 value.")]
+    [Category("Math")]
     public class SetVector2 : Action
     {
         [Tooltip("The Vector2 value to set.")]
@@ -20,7 +20,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.Math
         [RequireShared] [SerializeField] protected SharedVariable<Vector2> m_StoreResult;
 
         /// <summary>
-        /// Executes the task.
+        ///     Executes the task.
         /// </summary>
         /// <returns>The execution status of the task.</returns>
         public override TaskStatus OnUpdate()

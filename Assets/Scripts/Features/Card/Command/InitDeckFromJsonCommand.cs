@@ -21,7 +21,7 @@ namespace Features.Card.Command
             CardAmountEntryList list = JsonUtility.FromJson<CardAmountEntryList>(
                 "{\"entries\":" + mJson.text + "}");
 
-            if (list == null || list.entries == null || list.entries.Length == 0)
+            if (list?.entries == null || list.entries.Length == 0)
             {
                 Debug.LogWarning("Deck JSON is empty");
                 return;

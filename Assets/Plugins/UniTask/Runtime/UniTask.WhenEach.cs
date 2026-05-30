@@ -96,7 +96,7 @@ namespace Cysharp.Threading.Tasks
         private sealed class Enumerator : IUniTaskAsyncEnumerator<WhenEachResult<T>>
         {
             private readonly IEnumerable<UniTask<T>> source;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private Channel<WhenEachResult<T>> channel;
             private IUniTaskAsyncEnumerator<WhenEachResult<T>> channelEnumerator;

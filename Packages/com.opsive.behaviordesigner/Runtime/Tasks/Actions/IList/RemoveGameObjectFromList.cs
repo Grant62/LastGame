@@ -1,3 +1,8 @@
+using System.Collections.Generic;
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,20 +11,15 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.UnityObjects
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using System.Collections.Generic;
-    using UnityEngine;
-
-    [Opsive.Shared.Utility.Description("Removes the GameObject from the list.")]
-    [Shared.Utility.Category("Lists")]
+    [Description("Removes the GameObject from the list.")]
+    [Category("Lists")]
     public class RemoveGameObjectFromList : TargetGameObjectAction
     {
         [Tooltip("The list of possible GameObjects.")]
         [RequireShared] [SerializeField] protected SharedVariable<List<GameObject>> m_StoreResult;
 
         /// <summary>
-        /// Executes the task.
+        ///     Executes the task.
         /// </summary>
         /// <returns>The execution status of the task.</returns>
         public override TaskStatus OnUpdate()

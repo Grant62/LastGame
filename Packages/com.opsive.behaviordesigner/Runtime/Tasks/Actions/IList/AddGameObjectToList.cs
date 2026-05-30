@@ -1,3 +1,8 @@
+using System.Collections.Generic;
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,13 +11,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.UnityObjects
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using System.Collections.Generic;
-    using UnityEngine;
-
-    [Opsive.Shared.Utility.Description("Adds the GameObject to the list.")]
-    [Shared.Utility.Category("Lists")]
+    [Description("Adds the GameObject to the list.")]
+    [Category("Lists")]
     public class AddGameObjectToList : TargetGameObjectAction
     {
         [Tooltip("The list of possible GameObjects.")]
@@ -21,12 +21,13 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.UnityObjects
         [SerializeField] protected SharedVariable<bool> m_AllowDuplicates = true;
 
         /// <summary>
-        /// Executes the task.
+        ///     Executes the task.
         /// </summary>
         /// <returns>The execution status of the task.</returns>
         public override TaskStatus OnUpdate()
         {
-            if (!m_AllowDuplicates.Value && m_StoreResult.Value.Contains(m_ResolvedGameObject)) {
+            if (!m_AllowDuplicates.Value && m_StoreResult.Value.Contains(m_ResolvedGameObject))
+            {
                 return TaskStatus.Failure;
             }
 

@@ -367,7 +367,7 @@ namespace Cysharp.Threading.Tasks
                 private readonly Action<object> CancellationCallback2Delegate = CancellationCallback2;
 
                 private readonly SingleConsumerUnboundedChannelReader parent;
-                private CancellationToken cancellationToken1;
+                private readonly CancellationToken cancellationToken1;
                 private CancellationToken cancellationToken2;
                 private CancellationTokenRegistration cancellationTokenRegistration1;
                 private CancellationTokenRegistration cancellationTokenRegistration2;

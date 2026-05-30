@@ -28,7 +28,7 @@ namespace Cysharp.Threading.Tasks.Linq
         private class _Throw : IUniTaskAsyncEnumerator<TValue>
         {
             private readonly Exception exception;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             public _Throw(Exception exception, CancellationToken cancellationToken)
             {

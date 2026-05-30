@@ -10,11 +10,12 @@
 #pragma warning disable
 #endif
 
-using UnityEngine;
-using UnityEditor.AddressableAssets;
+using System.Collections.Generic;
 using Sirenix.OdinInspector.Editor.Validation;
-using UnityEngine.AddressableAssets;
 using Sirenix.OdinInspector.Modules.Addressables.Editor;
+using UnityEditor.AddressableAssets;
+using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 #if ODIN_VALIDATOR_3_1
 [assembly: RegisterValidationRule(typeof(AssetLabelReferenceValidator), Description =
@@ -28,14 +29,14 @@ using Sirenix.OdinInspector.Modules.Addressables.Editor;
 
 namespace Sirenix.OdinInspector.Modules.Addressables.Editor
 {
-	/// <summary>
-	/// Validator for AssetLabelReference values.
-	/// </summary>
-	public class AssetLabelReferenceValidator : ValueValidator<AssetLabelReference>
+    /// <summary>
+    ///     Validator for AssetLabelReference values.
+    /// </summary>
+    public class AssetLabelReferenceValidator : ValueValidator<AssetLabelReference>
     {
         [Tooltip("If enabled, the validator will display an error message if the AssetLabelReference is not set. " +
-            "If disabled, the validator will only display an error message if the AssetLabelReference is set, but the " +
-            "assigned label does not exist.")]
+                 "If disabled, the validator will only display an error message if the AssetLabelReference is set, but the " +
+                 "assigned label does not exist.")]
         [ToggleLeft]
         public bool RequiredByDefault;
 
@@ -45,11 +46,11 @@ namespace Sirenix.OdinInspector.Modules.Addressables.Editor
 
         protected override void Initialize()
         {
-            var requiredAttr = this.Property.GetAttribute<RequiredAttribute>();
+            RequiredAttribute requiredAttr = Property.GetAttribute<RequiredAttribute>();
 
-            this.requiredMessage = requiredAttr?.ErrorMessage ?? $"<b>{this.Property.NiceName}</b> is required.";
+            requiredMessage = requiredAttr?.ErrorMessage ?? $"<b>{Property.NiceName}</b> is required.";
 
-            if (this.RequiredByDefault)
+            if (RequiredByDefault)
             {
                 required = true;
                 optional = Property.GetAttribute<OptionalAttribute>() != null;
@@ -64,27 +65,27 @@ namespace Sirenix.OdinInspector.Modules.Addressables.Editor
         protected override void Validate(ValidationResult result)
         {
             // If the Addressables settings have not been created, nothing else is really valid.
-            if (AddressableAssetSettingsDefaultObject.SettingsExists == false)
+            if (!AddressableAssetSettingsDefaultObject.SettingsExists)
             {
                 result.AddError("Addressables Settings have not been created.")
                     .WithButton("Open Settings Window", () => OdinAddressableUtility.OpenGroupsWindow());
                 return;
             }
 
-            var value = Value?.labelString;
+            string value = Value?.labelString;
 
             if (string.IsNullOrEmpty(value))
             {
-                if (optional == false && required) // Optional == false & required? Nice.
+                if (!optional && required) // Optional == false & required? Nice.
                 {
                     result.AddError(requiredMessage).EnableRichText();
                 }
             }
             else
             {
-                var labels = AddressableAssetSettingsDefaultObject.Settings.GetLabels();
+                List<string> labels = AddressableAssetSettingsDefaultObject.Settings.GetLabels();
 
-                if (labels.Contains(value) == false)
+                if (!labels.Contains(value))
                 {
                     result.AddError($"Label <i>{value}</i> has not been created as a label.")
                         .WithButton("Open Label Settings", () => OdinAddressableUtility.OpenLabelsWindow());
@@ -92,7 +93,6 @@ namespace Sirenix.OdinInspector.Modules.Addressables.Editor
             }
         }
     }
-
 }
 
 #endif

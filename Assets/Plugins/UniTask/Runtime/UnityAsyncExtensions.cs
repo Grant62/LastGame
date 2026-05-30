@@ -26,12 +26,12 @@ namespace Cysharp.Threading.Tasks
 
         public static UniTask WithCancellation(this AsyncOperation asyncOperation, CancellationToken cancellationToken)
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken);
         }
 
         public static UniTask WithCancellation(this AsyncOperation asyncOperation, CancellationToken cancellationToken, bool cancelImmediately)
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
         }
 
         public static UniTask ToUniTask(this AsyncOperation asyncOperation, IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update,
@@ -254,12 +254,12 @@ namespace Cysharp.Threading.Tasks
 
         public static UniTask<Object> WithCancellation(this ResourceRequest asyncOperation, CancellationToken cancellationToken)
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken);
         }
 
         public static UniTask<Object> WithCancellation(this ResourceRequest asyncOperation, CancellationToken cancellationToken, bool cancelImmediately)
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
         }
 
         public static UniTask<Object> ToUniTask(this ResourceRequest asyncOperation, IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update,
@@ -492,12 +492,12 @@ namespace Cysharp.Threading.Tasks
 
         public static UniTask<Object> WithCancellation(this AssetBundleRequest asyncOperation, CancellationToken cancellationToken)
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken);
         }
 
         public static UniTask<Object> WithCancellation(this AssetBundleRequest asyncOperation, CancellationToken cancellationToken, bool cancelImmediately)
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
         }
 
         public static UniTask<Object> ToUniTask(this AssetBundleRequest asyncOperation, IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update,
@@ -732,12 +732,12 @@ namespace Cysharp.Threading.Tasks
 
         public static UniTask<AssetBundle> WithCancellation(this AssetBundleCreateRequest asyncOperation, CancellationToken cancellationToken)
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken);
         }
 
         public static UniTask<AssetBundle> WithCancellation(this AssetBundleCreateRequest asyncOperation, CancellationToken cancellationToken, bool cancelImmediately)
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
         }
 
         public static UniTask<AssetBundle> ToUniTask(this AssetBundleCreateRequest asyncOperation, IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update,
@@ -972,12 +972,12 @@ namespace Cysharp.Threading.Tasks
 
         public static UniTask<UnityWebRequest> WithCancellation(this UnityWebRequestAsyncOperation asyncOperation, CancellationToken cancellationToken)
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken);
         }
 
         public static UniTask<UnityWebRequest> WithCancellation(this UnityWebRequestAsyncOperation asyncOperation, CancellationToken cancellationToken, bool cancelImmediately)
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
         }
 
         public static UniTask<UnityWebRequest> ToUniTask(this UnityWebRequestAsyncOperation asyncOperation, IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update,

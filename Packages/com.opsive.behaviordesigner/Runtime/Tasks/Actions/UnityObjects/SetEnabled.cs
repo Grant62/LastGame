@@ -1,3 +1,7 @@
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,12 +10,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.UnityObjects
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
-    [Opsive.Shared.Utility.Description("Enables or disables the specified MonoBehaviour.")]
-    [Shared.Utility.Category("Unity")]
+    [Description("Enables or disables the specified MonoBehaviour.")]
+    [Category("Unity")]
     public class SetEnabled : Action
     {
         [Tooltip("Should the MonoBehaviour be enabled?")]
@@ -20,14 +20,16 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.UnityObjects
         [SerializeField] protected SharedVariable<MonoBehaviour> m_MonoBehaviour;
 
         /// <summary>
-        /// Executes the task.
+        ///     Executes the task.
         /// </summary>
         /// <returns>The execution status of the task.</returns>
         public override TaskStatus OnUpdate()
         {
-            if (m_MonoBehaviour.Value == null) {
+            if (m_MonoBehaviour.Value == null)
+            {
                 return TaskStatus.Failure;
             }
+
             m_MonoBehaviour.Value.enabled = m_Enable.Value;
             return TaskStatus.Success;
         }

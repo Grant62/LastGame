@@ -1,3 +1,8 @@
+using System.Collections.Generic;
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,13 +11,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.UnityObjects
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using System.Collections.Generic;
-    using UnityEngine;
-
-    [Opsive.Shared.Utility.Description("Selects the GameObject from the list.")]
-    [Shared.Utility.Category("Lists")]
+    [Description("Selects the GameObject from the list.")]
+    [Category("Lists")]
     public class SelectGameObjectFromList : Action
     {
         [Tooltip("The list of possible GameObjects.")]
@@ -23,12 +23,13 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.UnityObjects
         [RequireShared] [SerializeField] protected SharedVariable<GameObject> m_StoreResult;
 
         /// <summary>
-        /// Executes the task.
+        ///     Executes the task.
         /// </summary>
         /// <returns>The execution status of the task.</returns>
         public override TaskStatus OnUpdate()
         {
-            if (m_GameObjects.Value == null || m_ElementIndex.Value < 0 || m_ElementIndex.Value > m_GameObjects.Value.Count) {
+            if (m_GameObjects.Value == null || m_ElementIndex.Value < 0 || m_ElementIndex.Value > m_GameObjects.Value.Count)
+            {
                 return TaskStatus.Failure;
             }
 

@@ -8,15 +8,15 @@
     "amount": 1
   },
   {
-    "cardId": 3,
-    "amount": 1
+    "cardId": 12001,
+    "amount": 3
   },
   {
-    "cardId": 4,
-    "amount": 1
+    "cardId": 12002,
+    "amount": 3
   },
   {
-    "cardId": 5,
-    "amount": 1
+    "cardId": 12003,
+    "amount": 3
   }
 ]

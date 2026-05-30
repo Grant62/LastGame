@@ -1,4 +1,14 @@
-﻿#if GRAPH_DESIGNER
+﻿using System;
+using Opsive.BehaviorDesigner.Runtime.Components;
+using Opsive.BehaviorDesigner.Runtime.Utility;
+using Opsive.GraphDesigner.Runtime;
+using Opsive.Shared.Utility;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEngine;
+
+#if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
 /// Copyright (c) Opsive. All Rights Reserved.
@@ -6,23 +16,13 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Composites
 {
-    using Opsive.BehaviorDesigner.Runtime.Components;
-    using Opsive.BehaviorDesigner.Runtime.Utility;
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.Shared.Utility;
-    using System;
-    using Unity.Burst;
-    using Unity.Collections;
-    using Unity.Entities;
-    using UnityEngine;
-
     /// <summary>
-    /// A node representation of the priority selector task.
+    ///     A node representation of the priority selector task.
     /// </summary>
     [NodeIcon("cea0f2b6cee06a742bb35dcc40202e8e", "744afc2640950e045961296f1d5800d7")]
-    [Opsive.Shared.Utility.Description("Similar to the selector task, the priority selector task will return success as soon as a child task returns success. " +
-                     "Instead of running the tasks sequentially from left to right within the tree, the priority selector will ask the task what its priority is to determine the order. " +
-                     "The higher priority tasks have a higher chance at being run first.")]
+    [Description("Similar to the selector task, the priority selector task will return success as soon as a child task returns success. " +
+                 "Instead of running the tasks sequentially from left to right within the tree, the priority selector will ask the task what its priority is to determine the order. " +
+                 "The higher priority tasks have a higher chance at being run first.")]
     public class PrioritySelector : ECSCompositeTask<PrioritySelectorTaskSystem, PrioritySelectorComponent>, IParentNode, ISavableTask, ICloneable
     {
         private ushort m_ComponentIndex;
@@ -30,19 +30,19 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Composites
         public override ComponentType Flag { get => typeof(PrioritySelectorFlag); }
 
         /// <summary>
-        /// Returns a new TBufferElement for use by the system.
+        ///     Returns a new TBufferElement for use by the system.
         /// </summary>
         /// <returns>A new TBufferElement for use by the system.</returns>
         public override PrioritySelectorComponent GetBufferElement()
         {
-            return new PrioritySelectorComponent()
+            return new PrioritySelectorComponent
             {
-                Index = RuntimeIndex,
+                Index = RuntimeIndex
             };
         }
 
         /// <summary>
-        /// Adds the IBufferElementData to the entity.
+        ///     Adds the IBufferElementData to the entity.
         /// </summary>
         /// <param name="world">The world that the entity exists in.</param>
         /// <param name="entity">The entity that the IBufferElementData should be assigned to.</param>
@@ -55,58 +55,65 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Composites
         }
 
         /// <summary>
-        /// Specifies the type of reflection that should be used to save the task.
+        ///     Specifies the type of reflection that should be used to save the task.
         /// </summary>
-        /// <param name="index">The index of the sub-task. This is used for the task set allowing each contained task to have their own save type.</param>
+        /// <param name="index">
+        ///     The index of the sub-task. This is used for the task set allowing each contained task to have their
+        ///     own save type.
+        /// </param>
         public MemberVisibility GetSaveReflectionType(int index) { return MemberVisibility.None; }
 
         /// <summary>
-        /// Returns the current task state.
+        ///     Returns the current task state.
         /// </summary>
         /// <param name="world">The DOTS world.</param>
         /// <param name="entity">The DOTS entity.</param>
         /// <returns>The current task state.</returns>
         public object Save(World world, Entity entity)
         {
-            var prioritySelectorComponents = world.EntityManager.GetBuffer<PrioritySelectorComponent>(entity);
-            var prioritySelectorComponent = prioritySelectorComponents[m_ComponentIndex];
+            DynamicBuffer<PrioritySelectorComponent> prioritySelectorComponents = world.EntityManager.GetBuffer<PrioritySelectorComponent>(entity);
+            PrioritySelectorComponent prioritySelectorComponent = prioritySelectorComponents[m_ComponentIndex];
 
             // Save the active child and array order.
-            var saveData = new object[2];
+            object[] saveData = new object[2];
             saveData[0] = prioritySelectorComponent.ActiveRelativeChildIndex;
-            if (prioritySelectorComponent.Priorities.IsCreated) {
+            if (prioritySelectorComponent.Priorities.IsCreated)
+            {
                 saveData[1] = prioritySelectorComponent.Priorities.ToArray();
             }
+
             return saveData;
         }
 
         /// <summary>
-        /// Loads the previous task state.
+        ///     Loads the previous task state.
         /// </summary>
         /// <param name="saveData">The previous task state.</param>
         /// <param name="world">The DOTS world.</param>
         /// <param name="entity">The DOTS entity.</param>
         public void Load(object saveData, World world, Entity entity)
         {
-            var prioritySelectorComponents = world.EntityManager.GetBuffer<PrioritySelectorComponent>(entity);
-            var prioritySelectorComponent = prioritySelectorComponents[m_ComponentIndex];
+            DynamicBuffer<PrioritySelectorComponent> prioritySelectorComponents = world.EntityManager.GetBuffer<PrioritySelectorComponent>(entity);
+            PrioritySelectorComponent prioritySelectorComponent = prioritySelectorComponents[m_ComponentIndex];
 
             // saveData is the active child and array order.
-            var taskSaveData = (object[])saveData;
+            object[] taskSaveData = (object[])saveData;
             prioritySelectorComponent.ActiveRelativeChildIndex = (ushort)taskSaveData[0];
-            if (taskSaveData[1] != null) {
+            if (taskSaveData[1] != null)
+            {
                 prioritySelectorComponent.Priorities = new NativeArray<PrioritySelectorComponent.PriorityItem>((PrioritySelectorComponent.PriorityItem[])taskSaveData[1], Allocator.Persistent);
             }
+
             prioritySelectorComponents[m_ComponentIndex] = prioritySelectorComponent;
         }
 
         /// <summary>
-        /// Creates a deep clone of the component.
+        ///     Creates a deep clone of the component.
         /// </summary>
         /// <returns>A deep clone of the component.</returns>
         public object Clone()
         {
-            var clone = Activator.CreateInstance<PrioritySelector>();
+            PrioritySelector clone = Activator.CreateInstance<PrioritySelector>();
             clone.Index = Index;
             clone.ParentIndex = ParentIndex;
             clone.SiblingIndex = SiblingIndex;
@@ -115,7 +122,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Composites
     }
 
     /// <summary>
-    /// The DOTS data structure for the PrioritySelector class.
+    ///     The DOTS data structure for the PrioritySelector class.
     /// </summary>
     public struct PrioritySelectorComponent : IBufferElementData
     {
@@ -127,7 +134,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Composites
         public NativeArray<PriorityItem> Priorities;
 
         /// <summary>
-        /// Joins the task index with the priority value.
+        ///     Joins the task index with the priority value.
         /// </summary>
         public struct PriorityItem : IComparable<PriorityItem>
         {
@@ -139,7 +146,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Composites
             public float Value;
 
             /// <summary>
-            /// Compares the current PriorityItem to the other PriorityItem.
+            ///     Compares the current PriorityItem to the other PriorityItem.
             /// </summary>
             /// <param name="other">The other PriorityItem.</param>
             /// <returns>The comparison between the current PriorityItem and the other PriorityItem.</returns>
@@ -152,7 +159,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Composites
     }
 
     /// <summary>
-    /// DOTS structure that contains the most recently priority of the task.
+    ///     DOTS structure that contains the most recently priority of the task.
     /// </summary>
     public struct PriorityValueComponent : IBufferElementData
     {
@@ -163,64 +170,74 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Composites
     }
 
     /// <summary>
-    /// A DOTS tag indicating when a PrioritySelector node is active.
+    ///     A DOTS tag indicating when a PrioritySelector node is active.
     /// </summary>
     public struct PrioritySelectorFlag : IComponentData, IEnableableComponent { }
 
     /// <summary>
-    /// Runs the PrioritySelector logic.
+    ///     Runs the PrioritySelector logic.
     /// </summary>
     [DisableAutoCreation]
     public partial struct PrioritySelectorTaskSystem : ISystem
     {
         /// <summary>
-        /// Updates the logic.
+        ///     Updates the logic.
         /// </summary>
         /// <param name="state">The current state of the system.</param>
         [BurstCompile]
         private void OnUpdate(ref SystemState state)
         {
-            var hasPriorityValueComponent = false;
-            foreach (var (branchComponents, taskComponents, prioritySelectorComponents, priorityValueComponents) in
-                SystemAPI.Query<DynamicBuffer<BranchComponent>, DynamicBuffer<TaskComponent>, DynamicBuffer<PrioritySelectorComponent>, DynamicBuffer<PriorityValueComponent>>().WithAll<PrioritySelectorFlag, EvaluateFlag>()) {
-
+            bool hasPriorityValueComponent = false;
+            foreach ((DynamicBuffer<BranchComponent> branchComponents, DynamicBuffer<TaskComponent> taskComponents, DynamicBuffer<PrioritySelectorComponent> prioritySelectorComponents,
+                         DynamicBuffer<PriorityValueComponent> priorityValueComponents) in
+                     SystemAPI.Query<DynamicBuffer<BranchComponent>, DynamicBuffer<TaskComponent>, DynamicBuffer<PrioritySelectorComponent>, DynamicBuffer<PriorityValueComponent>>()
+                         .WithAll<PrioritySelectorFlag, EvaluateFlag>())
+            {
                 hasPriorityValueComponent = true;
-                for (int i = 0; i < prioritySelectorComponents.Length; ++i) {
-                    var prioritySelectorComponent = prioritySelectorComponents[i];
-                    var taskComponent = taskComponents[prioritySelectorComponent.Index];
-                    var branchComponent = branchComponents[taskComponent.BranchIndex];
+                for (int i = 0; i < prioritySelectorComponents.Length; ++i)
+                {
+                    PrioritySelectorComponent prioritySelectorComponent = prioritySelectorComponents[i];
+                    TaskComponent taskComponent = taskComponents[prioritySelectorComponent.Index];
+                    BranchComponent branchComponent = branchComponents[taskComponent.BranchIndex];
 
                     // Do not continue if there will be an interrupt.
-                    if (branchComponent.InterruptType != InterruptType.None) {
+                    if (branchComponent.InterruptType != InterruptType.None)
+                    {
                         continue;
                     }
 
-                    var prioritySelectorComponentsBuffer = prioritySelectorComponents;
-                    var taskComponentsBuffer = taskComponents;
-                    var branchComponentBuffer = branchComponents;
-                    if (taskComponent.Status == TaskStatus.Queued) {
+                    DynamicBuffer<PrioritySelectorComponent> prioritySelectorComponentsBuffer = prioritySelectorComponents;
+                    DynamicBuffer<TaskComponent> taskComponentsBuffer = taskComponents;
+                    DynamicBuffer<BranchComponent> branchComponentBuffer = branchComponents;
+                    if (taskComponent.Status == TaskStatus.Queued)
+                    {
                         taskComponent.Status = TaskStatus.Running;
                         taskComponentsBuffer[taskComponent.Index] = taskComponent;
 
                         // Initialize the priority value array.
                         NativeArray<PrioritySelectorComponent.PriorityItem> priorities;
-                        if (prioritySelectorComponent.Priorities.Length == 0) {
-                            var childCount = TraversalUtility.GetImmediateChildCount(ref taskComponent, ref taskComponentsBuffer);
+                        if (prioritySelectorComponent.Priorities.Length == 0)
+                        {
+                            int childCount = TraversalUtility.GetImmediateChildCount(ref taskComponent, ref taskComponentsBuffer);
                             priorities = new NativeArray<PrioritySelectorComponent.PriorityItem>(childCount, Allocator.Persistent);
                             // Match the PriorityValueComponent with the child index.
-                            var childIndex = (ushort)(taskComponent.Index + 1);
-                            for (ushort j = 0; j < childCount; ++j) {
-                                priorities[j] = new PrioritySelectorComponent.PriorityItem() { TaskIndex = childIndex, PriorityValueIndex = ushort.MaxValue, Value = float.MinValue };
-                                for (ushort k = 0; k < priorityValueComponents.Length; ++k) {
-                                    var priorityValueComponent = priorityValueComponents[k];
+                            ushort childIndex = (ushort)(taskComponent.Index + 1);
+                            for (ushort j = 0; j < childCount; ++j)
+                            {
+                                priorities[j] = new PrioritySelectorComponent.PriorityItem { TaskIndex = childIndex, PriorityValueIndex = ushort.MaxValue, Value = float.MinValue };
+                                for (ushort k = 0; k < priorityValueComponents.Length; ++k)
+                                {
+                                    PriorityValueComponent priorityValueComponent = priorityValueComponents[k];
 
-                                    if (priorityValueComponent.Index == childIndex) {
-                                        var priorityItem = priorities[j];
+                                    if (priorityValueComponent.Index == childIndex)
+                                    {
+                                        PrioritySelectorComponent.PriorityItem priorityItem = priorities[j];
                                         priorityItem.PriorityValueIndex = k;
                                         priorities[j] = priorityItem;
                                         break;
                                     }
                                 }
+
                                 childIndex = taskComponents[childIndex].SiblingIndex;
                             }
 
@@ -230,17 +247,20 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Composites
                         // Determine the child order when the task starts.
                         priorities = prioritySelectorComponent.Priorities;
 
-                        for (ushort j = 0; j < priorities.Length; ++j) {
-                            var valueIndex = priorities[j].PriorityValueIndex;
+                        for (ushort j = 0; j < priorities.Length; ++j)
+                        {
+                            ushort valueIndex = priorities[j].PriorityValueIndex;
                             // The task may not have a matching PriorityValueComponent.
-                            if (valueIndex == ushort.MaxValue) {
+                            if (valueIndex == ushort.MaxValue)
+                            {
                                 continue;
                             }
 
-                            var priorityItem = priorities[j];
+                            PrioritySelectorComponent.PriorityItem priorityItem = priorities[j];
                             priorityItem.Value = priorityValueComponents[valueIndex].Value;
                             priorities[j] = priorityItem;
                         }
+
                         priorities.Sort();
                         prioritySelectorComponent.Priorities = priorities;
                         prioritySelectorComponentsBuffer[i] = prioritySelectorComponent;
@@ -250,23 +270,27 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Composites
                         branchComponentBuffer[taskComponent.BranchIndex] = branchComponent;
 
                         // Start the child.
-                        var nextChildTaskComponent = taskComponents[branchComponent.NextIndex];
+                        TaskComponent nextChildTaskComponent = taskComponents[branchComponent.NextIndex];
                         nextChildTaskComponent.Status = TaskStatus.Queued;
                         taskComponentsBuffer[branchComponent.NextIndex] = nextChildTaskComponent;
-                    } else if (taskComponent.Status != TaskStatus.Running) {
+                    }
+                    else if (taskComponent.Status != TaskStatus.Running)
+                    {
                         continue;
                     }
 
                     // The prioritySelector task is currently active. Check the first child.
-                    var childTaskComponent = taskComponents[prioritySelectorComponent.Priorities[prioritySelectorComponent.ActiveRelativeChildIndex].TaskIndex];
-                    if (childTaskComponent.Status == TaskStatus.Queued || childTaskComponent.Status == TaskStatus.Running) {
+                    TaskComponent childTaskComponent = taskComponents[prioritySelectorComponent.Priorities[prioritySelectorComponent.ActiveRelativeChildIndex].TaskIndex];
+                    if (childTaskComponent.Status == TaskStatus.Queued || childTaskComponent.Status == TaskStatus.Running)
+                    {
                         // The child should keep running.
                         continue;
                     }
 
                     // Switch to the next highest priority. If no more priority values exist the task should act as a normal selector.
-                    if (prioritySelectorComponent.ActiveRelativeChildIndex == prioritySelectorComponent.Priorities.Length - 1 || 
-                        childTaskComponent.Status == TaskStatus.Success) {
+                    if (prioritySelectorComponent.ActiveRelativeChildIndex == prioritySelectorComponent.Priorities.Length - 1 ||
+                        childTaskComponent.Status == TaskStatus.Success)
+                    {
                         // There are no more children or the child succeeded. The selector task should end.
                         taskComponent.Status = childTaskComponent.Status;
                         prioritySelectorComponent.ActiveRelativeChildIndex = 0;
@@ -274,39 +298,45 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Composites
 
                         branchComponent.NextIndex = taskComponent.ParentIndex;
                         branchComponentBuffer[taskComponent.BranchIndex] = branchComponent;
-                    } else {
+                    }
+                    else
+                    {
                         // The child task returned failure. Move onto the next task. 
                         prioritySelectorComponent.ActiveRelativeChildIndex++;
-                        var nextIndex = prioritySelectorComponent.Priorities[prioritySelectorComponent.ActiveRelativeChildIndex].TaskIndex;
-                        var nextTaskComponent = taskComponents[nextIndex];
+                        ushort nextIndex = prioritySelectorComponent.Priorities[prioritySelectorComponent.ActiveRelativeChildIndex].TaskIndex;
+                        TaskComponent nextTaskComponent = taskComponents[nextIndex];
                         nextTaskComponent.Status = TaskStatus.Queued;
                         taskComponentsBuffer[nextIndex] = nextTaskComponent;
 
                         branchComponent.NextIndex = nextIndex;
                         branchComponentBuffer[taskComponent.BranchIndex] = branchComponent;
                     }
+
                     prioritySelectorComponentsBuffer[i] = prioritySelectorComponent;
                 }
             }
 
             // Special case where the PrioritySelectorComponent has no PriorityValueComponent children.
-            if (!hasPriorityValueComponent) {
-                foreach (var (prioritySelectorComponents, taskComponents, branchComponents) in
-                    SystemAPI.Query<DynamicBuffer<PrioritySelectorComponent>, DynamicBuffer<TaskComponent>, DynamicBuffer<BranchComponent>>().WithAll<PrioritySelectorFlag, EvaluateFlag>()) {
-
-                    for (int i = 0; i < prioritySelectorComponents.Length; ++i) {
-                        var prioritySelectorComponent = prioritySelectorComponents[i];
-                        var taskComponent = taskComponents[prioritySelectorComponent.Index];
+            if (!hasPriorityValueComponent)
+            {
+                foreach ((DynamicBuffer<PrioritySelectorComponent> prioritySelectorComponents, DynamicBuffer<TaskComponent> taskComponents, DynamicBuffer<BranchComponent> branchComponents) in
+                         SystemAPI.Query<DynamicBuffer<PrioritySelectorComponent>, DynamicBuffer<TaskComponent>, DynamicBuffer<BranchComponent>>().WithAll<PrioritySelectorFlag, EvaluateFlag>())
+                {
+                    for (int i = 0; i < prioritySelectorComponents.Length; ++i)
+                    {
+                        PrioritySelectorComponent prioritySelectorComponent = prioritySelectorComponents[i];
+                        TaskComponent taskComponent = taskComponents[prioritySelectorComponent.Index];
 
                         // If there are no values then the selector should return failure.
-                        if (taskComponent.Status == TaskStatus.Queued && prioritySelectorComponent.Priorities.Length == 0) {
+                        if (taskComponent.Status == TaskStatus.Queued && prioritySelectorComponent.Priorities.Length == 0)
+                        {
                             taskComponent.Status = TaskStatus.Failure;
-                            var taskComponentsBuffer = taskComponents;
+                            DynamicBuffer<TaskComponent> taskComponentsBuffer = taskComponents;
                             taskComponentsBuffer[prioritySelectorComponent.Index] = taskComponent;
 
-                            var branchComponent = branchComponents[taskComponent.BranchIndex];
+                            BranchComponent branchComponent = branchComponents[taskComponent.BranchIndex];
                             branchComponent.NextIndex = taskComponent.ParentIndex;
-                            var branchComponentBuffer = branchComponents;
+                            DynamicBuffer<BranchComponent> branchComponentBuffer = branchComponents;
                             branchComponentBuffer[taskComponent.BranchIndex] = branchComponent;
                         }
                     }
@@ -315,13 +345,15 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Composites
         }
 
         /// <summary>
-        /// The task has been destroyed.
+        ///     The task has been destroyed.
         /// </summary>
         /// <param name="state">The current state of the system.</param>
         private void OnDestroy(ref SystemState state)
         {
-            foreach (var prioritySelectorComponents in SystemAPI.Query<DynamicBuffer<PrioritySelectorComponent>>()) {
-                for (int i = 0; i < prioritySelectorComponents.Length; ++i) {
+            foreach (DynamicBuffer<PrioritySelectorComponent> prioritySelectorComponents in SystemAPI.Query<DynamicBuffer<PrioritySelectorComponent>>())
+            {
+                for (int i = 0; i < prioritySelectorComponents.Length; ++i)
+                {
                     prioritySelectorComponents[i].Priorities.Dispose();
                 }
             }

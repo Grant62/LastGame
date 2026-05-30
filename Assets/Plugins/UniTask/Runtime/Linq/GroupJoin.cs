@@ -122,7 +122,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly Func<TInner, TKey> innerKeySelector;
             private readonly Func<TOuter, IEnumerable<TInner>, TResult> resultSelector;
             private readonly IEqualityComparer<TKey> comparer;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private ILookup<TKey, TInner> lookup;
             private IUniTaskAsyncEnumerator<TOuter> enumerator;
@@ -269,7 +269,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly Func<TInner, UniTask<TKey>> innerKeySelector;
             private readonly Func<TOuter, IEnumerable<TInner>, UniTask<TResult>> resultSelector;
             private readonly IEqualityComparer<TKey> comparer;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private ILookup<TKey, TInner> lookup;
             private IUniTaskAsyncEnumerator<TOuter> enumerator;
@@ -469,7 +469,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly Func<TInner, CancellationToken, UniTask<TKey>> innerKeySelector;
             private readonly Func<TOuter, IEnumerable<TInner>, CancellationToken, UniTask<TResult>> resultSelector;
             private readonly IEqualityComparer<TKey> comparer;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private ILookup<TKey, TInner> lookup;
             private IUniTaskAsyncEnumerator<TOuter> enumerator;

@@ -1,3 +1,7 @@
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,23 +10,19 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.Math
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
-    [Opsive.Shared.Utility.Description("Performs a math operation on the two booleans.")]
-    [Shared.Utility.Category("Math")]
+    [Description("Performs a math operation on the two booleans.")]
+    [Category("Math")]
     public class BoolOperator : Action
     {
         /// <summary>
-        /// Specifies the type of bool operation that should be performed.
+        ///     Specifies the type of bool operation that should be performed.
         /// </summary>
         protected enum Operation
         {
-            AND,    // Returns the AND between two booleans.
-            OR,     // Returns the OR between two booleans.
-            NAND,   // Returns the NAND between two booleans.
-            XOR,    // Returns the XOR between two booleans.
+            AND, // Returns the AND between two booleans.
+            OR, // Returns the OR between two booleans.
+            NAND, // Returns the NAND between two booleans.
+            XOR // Returns the XOR between two booleans.
         }
 
         [Tooltip("The operation to perform.")]
@@ -35,12 +35,13 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.Math
         [RequireShared] [SerializeField] protected SharedVariable<bool> m_StoreResult;
 
         /// <summary>
-        /// Executes the task.
+        ///     Executes the task.
         /// </summary>
         /// <returns>The execution status of the task.</returns>
         public override TaskStatus OnUpdate()
         {
-            switch (m_Operation.Value) {
+            switch (m_Operation.Value)
+            {
                 case Operation.AND:
                     m_StoreResult.Value = m_Bool1.Value && m_Bool2.Value;
                     break;
@@ -51,9 +52,10 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.Math
                     m_StoreResult.Value = !(m_Bool1.Value && m_Bool2.Value);
                     break;
                 case Operation.XOR:
-                    m_StoreResult.Value = (m_Bool1.Value ^ m_Bool2.Value);
+                    m_StoreResult.Value = m_Bool1.Value ^ m_Bool2.Value;
                     break;
             }
+
             return TaskStatus.Success;
         }
     }

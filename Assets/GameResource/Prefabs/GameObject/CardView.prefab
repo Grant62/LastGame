@@ -48,13 +48,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c27370dca44fb74a878e83760566588, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Features.Card.View.CardDragHandler
-  mDropLayer:
+  dropLayer:
     serializedVersion: 2
     m_Bits: 64
-  mEnemyLayer:
+  enemyLayer:
     serializedVersion: 2
     m_Bits: 128
-  mOutlineMaterial: {fileID: 2100000, guid: b7febd74ee7c25f458b58b3f99c43618, type: 2}
+  slotLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  board: {fileID: 359282010207872277, guid: cc9d5d3a0e719114a89b9ca4e440147b, type: 3}
+  outlineMaterial: {fileID: 2100000, guid: b7febd74ee7c25f458b58b3f99c43618, type: 2}
+  hoverY: -4
 --- !u!114 &1517702290828667989
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70,9 +75,7 @@ MonoBehaviour:
   Wrapper: {fileID: 2651951275299054838}
   CardImage: {fileID: 3815036280752655972}
   Cost: {fileID: 4973045552724113237}
-  TitileImage: {fileID: 6872631686709833996}
   Title: {fileID: 8112838446833617280}
-  DescImage: {fileID: 6461156706707017892}
   DescText: {fileID: 5515916316819193943}
   TypeText: {fileID: 5733800211357684692}
 --- !u!210 &1023884364890360438

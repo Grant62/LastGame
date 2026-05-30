@@ -16,7 +16,7 @@ namespace Features.Hero.Command
         {
             IHeroModel model = this.GetModel<IHeroModel>();
             model.MaxHealth.Value = mDefine.MaxHealth;
-            model.Health.Value = mDefine.MaxHealth;
+            model.Health.Value = mDefine.InitialHealth > 0 ? mDefine.InitialHealth : mDefine.MaxHealth;
             model.Invincible.Value = mDefine.Invincible;
         }
     }

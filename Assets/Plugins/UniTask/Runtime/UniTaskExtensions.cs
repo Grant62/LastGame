@@ -242,7 +242,7 @@ namespace Cysharp.Threading.Tasks
             private static readonly Action<object> cancellationCallbackDelegate = CancellationCallback;
 
             private readonly CancellationToken cancellationToken;
-            private CancellationTokenRegistration tokenRegistration;
+            private readonly CancellationTokenRegistration tokenRegistration;
             private UniTaskCompletionSourceCore<AsyncUnit> core;
 
             public AttachExternalCancellationSource(UniTask task, CancellationToken cancellationToken)
@@ -301,7 +301,7 @@ namespace Cysharp.Threading.Tasks
             private static readonly Action<object> cancellationCallbackDelegate = CancellationCallback;
 
             private readonly CancellationToken cancellationToken;
-            private CancellationTokenRegistration tokenRegistration;
+            private readonly CancellationTokenRegistration tokenRegistration;
             private UniTaskCompletionSourceCore<T> core;
 
             public AttachExternalCancellationSource(UniTask<T> task, CancellationToken cancellationToken)
@@ -582,7 +582,7 @@ namespace Cysharp.Threading.Tasks
         {
             if (exceptionHandler == null)
             {
-                Forget(task);
+                task.Forget();
             }
             else
             {

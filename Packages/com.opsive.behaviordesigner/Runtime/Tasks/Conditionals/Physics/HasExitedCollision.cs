@@ -1,3 +1,7 @@
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,12 +10,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals.Physics
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
-    [Opsive.Shared.Utility.Description("Returns success when a collision ends. This task will only receive the physics callback if it is being reevaluated (with a conditional abort or under a parallel task).")]
-    [Shared.Utility.Category("Physics")]
+    [Description("Returns success when a collision ends. This task will only receive the physics callback if it is being reevaluated (with a conditional abort or under a parallel task).")]
+    [Category("Physics")]
     public class HasExitedCollision : Conditional
     {
         [Tooltip("The tag of the GameObject that the collision should be checked against.")]
@@ -19,12 +19,12 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals.Physics
         [Tooltip("The collided GameObject.")]
         [SerializeField] protected SharedVariable<GameObject> m_StoredCollisionGameObject;
 
-        protected override bool ReceiveCollisionExitCallback => true;
+        protected override bool ReceiveCollisionExitCallback { get => true; }
 
         private bool m_ExitedCollision;
 
         /// <summary>
-        /// Returns true when the agent has left a collision.
+        ///     Returns true when the agent has left a collision.
         /// </summary>
         /// <returns>True when the agent has left a collision.</returns>
         public override TaskStatus OnUpdate()
@@ -33,7 +33,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals.Physics
         }
 
         /// <summary>
-        /// The task has ended.
+        ///     The task has ended.
         /// </summary>
         public override void OnEnd()
         {
@@ -43,16 +43,20 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals.Physics
         }
 
         /// <summary>
-        /// The agent has left a collision.
+        ///     The agent has left a collision.
         /// </summary>
         /// <param name="collision">The collision that caused the event.</param>
         protected override void OnCollisionExit(Collision collision)
         {
-            if (!string.IsNullOrEmpty(m_Tag.Value) && !collision.gameObject.CompareTag(m_Tag.Value)) {
+            if (!string.IsNullOrEmpty(m_Tag.Value) && !collision.gameObject.CompareTag(m_Tag.Value))
+            {
                 return;
             }
 
-            if (m_StoredCollisionGameObject != null && m_StoredCollisionGameObject.IsShared) { m_StoredCollisionGameObject.Value = collision.gameObject; }
+            if (m_StoredCollisionGameObject != null && m_StoredCollisionGameObject.IsShared)
+            {
+                m_StoredCollisionGameObject.Value = collision.gameObject;
+            }
 
             m_ExitedCollision = true;
         }

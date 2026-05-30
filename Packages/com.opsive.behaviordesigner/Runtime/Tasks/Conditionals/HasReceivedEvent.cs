@@ -1,3 +1,9 @@
+using Opsive.GraphDesigner.Runtime;
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Events;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,16 +12,12 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using Opsive.Shared.Events;
-    using UnityEngine;
-
     /// <summary>
-    /// A TaskObject implementation of the Conditional task. This class can be used when the task should not be grouped by the StackedConditional task.
+    ///     A TaskObject implementation of the Conditional task. This class can be used when the task should not be grouped by
+    ///     the StackedConditional task.
     /// </summary>
     [NodeIcon("e6fc90c130121da4f9067b5e15b02975", "69959064b54a0cb4cb077dbb6967a3e1")]
-    [Opsive.Shared.Utility.Description("Returns success as soon as the event specified by eventName has been received.")]
+    [Description("Returns success as soon as the event specified by eventName has been received.")]
     public class HasReceivedEvent : TargetBehaviorTreeConditional
     {
         [Tooltip("The name of the event that should be registered.")]
@@ -35,7 +37,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals
         private bool m_ResetEventReceived = true;
 
         /// <summary>
-        /// The behavior tree has started.
+        ///     The behavior tree has started.
         /// </summary>
         public override void OnBehaviorTreeStarted()
         {
@@ -45,11 +47,12 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals
         }
 
         /// <summary>
-        /// Initializes the target behavior tree.
+        ///     Initializes the target behavior tree.
         /// </summary>
         protected override void InitializeTarget()
         {
-            if (m_ResolvedBehaviorTree != null) {
+            if (m_ResolvedBehaviorTree != null)
+            {
                 UnregisterEvents();
             }
 
@@ -59,43 +62,66 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals
         }
 
         /// <summary>
-        /// Registers for the events.
+        ///     Registers for the events.
         /// </summary>
         private void RegisterEvents()
         {
-            if (m_EventRegistered) {
+            if (m_EventRegistered)
+            {
                 return;
             }
 
-            if (string.IsNullOrEmpty(m_EventName.Value)) {
+            if (string.IsNullOrEmpty(m_EventName.Value))
+            {
                 Debug.LogError("Error: Unable to receive event. The event name is empty.");
                 return;
             }
-             
-            if (m_StoredValue1 == null || !m_StoredValue1.IsShared) {
-                if (m_GlobalEvent.Value) {
+
+            if (m_StoredValue1 == null || !m_StoredValue1.IsShared)
+            {
+                if (m_GlobalEvent.Value)
+                {
                     EventHandler.RegisterEvent(m_EventName.Value, ReceivedEvent);
-                } else {
+                }
+                else
+                {
                     EventHandler.RegisterEvent(m_ResolvedBehaviorTree, m_EventName.Value, ReceivedEvent);
                 }
-            } else {
-                if (m_StoredValue2 == null || !m_StoredValue2.IsShared) {
-                    if (m_GlobalEvent.Value) {
+            }
+            else
+            {
+                if (m_StoredValue2 == null || !m_StoredValue2.IsShared)
+                {
+                    if (m_GlobalEvent.Value)
+                    {
                         EventHandler.RegisterEvent<object>(m_EventName.Value, ReceivedEvent);
-                    } else {
+                    }
+                    else
+                    {
                         EventHandler.RegisterEvent<object>(m_ResolvedBehaviorTree, m_EventName.Value, ReceivedEvent);
                     }
-                } else {
-                    if (m_StoredValue3 == null || !m_StoredValue3.IsShared) {
-                        if (m_GlobalEvent.Value) {
+                }
+                else
+                {
+                    if (m_StoredValue3 == null || !m_StoredValue3.IsShared)
+                    {
+                        if (m_GlobalEvent.Value)
+                        {
                             EventHandler.RegisterEvent<object, object>(m_EventName.Value, ReceivedEvent);
-                        } else {
+                        }
+                        else
+                        {
                             EventHandler.RegisterEvent<object, object>(m_ResolvedBehaviorTree, m_EventName.Value, ReceivedEvent);
                         }
-                    } else {
-                        if (m_GlobalEvent.Value) {
+                    }
+                    else
+                    {
+                        if (m_GlobalEvent.Value)
+                        {
                             EventHandler.RegisterEvent<object, object, object>(m_EventName.Value, ReceivedEvent);
-                        } else {
+                        }
+                        else
+                        {
                             EventHandler.RegisterEvent<object, object, object>(m_ResolvedBehaviorTree, m_EventName.Value, ReceivedEvent);
                         }
                     }
@@ -103,16 +129,27 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals
             }
 
             m_EventName.OnValueChange += UpdateEvents;
-            if (m_StoredValue1 != null) { m_StoredValue1.OnValueChange += UpdateEvents; }
-            if (m_StoredValue2 != null) { m_StoredValue2.OnValueChange += UpdateEvents; }
-            if (m_StoredValue3 != null) { m_StoredValue3.OnValueChange += UpdateEvents; }
+            if (m_StoredValue1 != null)
+            {
+                m_StoredValue1.OnValueChange += UpdateEvents;
+            }
+
+            if (m_StoredValue2 != null)
+            {
+                m_StoredValue2.OnValueChange += UpdateEvents;
+            }
+
+            if (m_StoredValue3 != null)
+            {
+                m_StoredValue3.OnValueChange += UpdateEvents;
+            }
 
             m_EventRegistered = true;
             m_RegisteredEventName = m_EventName.Value;
         }
 
         /// <summary>
-        /// The event name or parameter count has changed. Update the events.
+        ///     The event name or parameter count has changed. Update the events.
         /// </summary>
         private void UpdateEvents()
         {
@@ -121,7 +158,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals
         }
 
         /// <summary>
-        /// A parameterless event has been recevied.
+        ///     A parameterless event has been recevied.
         /// </summary>
         private void ReceivedEvent()
         {
@@ -129,18 +166,21 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals
         }
 
         /// <summary>
-        /// A single parameter event has been received.
+        ///     A single parameter event has been received.
         /// </summary>
         /// <param name="arg1">The first parameter.</param>
         private void ReceivedEvent(object arg1)
         {
             m_EventReceived = true;
 
-            if (m_StoredValue1 != null && m_StoredValue1.IsShared) { m_StoredValue1.SetValue(arg1); }
+            if (m_StoredValue1 != null && m_StoredValue1.IsShared)
+            {
+                m_StoredValue1.SetValue(arg1);
+            }
         }
 
         /// <summary>
-        /// A two parameter event has been received.
+        ///     A two parameter event has been received.
         /// </summary>
         /// <param name="arg1">The first parameter.</param>
         /// <param name="arg2">The second parameter.</param>
@@ -148,12 +188,19 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals
         {
             m_EventReceived = true;
 
-            if (m_StoredValue1 != null && m_StoredValue1.IsShared) { m_StoredValue1.SetValue(arg1); }
-            if (m_StoredValue2 != null && m_StoredValue2.IsShared) { m_StoredValue2.SetValue(arg2); }
+            if (m_StoredValue1 != null && m_StoredValue1.IsShared)
+            {
+                m_StoredValue1.SetValue(arg1);
+            }
+
+            if (m_StoredValue2 != null && m_StoredValue2.IsShared)
+            {
+                m_StoredValue2.SetValue(arg2);
+            }
         }
 
         /// <summary>
-        /// A three parameter event has been received.
+        ///     A three parameter event has been received.
         /// </summary>
         /// <param name="arg1">The first parameter.</param>
         /// <param name="arg2">The second parameter.</param>
@@ -162,25 +209,37 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals
         {
             m_EventReceived = true;
 
-            if (m_StoredValue1 != null && m_StoredValue1.IsShared) { m_StoredValue1.SetValue(arg1); }
-            if (m_StoredValue2 != null && m_StoredValue2.IsShared) { m_StoredValue2.SetValue(arg2); }
-            if (m_StoredValue3 != null && m_StoredValue3.IsShared) { m_StoredValue3.SetValue(arg3); }
+            if (m_StoredValue1 != null && m_StoredValue1.IsShared)
+            {
+                m_StoredValue1.SetValue(arg1);
+            }
+
+            if (m_StoredValue2 != null && m_StoredValue2.IsShared)
+            {
+                m_StoredValue2.SetValue(arg2);
+            }
+
+            if (m_StoredValue3 != null && m_StoredValue3.IsShared)
+            {
+                m_StoredValue3.SetValue(arg3);
+            }
         }
 
         /// <summary>
-        /// Callback when the task is started.
+        ///     Callback when the task is started.
         /// </summary>
         public override void OnStart()
         {
             base.OnStart();
 
-            if (m_ResetEventReceived) {
+            if (m_ResetEventReceived)
+            {
                 m_EventReceived = false;
             }
         }
 
         /// <summary>
-        /// The task has been updated.
+        ///     The task has been updated.
         /// </summary>
         /// <returns>True if an event has been received.</returns>
         public override TaskStatus OnUpdate()
@@ -189,21 +248,23 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals
         }
 
         /// <summary>
-        /// Reevaluates the task logic.
+        ///     Reevaluates the task logic.
         /// </summary>
         /// <returns>The status of the task during the reevaluation phase.</returns>
         public override TaskStatus OnReevaluateUpdate()
         {
-            if (m_EventReceived) {
+            if (m_EventReceived)
+            {
                 // OnStart/OnUpdate will be called immediately after the task is reevaluated. Do not reset the receive status.
                 m_ResetEventReceived = false;
                 return TaskStatus.Success;
             }
+
             return TaskStatus.Failure;
         }
 
         /// <summary>
-        /// The task has ended.
+        ///     The task has ended.
         /// </summary>
         public override void OnEnd()
         {
@@ -214,7 +275,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals
         }
 
         /// <summary>
-        /// The behavior tree has been stopped.
+        ///     The behavior tree has been stopped.
         /// </summary>
         /// <param name="paused">Is the behavior tree paused?</param>
         public override void OnBehaviorTreeStopped(bool paused)
@@ -227,22 +288,26 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals
         }
 
         /// <summary>
-        /// Unregisters for the events that were registered.
+        ///     Unregisters for the events that were registered.
         /// </summary>
         private void UnregisterEvents()
         {
             // The events must be registered first in order to be unregistered.
-            if (string.IsNullOrEmpty(m_RegisteredEventName)) {
+            if (string.IsNullOrEmpty(m_RegisteredEventName))
+            {
                 return;
             }
 
             // Unregister from all parameters. This will ensure no events are subscribed if the parameters change.
-            if (m_GlobalEvent.Value) {
+            if (m_GlobalEvent.Value)
+            {
                 EventHandler.UnregisterEvent(m_RegisteredEventName, ReceivedEvent);
                 EventHandler.UnregisterEvent<object>(m_RegisteredEventName, ReceivedEvent);
                 EventHandler.UnregisterEvent<object, object>(m_RegisteredEventName, ReceivedEvent);
                 EventHandler.UnregisterEvent<object, object, object>(m_RegisteredEventName, ReceivedEvent);
-            } else {
+            }
+            else
+            {
                 EventHandler.UnregisterEvent(m_ResolvedBehaviorTree, m_RegisteredEventName, ReceivedEvent);
                 EventHandler.UnregisterEvent<object>(m_ResolvedBehaviorTree, m_RegisteredEventName, ReceivedEvent);
                 EventHandler.UnregisterEvent<object, object>(m_ResolvedBehaviorTree, m_RegisteredEventName, ReceivedEvent);
@@ -250,9 +315,20 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals
             }
 
             m_EventName.OnValueChange -= UpdateEvents;
-            if (m_StoredValue1 != null) { m_StoredValue1.OnValueChange -= UpdateEvents; }
-            if (m_StoredValue2 != null) { m_StoredValue2.OnValueChange -= UpdateEvents; }
-            if (m_StoredValue3 != null) { m_StoredValue3.OnValueChange -= UpdateEvents; }
+            if (m_StoredValue1 != null)
+            {
+                m_StoredValue1.OnValueChange -= UpdateEvents;
+            }
+
+            if (m_StoredValue2 != null)
+            {
+                m_StoredValue2.OnValueChange -= UpdateEvents;
+            }
+
+            if (m_StoredValue3 != null)
+            {
+                m_StoredValue3.OnValueChange -= UpdateEvents;
+            }
 
             m_EventRegistered = false;
             m_RegisteredEventName = string.Empty;

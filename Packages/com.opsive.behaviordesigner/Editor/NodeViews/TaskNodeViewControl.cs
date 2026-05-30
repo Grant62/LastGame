@@ -1,4 +1,20 @@
-﻿#if GRAPH_DESIGNER
+﻿using Opsive.BehaviorDesigner.Runtime;
+using Opsive.BehaviorDesigner.Runtime.Components;
+using Opsive.BehaviorDesigner.Runtime.Tasks;
+using Opsive.GraphDesigner.Editor;
+using Opsive.GraphDesigner.Editor.Controls.NodeViews;
+using Opsive.GraphDesigner.Editor.Elements;
+using Opsive.GraphDesigner.Editor.Events;
+using Opsive.GraphDesigner.Runtime;
+using Opsive.Shared.Editor.UIElements.Controls;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UIElements;
+using EditorUtility = Opsive.Shared.Editor.Utility.EditorUtility;
+
+#if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
 /// Copyright (c) Opsive. All Rights Reserved.
@@ -6,22 +22,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Editor.Controls.NodeViews
 {
-    using Opsive.Shared.Editor.UIElements.Controls;
-    using Opsive.BehaviorDesigner.Runtime;
-    using Opsive.BehaviorDesigner.Runtime.Components;
-    using Opsive.BehaviorDesigner.Runtime.Tasks;
-    using Opsive.GraphDesigner.Editor;
-    using Opsive.GraphDesigner.Editor.Controls.NodeViews;
-    using Opsive.GraphDesigner.Editor.Elements;
-    using Opsive.GraphDesigner.Editor.Events;
-    using Opsive.GraphDesigner.Runtime;
-    using Unity.Entities;
-    using UnityEngine.UIElements;
-    using UnityEngine;
-    using UnityEditor;
-
     /// <summary>
-    /// Adds UI elements within the task node.
+    ///     Adds UI elements within the task node.
     /// </summary>
     [ControlType(typeof(IAction))]
     [ControlType(typeof(IConditional))]
@@ -59,7 +61,7 @@ namespace Opsive.BehaviorDesigner.Editor.Controls.NodeViews
         private Texture m_FailureReevaluateIcon;
 
         /// <summary>
-        /// Addes the UIElements for the specified runtime node to the editor Node within the graph.
+        ///     Addes the UIElements for the specified runtime node to the editor Node within the graph.
         /// </summary>
         /// <param name="graphWindow">A reference to the GraphWindow.</param>
         /// <param name="parent">The parent UIElement that should contain the node UIElements.</param>
@@ -71,41 +73,39 @@ namespace Opsive.BehaviorDesigner.Editor.Controls.NodeViews
             m_BehaviorTree = m_GraphWindow.Graph as BehaviorTree;
             m_LogicNode = parent.GetFirstAncestorOfType<LogicNode>();
 
-            if (node is IConditionalAbortParent conditionalAbortParent) {
+            if (node is IConditionalAbortParent conditionalAbortParent)
+            {
                 m_ConditionalAbortIcon = new Image();
                 m_ConditionalAbortIcon.name = "conditional-abort-icon";
                 parent.parent.Add(m_ConditionalAbortIcon);
                 SetConditionalAbortIcon(conditionalAbortParent);
 
-                m_ConditionalAbortIcon.RegisterCallback<AttachToPanelEvent>(c =>
-                {
-                    GraphEventHandler.RegisterEvent<object>(GraphEventType.NodeValueUpdated, UpdateNodeValue);
-                });
-                m_ConditionalAbortIcon.RegisterCallback<DetachFromPanelEvent>(c =>
-                {
-                    GraphEventHandler.UnregisterEvent<object>(GraphEventType.NodeValueUpdated, UpdateNodeValue);
-                });
+                m_ConditionalAbortIcon.RegisterCallback<AttachToPanelEvent>(c => { GraphEventHandler.RegisterEvent<object>(GraphEventType.NodeValueUpdated, UpdateNodeValue); });
+                m_ConditionalAbortIcon.RegisterCallback<DetachFromPanelEvent>(c => { GraphEventHandler.UnregisterEvent<object>(GraphEventType.NodeValueUpdated, UpdateNodeValue); });
             }
 
             // Subtree references can click into its references.
-            if (m_Node is ISubtreeReference) {
+            if (m_Node is ISubtreeReference)
+            {
                 m_LogicNode.RegisterCallback<MouseDownEvent>(OnSubtreeRferenceMouseDown);
             }
 
             // AddNodeView can be called multiple times. Ensure there is only one execution status image.
-            var previousExecutionStatus = m_LogicNode.Q("execution-status");
-            if (previousExecutionStatus != null) {
+            VisualElement previousExecutionStatus = m_LogicNode.Q("execution-status");
+            if (previousExecutionStatus != null)
+            {
                 previousExecutionStatus.parent.Remove(previousExecutionStatus);
             }
+
             m_ExecutionStatusIcon = new Image();
             m_ExecutionStatusIcon.name = "execution-status";
             parent.parent.Add(m_ExecutionStatusIcon); // The execution status icon should be placed behind every node element.
             m_ExecutionStatusIcon.SendToBack();
 
-            m_SuccessIcon = Shared.Editor.Utility.EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkSuccessIconGUID : c_LightSuccessIconGUID);
-            m_SuccessReevaluateIcon = Shared.Editor.Utility.EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkSuccessReevaluateIconGUID : c_LightSuccessReevaluateIconGUID);
-            m_FailureIcon = Shared.Editor.Utility.EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkFailureIconGUID : c_LightFailureIconGUID);
-            m_FailureReevaluateIcon = Shared.Editor.Utility.EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkFailureReevaluateIconGUID : c_LightFailureReevaluateIconGUID);
+            m_SuccessIcon = EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkSuccessIconGUID : c_LightSuccessIconGUID);
+            m_SuccessReevaluateIcon = EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkSuccessReevaluateIconGUID : c_LightSuccessReevaluateIconGUID);
+            m_FailureIcon = EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkFailureIconGUID : c_LightFailureIconGUID);
+            m_FailureReevaluateIcon = EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkFailureReevaluateIconGUID : c_LightFailureReevaluateIconGUID);
 
             m_ExecutionStatusIcon.RegisterCallback<AttachToPanelEvent>(c =>
             {
@@ -121,29 +121,38 @@ namespace Opsive.BehaviorDesigner.Editor.Controls.NodeViews
         }
 
         /// <summary>
-        /// Sets the conditional abort icon.
+        ///     Sets the conditional abort icon.
         /// </summary>
         /// <param name="conditionalAbortParent">The conditional abort node.</param>
         private void SetConditionalAbortIcon(IConditionalAbortParent conditionalAbortParent)
         {
-            if (conditionalAbortParent.AbortType == ConditionalAbortType.LowerPriority) {
-                m_ConditionalAbortIcon.image = Shared.Editor.Utility.EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkConditionalAbortLowerPriorityIconGUID : c_LightConditionalAbortLowerPriorityIconGUID);
-            } else if (conditionalAbortParent.AbortType == ConditionalAbortType.Self) {
-                m_ConditionalAbortIcon.image = Shared.Editor.Utility.EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkConditionalAbortSelfIconGUID : c_LightConditionalAbortSelfIconGUID);
-            } else if (conditionalAbortParent.AbortType == ConditionalAbortType.Both) {
-                m_ConditionalAbortIcon.image = Shared.Editor.Utility.EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkConditionalAbortBothIconGUID : c_LightConditionalAbortBothIconGUID);
-            } else {
+            if (conditionalAbortParent.AbortType == ConditionalAbortType.LowerPriority)
+            {
+                m_ConditionalAbortIcon.image =
+                    EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkConditionalAbortLowerPriorityIconGUID : c_LightConditionalAbortLowerPriorityIconGUID);
+            }
+            else if (conditionalAbortParent.AbortType == ConditionalAbortType.Self)
+            {
+                m_ConditionalAbortIcon.image = EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkConditionalAbortSelfIconGUID : c_LightConditionalAbortSelfIconGUID);
+            }
+            else if (conditionalAbortParent.AbortType == ConditionalAbortType.Both)
+            {
+                m_ConditionalAbortIcon.image = EditorUtility.LoadAsset<Texture>(EditorGUIUtility.isProSkin ? c_DarkConditionalAbortBothIconGUID : c_LightConditionalAbortBothIconGUID);
+            }
+            else
+            {
                 m_ConditionalAbortIcon.image = null;
             }
         }
 
         /// <summary>
-        /// A value has been updated for the specified node.
+        ///     A value has been updated for the specified node.
         /// </summary>
         /// <param name="node">The node that has been updated.</param>
         private void UpdateNodeValue(object node)
         {
-            if (node != m_Node) {
+            if (node != m_Node)
+            {
                 return;
             }
 
@@ -151,7 +160,7 @@ namespace Opsive.BehaviorDesigner.Editor.Controls.NodeViews
         }
 
         /// <summary>
-        /// Updates the node with the current execution status.
+        ///     Updates the node with the current execution status.
         /// </summary>
         private void UpdateNode()
         {
@@ -159,84 +168,112 @@ namespace Opsive.BehaviorDesigner.Editor.Controls.NodeViews
         }
 
         /// <summary>
-        /// Internal method which updates the node with the current execution status.
+        ///     Internal method which updates the node with the current execution status.
         /// </summary>
         /// <returns>The status of the task.</returns>
         protected virtual TaskStatus UpdateNodeInternal()
         {
-            if (m_BehaviorTree == null || m_BehaviorTree.Entity == Entity.Null || m_Node.RuntimeIndex == ushort.MaxValue || !m_BehaviorTree.World.EntityManager.Exists(m_BehaviorTree.Entity)) {
+            if (m_BehaviorTree == null || m_BehaviorTree.Entity == Entity.Null || m_Node.RuntimeIndex == ushort.MaxValue || !m_BehaviorTree.World.EntityManager.Exists(m_BehaviorTree.Entity))
+            {
                 // The task is no longer active. Reset the status while keeping the previous execution state.
                 m_LogicNode.SetColorState(m_GraphWindow.GraphEditor.IsNodeHierarchyEnabled(m_Node) ? ColorState.Default : ColorState.Disabled, 0.5f);
-                if (m_ExecutionStatusIcon.image != null) {
-                    if (m_ExecutionStatusIcon.image == m_SuccessReevaluateIcon) {
+                if (m_ExecutionStatusIcon.image != null)
+                {
+                    if (m_ExecutionStatusIcon.image == m_SuccessReevaluateIcon)
+                    {
                         m_ExecutionStatusIcon.image = m_SuccessIcon;
-                    } else if (m_ExecutionStatusIcon.image == m_FailureReevaluateIcon) {
+                    }
+                    else if (m_ExecutionStatusIcon.image == m_FailureReevaluateIcon)
+                    {
                         m_ExecutionStatusIcon.image = m_FailureIcon;
                     }
+
                     m_ExecutionStatusIcon.style.width = m_ExecutionStatusIcon.image.width;
                 }
+
                 return TaskStatus.Inactive;
             }
 
-            var taskComponents = m_BehaviorTree.World.EntityManager.GetBuffer<TaskComponent>(m_BehaviorTree.Entity);
-            var taskComponent = taskComponents[m_Node.RuntimeIndex];
-            if (taskComponent.Status == TaskStatus.Success) {
-                if (taskComponent.Reevaluate) {
+            DynamicBuffer<TaskComponent> taskComponents = m_BehaviorTree.World.EntityManager.GetBuffer<TaskComponent>(m_BehaviorTree.Entity);
+            TaskComponent taskComponent = taskComponents[m_Node.RuntimeIndex];
+            if (taskComponent.Status == TaskStatus.Success)
+            {
+                if (taskComponent.Reevaluate)
+                {
                     m_ExecutionStatusIcon.image = m_SuccessReevaluateIcon;
-                } else {
+                }
+                else
+                {
                     m_ExecutionStatusIcon.image = m_SuccessIcon;
                 }
-            } else if (taskComponent.Status == TaskStatus.Failure) {
-                if (taskComponent.Reevaluate) {
+            }
+            else if (taskComponent.Status == TaskStatus.Failure)
+            {
+                if (taskComponent.Reevaluate)
+                {
                     m_ExecutionStatusIcon.image = m_FailureReevaluateIcon;
-                } else {
+                }
+                else
+                {
                     m_ExecutionStatusIcon.image = m_FailureIcon;
                 }
-            } else if (m_ExecutionStatusIcon.image != null) {
+            }
+            else if (m_ExecutionStatusIcon.image != null)
+            {
                 m_ExecutionStatusIcon.image = null;
             }
 
-            if (m_ExecutionStatusIcon.image != null) {
+            if (m_ExecutionStatusIcon.image != null)
+            {
                 m_ExecutionStatusIcon.style.width = m_ExecutionStatusIcon.image.width;
             }
 
-            if (taskComponent.Status == TaskStatus.Running || taskComponent.Status == TaskStatus.Queued) {
-                m_LogicNode.SetColorState(ColorState.Active, 0);
-            } else {
+            if (taskComponent.Status == TaskStatus.Running || taskComponent.Status == TaskStatus.Queued)
+            {
+                m_LogicNode.SetColorState(ColorState.Active);
+            }
+            else
+            {
                 m_LogicNode.SetColorState(m_GraphWindow.GraphEditor.IsNodeHierarchyEnabled(m_Node) ? ColorState.Default : ColorState.Disabled, 0.5f);
             }
+
             return taskComponent.Status;
         }
 
         /// <summary>
-        /// Enables or disables the NodeView.
+        ///     Enables or disables the NodeView.
         /// </summary>
         /// <param name="enable">True if the NodeView is enabled.</param>
         public override void SetEnabled(bool enable)
         {
-            if (m_ConditionalAbortIcon != null) {
+            if (m_ConditionalAbortIcon != null)
+            {
                 m_ConditionalAbortIcon.SetEnabled(enable);
             }
         }
 
         /// <summary>
-        /// The mouse has been pressed.
+        ///     The mouse has been pressed.
         /// </summary>
         /// <param name="evt">The event that triggered the press.</param>
         private void OnSubtreeRferenceMouseDown(MouseDownEvent evt)
         {
-            if (evt.clickCount != 2) {
+            if (evt.clickCount != 2)
+            {
                 return;
             }
 
-            var subtreeReference = m_Node as ISubtreeReference;
-            if (subtreeReference.Subtrees == null) {
+            ISubtreeReference subtreeReference = m_Node as ISubtreeReference;
+            if (subtreeReference.Subtrees == null)
+            {
                 return;
             }
 
-            for (int i = 0; i < subtreeReference.Subtrees.Length; ++i) {
-                var subtree = subtreeReference.Subtrees[i];
-                if (subtree == null) {
+            for (int i = 0; i < subtreeReference.Subtrees.Length; ++i)
+            {
+                Subtree subtree = subtreeReference.Subtrees[i];
+                if (subtree == null)
+                {
                     continue;
                 }
 
@@ -245,27 +282,33 @@ namespace Opsive.BehaviorDesigner.Editor.Controls.NodeViews
         }
 
         /// <summary>
-        /// The GraphWindow selection has changed.
+        ///     The GraphWindow selection has changed.
         /// </summary>
         /// <param name="selection">The new selection.</param>
-        private void OnSelectionChange(UnityEngine.Object selection)
+        private void OnSelectionChange(Object selection)
         {
-            if (!Application.isPlaying || m_BehaviorTree == null || m_BehaviorTree.Entity == Entity.Null || !m_BehaviorTree.enabled || !m_BehaviorTree.Baked) {
+            if (!Application.isPlaying || m_BehaviorTree == null || m_BehaviorTree.Entity == Entity.Null || !m_BehaviorTree.enabled || !m_BehaviorTree.Baked)
+            {
                 return;
             }
 
             // The behavior tree was baked. Ensure the BehaviorTree component is pointing to the correct Entity. 
-            var worlds = World.All;
-            var foundEntity = false;
-            for (int i = 0; i < worlds.Count; ++i) {
-                var defaultEntities = worlds[i].EntityManager.GetAllEntities(Unity.Collections.Allocator.Temp);
-                if (defaultEntities != null) {
-                    var originalGuid = m_BehaviorTree.World.EntityManager.GetComponentData<EntityGuid>(m_BehaviorTree.Entity);
+            World.NoAllocReadOnlyCollection<World> worlds = World.All;
+            bool foundEntity = false;
+            for (int i = 0; i < worlds.Count; ++i)
+            {
+                NativeArray<Entity> defaultEntities = worlds[i].EntityManager.GetAllEntities();
+                if (defaultEntities != null)
+                {
+                    EntityGuid originalGuid = m_BehaviorTree.World.EntityManager.GetComponentData<EntityGuid>(m_BehaviorTree.Entity);
 
-                    foreach (var defaultEntity in defaultEntities) {
-                        if (worlds[i].EntityManager.HasComponent<EntityGuid>(defaultEntity)) {
-                            var entityGuid = worlds[i].EntityManager.GetComponentData<EntityGuid>(defaultEntity);
-                            if (originalGuid.OriginatingId == entityGuid.OriginatingId) {
+                    foreach (Entity defaultEntity in defaultEntities)
+                    {
+                        if (worlds[i].EntityManager.HasComponent<EntityGuid>(defaultEntity))
+                        {
+                            EntityGuid entityGuid = worlds[i].EntityManager.GetComponentData<EntityGuid>(defaultEntity);
+                            if (originalGuid.OriginatingId == entityGuid.OriginatingId)
+                            {
                                 m_BehaviorTree.World = worlds[i];
                                 m_BehaviorTree.Entity = defaultEntity;
                                 foundEntity = true;
@@ -273,8 +316,10 @@ namespace Opsive.BehaviorDesigner.Editor.Controls.NodeViews
                             }
                         }
                     }
+
                     defaultEntities.Dispose();
-                    if (foundEntity) {
+                    if (foundEntity)
+                    {
                         m_BehaviorTree.Baked = false;
                         break;
                     }

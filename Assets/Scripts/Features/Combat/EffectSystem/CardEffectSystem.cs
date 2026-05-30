@@ -12,22 +12,23 @@ namespace Features.Combat.EffectSystem
             this.RegisterEvent<CardPlayedEvent>(OnCardPlayed);
         }
 
-        private void OnCardPlayed(CardPlayedEvent e)
+        private void OnCardPlayed(CardPlayedEvent @event)
         {
             ITargetingSystem targeting = this.GetSystem<ITargetingSystem>();
+            ITargetable caster = this.GetUtility<ITargetSelector>().GetCaster();
 
-            foreach (Effect effect in e.CardData.ManualTargetEffect)
+            foreach (Effect effect in @event.CardData.ManualTargetEffect)
             {
-                ITargetable target = e.ManualTarget;
+                ITargetable target = @event.ManualTarget;
                 if (target != null)
-                    effect.Execute(new[] { target }, target);
+                    effect.Execute(new[] { target }, caster);
             }
 
-            foreach (AutoTargetEffect at in e.CardData.OtherEffects)
+            foreach (AutoTargetEffect at in @event.CardData.OtherEffects)
             {
-                ITargetable[] targets = targeting.ResolveTargets(at.TargetType, null);
+                ITargetable[] targets = targeting.ResolveTargets(at.TargetType, caster);
                 if (targets.Length > 0)
-                    at.Effect.Execute(targets, null);
+                    at.Effect.Execute(targets, caster);
             }
         }
     }

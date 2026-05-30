@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -10,7 +9,6 @@ namespace QFramework
     {
         public static ResDatas BuildEditorDataTable()
         {
-            Debug.Log("Start BuildAssetDataTable!");
             ResDatas resDatas = new();
             AddABInfo2ResDatas(resDatas);
             return resDatas;

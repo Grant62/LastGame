@@ -23,7 +23,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
         private class _Never : IUniTaskAsyncEnumerator<T>
         {
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             public _Never(CancellationToken cancellationToken)
             {

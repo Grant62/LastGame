@@ -2,7 +2,6 @@
 // Created: 2026/01/08
 
 #if DOTWEEN_UITOOLKIT && UNITY_2021_3_OR_NEWER // MODULE_MARKER
-
 using UnityEngine;
 using UnityEngine.UIElements;
 using DG.Tweening.Core;
@@ -132,9 +131,11 @@ namespace DG.Tweening
         /// <param name="snapping">If TRUE the tween will smoothly snap all values to integers</param>
         /// <param name="fadeOut">If TRUE the shake will automatically fadeOut smoothly within the tween's duration, otherwise it will not</param>
         /// <param name="randomnessMode">Randomness mode</param>
-        public static Tweener DOShake(this VisualElement target, float duration, float strength = 100, int vibrato = 10, float randomness = 90, bool snapping = false, bool fadeOut = true, ShakeRandomnessMode randomnessMode = ShakeRandomnessMode.Full)
+        public static Tweener DOShake(this VisualElement target, float duration, float strength = 100, int vibrato = 10, float randomness = 90, bool snapping = false, bool fadeOut =
+ true, ShakeRandomnessMode randomnessMode = ShakeRandomnessMode.Full)
         {
-            return DOTween.Shake(() => target.resolvedStyle.translate, x => target.style.translate = new Translate(x.x, x.y, x.z), duration, strength, vibrato, randomness, true, fadeOut, randomnessMode)
+            return DOTween.Shake(() => target.resolvedStyle.translate, x => target.style.translate =
+ new Translate(x.x, x.y, x.z), duration, strength, vibrato, randomness, true, fadeOut, randomnessMode)
                 .SetTarget(target).SetSpecialStartupMode(SpecialStartupMode.SetShake).SetOptions(snapping);
         }
         /// <summary>Shakes a VisualElement's position with the given values.
@@ -147,9 +148,11 @@ namespace DG.Tweening
         /// <param name="snapping">If TRUE the tween will smoothly snap all values to integers</param>
         /// <param name="fadeOut">If TRUE the shake will automatically fadeOut smoothly within the tween's duration, otherwise it will not</param>
         /// <param name="randomnessMode">Randomness mode</param>
-        public static Tweener DOShake(this VisualElement target, float duration, Vector2 strength, int vibrato = 10, float randomness = 90, bool snapping = false, bool fadeOut = true, ShakeRandomnessMode randomnessMode = ShakeRandomnessMode.Full)
+        public static Tweener DOShake(this VisualElement target, float duration, Vector2 strength, int vibrato = 10, float randomness = 90, bool snapping = false, bool fadeOut =
+ true, ShakeRandomnessMode randomnessMode = ShakeRandomnessMode.Full)
         {
-            return DOTween.Shake(() => target.resolvedStyle.translate, x => target.style.translate = new Translate(x.x, x.y, x.z), duration, strength, vibrato, randomness, fadeOut, randomnessMode)
+            return DOTween.Shake(() => target.resolvedStyle.translate, x => target.style.translate =
+ new Translate(x.x, x.y, x.z), duration, strength, vibrato, randomness, fadeOut, randomnessMode)
                 .SetTarget(target).SetSpecialStartupMode(SpecialStartupMode.SetShake).SetOptions(snapping);
         }
 

@@ -11,23 +11,27 @@ namespace Features.Card.Define
         public string Name;
         public int Cost;
         public int Damage;
-        public int Heal;
+        public int Block;
         public string Desc;
 
         public CardData CreateCardData()
         {
-            CardData card = new(Id, Name, 0, "Common", Desc, Cost, 0, "", 0, Damage, 0, 0, "", 0, "");
-
-            List<Effect> effects = new();
+            CardData card = new(
+                Id, Name, 0, "Common", Desc,
+                Cost, 0, "", 0,
+                Damage, Block, 0,
+                "", 0, "");
 
             if (Damage > 0)
-                effects.Add(new DealDamageEffect(Damage));
+                card.ManualTargetEffect = new List<Effect> { new DealDamageEffect(Damage) };
 
-            if (Heal > 0)
-                effects.Add(new DealHealEffect(Heal));
-
-            if (effects.Count > 0)
-                card.ManualTargetEffect = effects;
+            if (Block > 0)
+            {
+                card.OtherEffects = new List<AutoTargetEffect>
+                {
+                    new(TargetType.Self, new DealHealEffect(Block))
+                };
+            }
 
             return card;
         }

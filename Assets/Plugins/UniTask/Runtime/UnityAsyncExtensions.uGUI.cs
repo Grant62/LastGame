@@ -356,7 +356,7 @@ namespace Cysharp.Threading.Tasks
         private readonly UnityEvent unityEvent;
 
         private readonly CancellationToken cancellationToken;
-        private CancellationTokenRegistration registration;
+        private readonly CancellationTokenRegistration registration;
         private bool isDisposed;
         private readonly bool callOnce;
 
@@ -468,7 +468,7 @@ namespace Cysharp.Threading.Tasks
         private readonly UnityEvent<T> unityEvent;
 
         private readonly CancellationToken cancellationToken;
-        private CancellationTokenRegistration registration;
+        private readonly CancellationTokenRegistration registration;
         private bool isDisposed;
         private readonly bool callOnce;
 
@@ -639,8 +639,8 @@ namespace Cysharp.Threading.Tasks
             private static readonly Action<object> cancel2 = OnCanceled2;
 
             private readonly UnityEvent unityEvent;
-            private CancellationToken cancellationToken1;
-            private CancellationToken cancellationToken2;
+            private readonly CancellationToken cancellationToken1;
+            private readonly CancellationToken cancellationToken2;
 
             private UnityAction unityAction;
             private CancellationTokenRegistration registration1;
@@ -758,8 +758,8 @@ namespace Cysharp.Threading.Tasks
             private static readonly Action<object> cancel2 = OnCanceled2;
 
             private readonly UnityEvent<T> unityEvent;
-            private CancellationToken cancellationToken1;
-            private CancellationToken cancellationToken2;
+            private readonly CancellationToken cancellationToken1;
+            private readonly CancellationToken cancellationToken2;
 
             private UnityAction<T> unityAction;
             private CancellationTokenRegistration registration1;

@@ -9,7 +9,7 @@ namespace Cysharp.Threading.Tasks.Linq
         public static UniTask<bool> SequenceEqualAsync<TSource>(this IUniTaskAsyncEnumerable<TSource> first, IUniTaskAsyncEnumerable<TSource> second,
             CancellationToken cancellationToken = default)
         {
-            return SequenceEqualAsync(first, second, EqualityComparer<TSource>.Default, cancellationToken);
+            return first.SequenceEqualAsync(second, EqualityComparer<TSource>.Default, cancellationToken);
         }
 
         public static UniTask<bool> SequenceEqualAsync<TSource>(this IUniTaskAsyncEnumerable<TSource> first, IUniTaskAsyncEnumerable<TSource> second, IEqualityComparer<TSource> comparer,

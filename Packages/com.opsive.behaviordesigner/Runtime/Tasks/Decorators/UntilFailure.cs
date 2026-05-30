@@ -1,4 +1,11 @@
-﻿#if GRAPH_DESIGNER
+﻿using Opsive.BehaviorDesigner.Runtime.Components;
+using Opsive.GraphDesigner.Runtime;
+using Opsive.Shared.Utility;
+using Unity.Burst;
+using Unity.Entities;
+using UnityEngine;
+
+#if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
 /// Copyright (c) Opsive. All Rights Reserved.
@@ -6,36 +13,30 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
 {
-    using Opsive.BehaviorDesigner.Runtime.Components;
-    using Opsive.GraphDesigner.Runtime;
-    using Unity.Burst;
-    using Unity.Entities;
-    using UnityEngine;
-
     /// <summary>
-    /// A node representation of the until failure task.
+    ///     A node representation of the until failure task.
     /// </summary>
     [NodeIcon("60da350fd1f5b48428e466b79cb85cb2", "3d29cc3223984f44291c0e423a0aa6c6")]
-    [Opsive.Shared.Utility.Description("The until failure task will keep executing its child task until the child task returns failure.")]
+    [Description("The until failure task will keep executing its child task until the child task returns failure.")]
     public class UntilFailure : ECSDecoratorTask<UntilFailureTaskSystem, UntilFailureComponent>, IParentNode
     {
         public override ComponentType Flag { get => typeof(UntilFailureFlag); }
 
         /// <summary>
-        /// Returns a new TBufferElement for use by the system.
+        ///     Returns a new TBufferElement for use by the system.
         /// </summary>
         /// <returns>A new TBufferElement for use by the system.</returns>
         public override UntilFailureComponent GetBufferElement()
         {
-            return new UntilFailureComponent()
+            return new UntilFailureComponent
             {
-                Index = RuntimeIndex,
+                Index = RuntimeIndex
             };
         }
     }
 
     /// <summary>
-    /// The DOTS data structure for the UntilFailure class.
+    ///     The DOTS data structure for the UntilFailure class.
     /// </summary>
     public struct UntilFailureComponent : IBufferElementData
     {
@@ -44,49 +45,53 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
     }
 
     /// <summary>
-    /// A DOTS tag indicating when an UntilFailure node is active.
+    ///     A DOTS tag indicating when an UntilFailure node is active.
     /// </summary>
     public struct UntilFailureFlag : IComponentData, IEnableableComponent { }
 
     /// <summary>
-    /// Runs the UntilFailure logic.
+    ///     Runs the UntilFailure logic.
     /// </summary>
     [DisableAutoCreation]
     public partial struct UntilFailureTaskSystem : ISystem
     {
         /// <summary>
-        /// Creates the job.
+        ///     Creates the job.
         /// </summary>
         /// <param name="state">The current state of the system.</param>
         [BurstCompile]
         private void OnUpdate(ref SystemState state)
         {
-            var query = SystemAPI.QueryBuilder().WithAllRW<BranchComponent>().WithAllRW<TaskComponent>().WithAllRW<UntilFailureComponent>().WithAll<UntilFailureFlag, EvaluateFlag>().Build();
+            EntityQuery query = SystemAPI.QueryBuilder().WithAllRW<BranchComponent>().WithAllRW<TaskComponent>().WithAllRW<UntilFailureComponent>().WithAll<UntilFailureFlag, EvaluateFlag>()
+                .Build();
             state.Dependency = new UntilFailureJob().ScheduleParallel(query, state.Dependency);
         }
 
         /// <summary>
-        /// Job which executes the task logic.
+        ///     Job which executes the task logic.
         /// </summary>
         [BurstCompile]
         private partial struct UntilFailureJob : IJobEntity
         {
             /// <summary>
-            /// Executes the until failure logic.
+            ///     Executes the until failure logic.
             /// </summary>
             /// <param name="branchComponents">An array of BranchComponents.</param>
             /// <param name="taskComponents">An array of TaskComponents.</param>
             /// <param name="untilFailureComponents">An array of UntilFailureComponents.</param>
             [BurstCompile]
-            public void Execute(ref DynamicBuffer<BranchComponent> branchComponents, ref DynamicBuffer<TaskComponent> taskComponents, ref DynamicBuffer<UntilFailureComponent> untilFailureComponents)
+            public void Execute(ref DynamicBuffer<BranchComponent> branchComponents, ref DynamicBuffer<TaskComponent> taskComponents,
+                ref DynamicBuffer<UntilFailureComponent> untilFailureComponents)
             {
-                for (int i = 0; i < untilFailureComponents.Length; ++i) {
-                    var untilFailureComponent = untilFailureComponents[i];
-                    var taskComponent = taskComponents[untilFailureComponent.Index];
-                    var branchComponent = branchComponents[taskComponent.BranchIndex];
+                for (int i = 0; i < untilFailureComponents.Length; ++i)
+                {
+                    UntilFailureComponent untilFailureComponent = untilFailureComponents[i];
+                    TaskComponent taskComponent = taskComponents[untilFailureComponent.Index];
+                    BranchComponent branchComponent = branchComponents[taskComponent.BranchIndex];
                     TaskComponent childTaskComponent;
 
-                    if (taskComponent.Status == TaskStatus.Queued) {
+                    if (taskComponent.Status == TaskStatus.Queued)
+                    {
                         taskComponent.Status = TaskStatus.Running;
                         taskComponents[taskComponent.Index] = taskComponent;
 
@@ -97,19 +102,24 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
                         branchComponent.NextIndex = (ushort)(taskComponent.Index + 1);
                         branchComponents[taskComponent.BranchIndex] = branchComponent;
                         continue;
-                    } else if (taskComponent.Status != TaskStatus.Running) {
+                    }
+
+                    if (taskComponent.Status != TaskStatus.Running)
+                    {
                         continue;
                     }
 
                     // The until failure task is currently active. Check the first child.
                     childTaskComponent = taskComponents[taskComponent.Index + 1];
-                    if (childTaskComponent.Status == TaskStatus.Queued || childTaskComponent.Status == TaskStatus.Running) {
+                    if (childTaskComponent.Status == TaskStatus.Queued || childTaskComponent.Status == TaskStatus.Running)
+                    {
                         // The child should keep running.
                         continue;
                     }
 
                     // If the child returns success then it should be queued again.
-                    if (childTaskComponent.Status == TaskStatus.Success) {
+                    if (childTaskComponent.Status == TaskStatus.Success)
+                    {
                         childTaskComponent.Status = TaskStatus.Queued;
                         taskComponents[taskComponent.Index + 1] = childTaskComponent;
 

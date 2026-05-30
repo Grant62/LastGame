@@ -1,3 +1,8 @@
+using Opsive.GraphDesigner.Runtime;
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,15 +11,11 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
     /// <summary>
-    /// Allows for subtrees to be loaded at runtime into the tree.
+    ///     Allows for subtrees to be loaded at runtime into the tree.
     /// </summary>
     [NodeIcon("e0a8f1df788b6274a9a24003859dfa7e")]
-    [Opsive.Shared.Utility.Description("Loads the specified subtrees in at runtime.")]
+    [Description("Loads the specified subtrees in at runtime.")]
     public class SubtreeReference : ActionNode, ISubtreeReference
     {
         [Tooltip("The subtrees that should be loaded.")]
@@ -24,21 +25,21 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions
         [SharedVariableOverridesListAttribute]
         [SerializeField] protected SharedVariableOverride[] m_Variables;
 
-        public virtual Subtree[] Subtrees { get { return m_Subtrees; } }
+        public virtual Subtree[] Subtrees { get => m_Subtrees; }
 
         /// <summary>
-        /// A list of mapped SharedVariables. These variables can override the subtree.
+        ///     A list of mapped SharedVariables. These variables can override the subtree.
         /// </summary>
         public virtual SharedVariableOverride[] SharedVariableOverrides { get => m_Variables; set => m_Variables = value; }
 
         /// <summary>
-        /// Performs any runtime operations to evaluate the array of subtrees that should be returned.
+        ///     Performs any runtime operations to evaluate the array of subtrees that should be returned.
         /// </summary>
         /// <param name="graphComponent">The component that the node is attached to.</param>
         public virtual void EvaluateSubtrees(IGraphComponent graphComponent) { }
 
         /// <summary>
-        /// If the task exists at runtime then the subtree didn't load. Return failure.
+        ///     If the task exists at runtime then the subtree didn't load. Return failure.
         /// </summary>
         /// <returns>The failure TaskStatus.</returns>
         public override TaskStatus OnUpdate()

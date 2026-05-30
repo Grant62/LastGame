@@ -26,7 +26,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
         private class _Return : IUniTaskAsyncEnumerator<TValue>
         {
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private bool called;
 

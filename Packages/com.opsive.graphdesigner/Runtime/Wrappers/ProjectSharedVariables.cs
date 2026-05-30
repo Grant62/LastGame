@@ -7,10 +7,8 @@
 namespace Opsive.GraphDesigner.Runtime.Wrappers
 {
     /// <summary>
-    /// Wrapper for the Project Shared Variables component.
+    ///     Wrapper for the Project Shared Variables component.
     /// </summary>
-    public class ProjectSharedVariables : Runtime.Variables.ProjectSharedVariables
-    {
-    }
+    public class ProjectSharedVariables : Variables.ProjectSharedVariables { }
 }
 #endif

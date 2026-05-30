@@ -40,8 +40,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEditor;
-using UnityEngine;
 using UnityEditor.Build;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Spine.Unity.Editor

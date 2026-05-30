@@ -1,3 +1,6 @@
+using Opsive.GraphDesigner.Runtime;
+using Opsive.GraphDesigner.Runtime.Variables;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,27 +9,24 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-
     /// <summary>
-    /// Interface for tasks that can load subtrees.
+    ///     Interface for tasks that can load subtrees.
     /// </summary>
     public interface ISubtreeReference
     {
         /// <summary>
-        /// A list of mapped SharedVariables. These variables can override the subtree.
+        ///     A list of mapped SharedVariables. These variables can override the subtree.
         /// </summary>
         SharedVariableOverride[] SharedVariableOverrides { get; set; }
 
         /// <summary>
-        /// Performs any runtime operations to evaluate the array of subtrees that should be returned.
+        ///     Performs any runtime operations to evaluate the array of subtrees that should be returned.
         /// </summary>
         /// <param name="graphComponent">The component that the node is attached to.</param>
         void EvaluateSubtrees(IGraphComponent graphComponent);
 
         /// <summary>
-        /// The Subtrees that should be used at runtime.
+        ///     The Subtrees that should be used at runtime.
         /// </summary>
         Subtree[] Subtrees { get; }
     }

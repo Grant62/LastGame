@@ -1,4 +1,5 @@
 using Core.Architecture;
+using DG.Tweening;
 using Features.Combat.Targeting;
 using Features.Hero.Command;
 using Features.Hero.Model;
@@ -9,7 +10,10 @@ namespace Features.Hero.View
 {
     public partial class HeroView : ViewController, IController, IDamageable
     {
+        [SerializeField] private Transform characterRoot;
+
         private IHeroModel mHeroModel;
+        private Tween mHealthTween;
 
         public IArchitecture GetArchitecture()
         {
@@ -38,41 +42,48 @@ namespace Features.Hero.View
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
             mHeroModel.MaxHealth.Register(OnMaxHealthChanged)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
-            mHeroModel.Invincible.Register(OnInvincibleChanged)
+            mHeroModel.IsFacingRight.Register(OnFacingChanged)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
             RefreshHealthBar();
+            OnFacingChanged(mHeroModel.IsFacingRight.Value);
         }
 
         private void OnHealthChanged(int health)
         {
-            RefreshHealthBar();
+            RefreshHealthBar(true);
         }
 
         private void OnMaxHealthChanged(int maxHealth)
         {
-            RefreshHealthBar();
+            RefreshHealthBar(true);
         }
 
-        private void OnInvincibleChanged(bool invincible) { }
-
-        private void RefreshHealthBar()
+        private void OnFacingChanged(bool facingRight)
         {
-            if (Fill == null)
-                return;
+            if (characterRoot != null)
+            {
+                Vector3 scale = characterRoot.localScale;
+                scale.x = Mathf.Abs(scale.x) * (facingRight ? 1 : -1);
+                characterRoot.localScale = scale;
+            }
+        }
 
+        private void RefreshHealthBar(bool animate = false)
+        {
+            mHealthTween?.Kill();
             float ratio = mHeroModel.MaxHealth.Value > 0
                 ? (float)mHeroModel.Health.Value / mHeroModel.MaxHealth.Value
                 : 0f;
 
-            Fill.transform.localScale = new Vector3(ratio, 1, 1);
+            if (animate)
+                mHealthTween = Fill.transform.DOScaleX(ratio, 0.3f);
+            else
+                Fill.transform.localScale = new Vector3(ratio, 1, 1);
 
-            if (HealthText != null)
-            {
-                HealthText.text = mHeroModel.Health.Value <= 0
-                    ? "死亡"
-                    : $"{mHeroModel.Health.Value}/{mHeroModel.MaxHealth.Value}";
-            }
+            HealthText.text = mHeroModel.Health.Value <= 0
+                ? "死亡"
+                : $"{mHeroModel.Health.Value}/{mHeroModel.MaxHealth.Value}";
         }
     }
 }

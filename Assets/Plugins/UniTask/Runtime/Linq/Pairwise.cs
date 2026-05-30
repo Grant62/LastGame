@@ -33,7 +33,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
 
             private readonly IUniTaskAsyncEnumerable<TSource> source;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<TSource> enumerator;
             private UniTask<bool>.Awaiter awaiter;

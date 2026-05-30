@@ -7,5 +7,6 @@ namespace Features.Combat.Targeting
     {
         ITargetable GetTargetAtPosition(Vector3 position);
         ITargetable GetTargetAtMousePosition();
+        ITargetable GetCaster();
     }
 }

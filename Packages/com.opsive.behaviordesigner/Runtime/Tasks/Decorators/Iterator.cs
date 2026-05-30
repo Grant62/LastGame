@@ -1,3 +1,11 @@
+using System.Collections;
+using Opsive.BehaviorDesigner.Runtime.Components;
+using Opsive.GraphDesigner.Runtime;
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using Unity.Entities;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,15 +14,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
 {
-    using Opsive.BehaviorDesigner.Runtime.Components;
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using System.Collections;
-    using Unity.Entities;
-    using UnityEngine;
-
     [NodeIcon("3c1366e1dc8fe0b46b4a6c8724194cdd", "5b924a7ff18f0544aaa585af94ac536c")]
-    [Opsive.Shared.Utility.Description("Iterates through each element of the list. For each execution the Iterator task will set the next Element within the specified List.")]
+    [Description("Iterates through each element of the list. For each execution the Iterator task will set the next Element within the specified List.")]
     public class Iterator : DecoratorNode
     {
         [Tooltip("The list that should be iterated upon.")]
@@ -27,7 +28,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         private int m_Index;
 
         /// <summary>
-        /// Resets the task values back to their default.
+        ///     Resets the task values back to their default.
         /// </summary>
         public override void Reset()
         {
@@ -37,7 +38,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// Callback when the task is started.
+        ///     Callback when the task is started.
         /// </summary>
         public override void OnStart()
         {
@@ -46,30 +47,36 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// Executes the task logic.
+        ///     Executes the task logic.
         /// </summary>
         /// <returns>The status of the task.</returns>
         public override TaskStatus OnUpdate()
         {
-            if (m_List == null) {
-                return TaskStatus.Failure;
-            }
-            var list = m_List.GetValue() as IList;
-            if (list == null || list.Count == 0) {
+            if (m_List == null)
+            {
                 return TaskStatus.Failure;
             }
 
-            var taskComponents = m_BehaviorTree.World.EntityManager.GetBuffer<TaskComponent>(m_BehaviorTree.Entity);
-            if (taskComponents[Index + 1].Status == TaskStatus.Queued || taskComponents[Index + 1].Status == TaskStatus.Running) {
+            IList list = m_List.GetValue() as IList;
+            if (list == null || list.Count == 0)
+            {
+                return TaskStatus.Failure;
+            }
+
+            DynamicBuffer<TaskComponent> taskComponents = m_BehaviorTree.World.EntityManager.GetBuffer<TaskComponent>(m_BehaviorTree.Entity);
+            if (taskComponents[Index + 1].Status == TaskStatus.Queued || taskComponents[Index + 1].Status == TaskStatus.Running)
+            {
                 return TaskStatus.Running;
             }
 
-            if (taskComponents[Index + 1].Status == TaskStatus.Failure && m_EndOnFailure.Value) {
+            if (taskComponents[Index + 1].Status == TaskStatus.Failure && m_EndOnFailure.Value)
+            {
                 return TaskStatus.Failure;
             }
 
             // End when there are no more list elements.
-            if (m_Index >= list.Count) {
+            if (m_Index >= list.Count)
+            {
                 return taskComponents[Index + 1].Status; // Index + 1 will always be the task's only child.
             }
 
@@ -80,7 +87,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// Returns the current task state.
+        ///     Returns the current task state.
         /// </summary>
         /// <param name="world">The DOTS world.</param>
         /// <param name="entity">The DOTS entity.</param>
@@ -91,7 +98,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// Loads the previous task state.
+        ///     Loads the previous task state.
         /// </summary>
         /// <param name="saveData">The previous task state.</param>
         /// <param name="world">The DOTS world.</param>
@@ -99,8 +106,9 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         public override void Load(object saveData, World world, Entity entity)
         {
             m_Index = (int)saveData;
-            var list = m_List.GetValue() as IList;
-            if (list != null && m_Index < list.Count) {
+            IList list = m_List.GetValue() as IList;
+            if (list != null && m_Index < list.Count)
+            {
                 m_Element.SetValue(list[m_Index]);
             }
         }

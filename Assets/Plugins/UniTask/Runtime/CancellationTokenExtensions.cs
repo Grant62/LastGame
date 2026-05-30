@@ -27,7 +27,7 @@ namespace Cysharp.Threading.Tasks
 
             if (!linkToken.CanBeCanceled)
             {
-                return ToCancellationToken(task);
+                return task.ToCancellationToken();
             }
 
             CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(linkToken);
@@ -38,12 +38,12 @@ namespace Cysharp.Threading.Tasks
 
         public static CancellationToken ToCancellationToken<T>(this UniTask<T> task)
         {
-            return ToCancellationToken(task.AsUniTask());
+            return task.AsUniTask().ToCancellationToken();
         }
 
         public static CancellationToken ToCancellationToken<T>(this UniTask<T> task, CancellationToken linkToken)
         {
-            return ToCancellationToken(task.AsUniTask(), linkToken);
+            return task.AsUniTask().ToCancellationToken(linkToken);
         }
 
         private static async UniTaskVoid ToCancellationTokenCore(UniTask task, CancellationTokenSource cts)
@@ -155,7 +155,7 @@ namespace Cysharp.Threading.Tasks
 
         public struct Awaiter : ICriticalNotifyCompletion
         {
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             public Awaiter(CancellationToken cancellationToken)
             {

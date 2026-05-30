@@ -1,3 +1,8 @@
+using System;
+using Opsive.BehaviorDesigner.Runtime.Tasks;
+using Opsive.GraphDesigner.Runtime;
+using Opsive.Shared.Utility;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,24 +11,20 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime
 {
-    using Opsive.BehaviorDesigner.Runtime.Tasks;
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.Shared.Utility;
-    using System;
-
     /// <summary>
-    /// Template for creating a custom action node.
+    ///     Template for creating a custom action node.
     /// </summary>
     [Category("GameObjects")]
     [DisplayName("Action")]
     [Description("Create a new action node.")]
     public class GameObjectActionNode : INodeTemplate
     {
-        public Type BaseType => typeof(IAction);
-        public bool IsLogicNode => true;
+        public Type BaseType { get => typeof(IAction); }
+
+        public bool IsLogicNode { get => true; }
 
         /// <summary>
-        /// Returns the script that should be used for the template file.
+        ///     Returns the script that should be used for the template file.
         /// </summary>
         /// <param name="name">The name of the node.</param>
         /// <returns>The node script.</returns>
@@ -50,18 +51,19 @@ public class {name} : ActionNode
     }
 
     /// <summary>
-    /// Template for creating a custom action task.
+    ///     Template for creating a custom action task.
     /// </summary>
     [Category("GameObjects")]
     [DisplayName("Stacked Action")]
     [Description("Create a new stacked action node.")]
     public class GameObjectAction : INodeTemplate
     {
-        public Type BaseType => typeof(IAction);
-        public bool IsLogicNode => false;
+        public Type BaseType { get => typeof(IAction); }
+
+        public bool IsLogicNode { get => false; }
 
         /// <summary>
-        /// Returns the script that should be used for the template file.
+        ///     Returns the script that should be used for the template file.
         /// </summary>
         /// <param name="name">The name of the node.</param>
         /// <returns>The node script.</returns>
@@ -88,18 +90,19 @@ public class {name} : Action
     }
 
     /// <summary>
-    /// Template for creating a custom composite node.
+    ///     Template for creating a custom composite node.
     /// </summary>
     [Category("GameObjects")]
     [DisplayName("Composite")]
     [Description("Create a new composite node.")]
     public class GameObjectCompositeNode : IParentNodeTemplate
     {
-        public Type BaseType => typeof(IComposite);
-        public bool IsLogicNode => true;
+        public Type BaseType { get => typeof(IComposite); }
+
+        public bool IsLogicNode { get => true; }
 
         /// <summary>
-        /// Returns the script that should be used for the template file.
+        ///     Returns the script that should be used for the template file.
         /// </summary>
         /// <param name="name">The name of the node.</param>
         /// <returns>The node script.</returns>
@@ -126,18 +129,19 @@ public class {name} : CompositeNode
     }
 
     /// <summary>
-    /// Template for creating a custom conditional node.
+    ///     Template for creating a custom conditional node.
     /// </summary>
     [Category("GameObjects")]
     [DisplayName("Conditional")]
     [Description("Create a new conditional node.")]
     public class GameObjectConditionalNode : INodeTemplate
     {
-        public Type BaseType => typeof(IConditional);
-        public bool IsLogicNode => true;
+        public Type BaseType { get => typeof(IConditional); }
+
+        public bool IsLogicNode { get => true; }
 
         /// <summary>
-        /// Returns the script that should be used for the template file.
+        ///     Returns the script that should be used for the template file.
         /// </summary>
         /// <param name="name">The name of the node.</param>
         /// <returns>The node script.</returns>
@@ -164,18 +168,19 @@ public class {name} : ConditionalNode
     }
 
     /// <summary>
-    /// Template for creating a custom conditional task.
+    ///     Template for creating a custom conditional task.
     /// </summary>
     [Category("GameObjects")]
     [DisplayName("Stacked Conditional")]
     [Description("Create a new stacked conditional node.")]
     public class GameObjectConditional : INodeTemplate
     {
-        public Type BaseType => typeof(IConditional);
-        public bool IsLogicNode => false;
+        public Type BaseType { get => typeof(IConditional); }
+
+        public bool IsLogicNode { get => false; }
 
         /// <summary>
-        /// Returns the script that should be used for the template file.
+        ///     Returns the script that should be used for the template file.
         /// </summary>
         /// <param name="name">The name of the node.</param>
         /// <returns>The node script.</returns>
@@ -202,18 +207,19 @@ public class {name} : Conditional
     }
 
     /// <summary>
-    /// Template for creating a custom decorator node.
+    ///     Template for creating a custom decorator node.
     /// </summary>
     [Category("GameObjects")]
     [DisplayName("Decorator")]
     [Description("Create a new decorator node.")]
     public class GameObjectDecoratorNode : IParentNodeTemplate
     {
-        public Type BaseType => typeof(IDecorator);
-        public bool IsLogicNode => true;
+        public Type BaseType { get => typeof(IDecorator); }
+
+        public bool IsLogicNode { get => true; }
 
         /// <summary>
-        /// Returns the script that should be used for the template file.
+        ///     Returns the script that should be used for the template file.
         /// </summary>
         /// <param name="name">The name of the node.</param>
         /// <returns>The node script.</returns>

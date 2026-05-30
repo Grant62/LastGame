@@ -18,21 +18,20 @@ using UnityEngine.AddressableAssets;
 
 namespace Sirenix.OdinInspector.Modules.Addressables.Editor
 {
-	/// <summary>
-	/// Validator for the DisallowAddressableSubAssetFieldAttribute.
-	/// </summary>
-	public class DisallowAddressableSubAssetFieldAttributeValidator : AttributeValidator<DisallowAddressableSubAssetFieldAttribute, AssetReference>
+    /// <summary>
+    ///     Validator for the DisallowAddressableSubAssetFieldAttribute.
+    /// </summary>
+    public class DisallowAddressableSubAssetFieldAttributeValidator : AttributeValidator<DisallowAddressableSubAssetFieldAttribute, AssetReference>
     {
         protected override void Validate(ValidationResult result)
         {
-            if (this.Value != null && string.IsNullOrEmpty(this.Value.SubObjectName) == false)
+            if (Value != null && !string.IsNullOrEmpty(Value.SubObjectName))
             {
                 result.AddError("Sub-asset references is not allowed on this field.")
-                    .WithFix("Remove Sub-Asset", () => this.Value.SubObjectName = null, true);
+                    .WithFix("Remove Sub-Asset", () => Value.SubObjectName = null);
             }
         }
     }
-
 }
 
 #endif

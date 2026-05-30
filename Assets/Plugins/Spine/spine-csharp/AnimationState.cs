@@ -1154,15 +1154,15 @@ namespace Spine
 
         private struct EventQueueEntry
         {
-            public readonly EventType type;
-            public readonly TrackEntry entry;
-            public readonly Event e;
+            public readonly EventType Type;
+            public readonly TrackEntry Entry;
+            public readonly Event Event;
 
-            public EventQueueEntry(EventType eventType, TrackEntry trackEntry, Event e = null)
+            public EventQueueEntry(EventType eventType, TrackEntry trackEntry, Event @event = null)
             {
-                type = eventType;
-                entry = trackEntry;
-                this.e = e;
+                Type = eventType;
+                Entry = trackEntry;
+                Event = @event;
             }
         }
 
@@ -1221,9 +1221,9 @@ namespace Spine
             for (int i = 0; i < entries.Count; i++)
             {
                 EventQueueEntry queueEntry = entries[i];
-                TrackEntry trackEntry = queueEntry.entry;
+                TrackEntry trackEntry = queueEntry.Entry;
 
-                switch (queueEntry.type)
+                switch (queueEntry.Type)
                 {
                     case EventType.Start:
                         trackEntry.OnStart();
@@ -1247,8 +1247,8 @@ namespace Spine
                         state.OnComplete(trackEntry);
                         break;
                     case EventType.Event:
-                        trackEntry.OnEvent(queueEntry.e);
-                        state.OnEvent(trackEntry, queueEntry.e);
+                        trackEntry.OnEvent(queueEntry.Event);
+                        state.OnEvent(trackEntry, queueEntry.Event);
                         break;
                 }
             }

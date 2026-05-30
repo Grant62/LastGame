@@ -1,4 +1,11 @@
-﻿#if GRAPH_DESIGNER
+﻿using Opsive.BehaviorDesigner.Runtime.Components;
+using Opsive.GraphDesigner.Runtime;
+using Opsive.Shared.Utility;
+using Unity.Burst;
+using Unity.Entities;
+using UnityEngine;
+
+#if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
 /// Copyright (c) Opsive. All Rights Reserved.
@@ -6,37 +13,31 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
 {
-    using Opsive.BehaviorDesigner.Runtime.Components;
-    using Opsive.GraphDesigner.Runtime;
-    using Unity.Burst;
-    using Unity.Entities;
-    using UnityEngine;
-
     /// <summary>
-    /// A node representation of the inverter task.
+    ///     A node representation of the inverter task.
     /// </summary>
     [NodeIcon("53fe4de81c20e924095bdb5f3447acdc", "8d991ea2b725c214c85580d5647c578c")]
-    [Opsive.Shared.Utility.Description("The inverter task will invert the return value of the child task after it has finished executing. " +
-                     "If the child returns success, the inverter task will return failure. If the child returns failure, the inverter task will return success.")]
+    [Description("The inverter task will invert the return value of the child task after it has finished executing. " +
+                 "If the child returns success, the inverter task will return failure. If the child returns failure, the inverter task will return success.")]
     public class Inverter : ECSDecoratorTask<InverterTaskSystem, InverterComponent>, IParentNode
     {
         public override ComponentType Flag { get => typeof(InverterFlag); }
 
         /// <summary>
-        /// Returns a new TBufferElement for use by the system.
+        ///     Returns a new TBufferElement for use by the system.
         /// </summary>
         /// <returns>A new TBufferElement for use by the system.</returns>
         public override InverterComponent GetBufferElement()
         {
-            return new InverterComponent()
+            return new InverterComponent
             {
-                Index = RuntimeIndex,
+                Index = RuntimeIndex
             };
         }
     }
 
     /// <summary>
-    /// The DOTS data structure for the Inverter class.
+    ///     The DOTS data structure for the Inverter class.
     /// </summary>
     public struct InverterComponent : IBufferElementData
     {
@@ -45,35 +46,35 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
     }
 
     /// <summary>
-    /// A DOTS tag indicating when an Inverter node is active.
+    ///     A DOTS tag indicating when an Inverter node is active.
     /// </summary>
     public struct InverterFlag : IComponentData, IEnableableComponent { }
 
     /// <summary>
-    /// Runs the Inverter logic.
+    ///     Runs the Inverter logic.
     /// </summary>
     [DisableAutoCreation]
     public partial struct InverterTaskSystem : ISystem
     {
         /// <summary>
-        /// Creates the job.
+        ///     Creates the job.
         /// </summary>
         /// <param name="state">The current state of the system.</param>
         [BurstCompile]
         private void OnUpdate(ref SystemState state)
         {
-            var query = SystemAPI.QueryBuilder().WithAllRW<BranchComponent>().WithAllRW<TaskComponent>().WithAllRW<InverterComponent>().WithAll<InverterFlag, EvaluateFlag>().Build();
+            EntityQuery query = SystemAPI.QueryBuilder().WithAllRW<BranchComponent>().WithAllRW<TaskComponent>().WithAllRW<InverterComponent>().WithAll<InverterFlag, EvaluateFlag>().Build();
             state.Dependency = new InverterJob().ScheduleParallel(query, state.Dependency);
         }
 
         /// <summary>
-        /// Job which executes the task logic.
+        ///     Job which executes the task logic.
         /// </summary>
         [BurstCompile]
         private partial struct InverterJob : IJobEntity
         {
             /// <summary>
-            /// Executes the inverter logic.
+            ///     Executes the inverter logic.
             /// </summary>
             /// <param name="branchComponents">An array of BranchComponents.</param>
             /// <param name="taskComponents">An array of TaskComponents.</param>
@@ -81,13 +82,15 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
             [BurstCompile]
             public void Execute(ref DynamicBuffer<BranchComponent> branchComponents, ref DynamicBuffer<TaskComponent> taskComponents, ref DynamicBuffer<InverterComponent> inverterComponents)
             {
-                for (int i = 0; i < inverterComponents.Length; ++i) {
-                    var inverterComponent = inverterComponents[i];
-                    var taskComponent = taskComponents[inverterComponent.Index];
-                    var branchComponent = branchComponents[taskComponent.BranchIndex];
+                for (int i = 0; i < inverterComponents.Length; ++i)
+                {
+                    InverterComponent inverterComponent = inverterComponents[i];
+                    TaskComponent taskComponent = taskComponents[inverterComponent.Index];
+                    BranchComponent branchComponent = branchComponents[taskComponent.BranchIndex];
                     TaskComponent childTaskComponent;
 
-                    if (taskComponent.Status == TaskStatus.Queued) {
+                    if (taskComponent.Status == TaskStatus.Queued)
+                    {
                         taskComponent.Status = TaskStatus.Running;
                         taskComponents[taskComponent.Index] = taskComponent;
 
@@ -98,13 +101,17 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
                         branchComponent.NextIndex = (ushort)(taskComponent.Index + 1);
                         branchComponents[taskComponent.BranchIndex] = branchComponent;
                         continue;
-                    } else if (taskComponent.Status != TaskStatus.Running) {
+                    }
+
+                    if (taskComponent.Status != TaskStatus.Running)
+                    {
                         continue;
                     }
 
                     // The inverter task is currently active. Check the first child.
                     childTaskComponent = taskComponents[taskComponent.Index + 1];
-                    if (childTaskComponent.Status == TaskStatus.Queued || childTaskComponent.Status == TaskStatus.Running) {
+                    if (childTaskComponent.Status == TaskStatus.Queued || childTaskComponent.Status == TaskStatus.Running)
+                    {
                         // The child should keep running.
                         continue;
                     }

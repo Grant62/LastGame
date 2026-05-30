@@ -1,3 +1,9 @@
+using Opsive.GraphDesigner.Runtime;
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Events;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,13 +12,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Events
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using Opsive.Shared.Events;
-    using UnityEngine;
-
     [AllowMultipleTypes]
-    [Opsive.Shared.Utility.Description("Invoked when the specified event is received.")]
+    [Description("Invoked when the specified event is received.")]
     public class OnReceivedEvent : EventNode
     {
         [Tooltip("The name of the event that starts the branch.")]
@@ -28,14 +29,16 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Events
         private bool m_Initialized;
 
         /// <summary>
-        /// Initializes the node to the specified graph.
+        ///     Initializes the node to the specified graph.
         /// </summary>
         /// <param name="graph">The graph that is initializing the task.</param>
         public override void Initialize(IGraph graph)
         {
-            if (m_Initialized) {
+            if (m_Initialized)
+            {
                 return;
             }
+
             m_Initialized = true;
 
             base.Initialize(graph);
@@ -43,27 +46,47 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Events
             m_BehaviorTree.OnBehaviorTreeDestroyed += Destroy;
 
             m_EventName.OnValueChange += UpdateEvents;
-            if (m_StoredValue1 != null) { m_StoredValue1.OnValueChange += UpdateEvents; }
-            if (m_StoredValue2 != null) { m_StoredValue2.OnValueChange += UpdateEvents; }
-            if (m_StoredValue3 != null) { m_StoredValue3.OnValueChange += UpdateEvents; }
+            if (m_StoredValue1 != null)
+            {
+                m_StoredValue1.OnValueChange += UpdateEvents;
+            }
+
+            if (m_StoredValue2 != null)
+            {
+                m_StoredValue2.OnValueChange += UpdateEvents;
+            }
+
+            if (m_StoredValue3 != null)
+            {
+                m_StoredValue3.OnValueChange += UpdateEvents;
+            }
 
             RegisterEvents();
         }
 
         /// <summary>
-        /// Registers for the events.
+        ///     Registers for the events.
         /// </summary>
         private void RegisterEvents()
         {
-            if (m_StoredValue1 == null || !m_StoredValue1.IsShared) {
+            if (m_StoredValue1 == null || !m_StoredValue1.IsShared)
+            {
                 EventHandler.RegisterEvent(m_BehaviorTree, m_EventName.Value, ReceivedEvent);
-            } else {
-                if (m_StoredValue2 == null || !m_StoredValue2.IsShared) {
+            }
+            else
+            {
+                if (m_StoredValue2 == null || !m_StoredValue2.IsShared)
+                {
                     EventHandler.RegisterEvent<object>(m_BehaviorTree, m_EventName.Value, ReceivedEvent);
-                } else {
-                    if (m_StoredValue3 == null || !m_StoredValue3.IsShared) {
+                }
+                else
+                {
+                    if (m_StoredValue3 == null || !m_StoredValue3.IsShared)
+                    {
                         EventHandler.RegisterEvent<object, object>(m_BehaviorTree, m_EventName.Value, ReceivedEvent);
-                    } else {
+                    }
+                    else
+                    {
                         EventHandler.RegisterEvent<object, object, object>(m_BehaviorTree, m_EventName.Value, ReceivedEvent);
                     }
                 }
@@ -73,12 +96,13 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Events
         }
 
         /// <summary>
-        /// Unregisters for the events that were registered.
+        ///     Unregisters for the events that were registered.
         /// </summary>
         private void UnregisterEvents()
         {
             // The events must be registered first in order to be unregistered.
-            if (string.IsNullOrEmpty(m_RegisteredEventName)) {
+            if (string.IsNullOrEmpty(m_RegisteredEventName))
+            {
                 return;
             }
 
@@ -92,7 +116,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Events
         }
 
         /// <summary>
-        /// The event name or parameter count has changed. Update the events.
+        ///     The event name or parameter count has changed. Update the events.
         /// </summary>
         private void UpdateEvents()
         {
@@ -101,7 +125,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Events
         }
 
         /// <summary>
-        /// The event has been received.
+        ///     The event has been received.
         /// </summary>
         private void ReceivedEvent()
         {
@@ -109,55 +133,87 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Events
         }
 
         /// <summary>
-        /// A single parameter event has been received.
+        ///     A single parameter event has been received.
         /// </summary>
         /// <param name="arg1">The first parameter.</param>
         private void ReceivedEvent(object arg1)
         {
-            if (m_StoredValue1 != null && m_StoredValue1.IsShared) { m_StoredValue1.SetValue(arg1); }
+            if (m_StoredValue1 != null && m_StoredValue1.IsShared)
+            {
+                m_StoredValue1.SetValue(arg1);
+            }
 
             m_BehaviorTree.StartBranch(this);
         }
 
         /// <summary>
-        /// A two parameter event has been received.
+        ///     A two parameter event has been received.
         /// </summary>
         /// <param name="arg1">The first parameter.</param>
         /// <param name="arg2">The second parameter.</param>
         private void ReceivedEvent(object arg1, object arg2)
         {
-            if (m_StoredValue1 != null && m_StoredValue1.IsShared) { m_StoredValue1.SetValue(arg1); }
-            if (m_StoredValue2 != null && m_StoredValue2.IsShared) { m_StoredValue2.SetValue(arg2); }
+            if (m_StoredValue1 != null && m_StoredValue1.IsShared)
+            {
+                m_StoredValue1.SetValue(arg1);
+            }
+
+            if (m_StoredValue2 != null && m_StoredValue2.IsShared)
+            {
+                m_StoredValue2.SetValue(arg2);
+            }
 
             m_BehaviorTree.StartBranch(this);
         }
 
         /// <summary>
-        /// A three parameter event has been received.
+        ///     A three parameter event has been received.
         /// </summary>
         /// <param name="arg1">The first parameter.</param>
         /// <param name="arg2">The second parameter.</param>
         /// <param name="arg3">The third parameter.</param>
         private void ReceivedEvent(object arg1, object arg2, object arg3)
         {
-            if (m_StoredValue1 != null && m_StoredValue1.IsShared) { m_StoredValue1.SetValue(arg1); }
-            if (m_StoredValue2 != null && m_StoredValue2.IsShared) { m_StoredValue2.SetValue(arg2); }
-            if (m_StoredValue3 != null && m_StoredValue3.IsShared) { m_StoredValue3.SetValue(arg3); }
+            if (m_StoredValue1 != null && m_StoredValue1.IsShared)
+            {
+                m_StoredValue1.SetValue(arg1);
+            }
+
+            if (m_StoredValue2 != null && m_StoredValue2.IsShared)
+            {
+                m_StoredValue2.SetValue(arg2);
+            }
+
+            if (m_StoredValue3 != null && m_StoredValue3.IsShared)
+            {
+                m_StoredValue3.SetValue(arg3);
+            }
 
             m_BehaviorTree.StartBranch(this);
         }
 
         /// <summary>
-        /// The behavior tree has been destroyed.
+        ///     The behavior tree has been destroyed.
         /// </summary>
         private void Destroy()
         {
             m_BehaviorTree.OnBehaviorTreeDestroyed -= Destroy;
 
             m_EventName.OnValueChange -= UpdateEvents;
-            if (m_StoredValue1 != null) { m_StoredValue1.OnValueChange -= UpdateEvents; }
-            if (m_StoredValue2 != null) { m_StoredValue2.OnValueChange -= UpdateEvents; }
-            if (m_StoredValue3 != null) { m_StoredValue3.OnValueChange -= UpdateEvents; }
+            if (m_StoredValue1 != null)
+            {
+                m_StoredValue1.OnValueChange -= UpdateEvents;
+            }
+
+            if (m_StoredValue2 != null)
+            {
+                m_StoredValue2.OnValueChange -= UpdateEvents;
+            }
+
+            if (m_StoredValue3 != null)
+            {
+                m_StoredValue3.OnValueChange -= UpdateEvents;
+            }
 
             UnregisterEvents();
             m_Initialized = false;

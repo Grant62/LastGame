@@ -294,7 +294,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<T2> source2;
 
             private readonly Func<T1, T2, TResult> resultSelector;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<T1> enumerator1;
             private UniTask<bool>.Awaiter awaiter1;
@@ -546,7 +546,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<T3> source3;
 
             private readonly Func<T1, T2, T3, TResult> resultSelector;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<T1> enumerator1;
             private UniTask<bool>.Awaiter awaiter1;
@@ -885,7 +885,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<T4> source4;
 
             private readonly Func<T1, T2, T3, T4, TResult> resultSelector;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<T1> enumerator1;
             private UniTask<bool>.Awaiter awaiter1;
@@ -1309,7 +1309,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<T5> source5;
 
             private readonly Func<T1, T2, T3, T4, T5, TResult> resultSelector;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<T1> enumerator1;
             private UniTask<bool>.Awaiter awaiter1;
@@ -1818,7 +1818,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<T6> source6;
 
             private readonly Func<T1, T2, T3, T4, T5, T6, TResult> resultSelector;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<T1> enumerator1;
             private UniTask<bool>.Awaiter awaiter1;
@@ -2412,7 +2412,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<T7> source7;
 
             private readonly Func<T1, T2, T3, T4, T5, T6, T7, TResult> resultSelector;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<T1> enumerator1;
             private UniTask<bool>.Awaiter awaiter1;
@@ -3093,7 +3093,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<T8> source8;
 
             private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult> resultSelector;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<T1> enumerator1;
             private UniTask<bool>.Awaiter awaiter1;
@@ -3859,7 +3859,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<T9> source9;
 
             private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> resultSelector;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<T1> enumerator1;
             private UniTask<bool>.Awaiter awaiter1;
@@ -4710,7 +4710,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<T10> source10;
 
             private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TResult> resultSelector;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<T1> enumerator1;
             private UniTask<bool>.Awaiter awaiter1;
@@ -5648,7 +5648,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<T11> source11;
 
             private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TResult> resultSelector;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<T1> enumerator1;
             private UniTask<bool>.Awaiter awaiter1;
@@ -6671,7 +6671,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<T12> source12;
 
             private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TResult> resultSelector;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<T1> enumerator1;
             private UniTask<bool>.Awaiter awaiter1;
@@ -7781,7 +7781,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<T13> source13;
 
             private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TResult> resultSelector;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<T1> enumerator1;
             private UniTask<bool>.Awaiter awaiter1;
@@ -8976,7 +8976,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<T14> source14;
 
             private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TResult> resultSelector;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<T1> enumerator1;
             private UniTask<bool>.Awaiter awaiter1;
@@ -10259,7 +10259,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<T15> source15;
 
             private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult> resultSelector;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<T1> enumerator1;
             private UniTask<bool>.Awaiter awaiter1;

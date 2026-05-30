@@ -7,10 +7,8 @@
 namespace Opsive.GraphDesigner.Runtime.Wrappers
 {
     /// <summary>
-    /// Wrapper for the Scene Shared Variables component.
+    ///     Wrapper for the Scene Shared Variables component.
     /// </summary>
-    public class SceneSharedVariables : Runtime.Variables.SceneSharedVariables
-    {
-    }
+    public class SceneSharedVariables : Variables.SceneSharedVariables { }
 }
 #endif

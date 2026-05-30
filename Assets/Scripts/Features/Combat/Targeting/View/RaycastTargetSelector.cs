@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 namespace Features.Combat.Targeting.View
@@ -5,10 +6,12 @@ namespace Features.Combat.Targeting.View
     public class RaycastTargetSelector : ITargetSelector
     {
         private readonly LayerMask mLayerMask;
+        private readonly Camera mMainCamera;
 
         public RaycastTargetSelector(LayerMask layerMask)
         {
             mLayerMask = layerMask;
+            mMainCamera = Camera.main;
         }
 
         public ITargetable GetTargetAtPosition(Vector3 position)
@@ -25,9 +28,17 @@ namespace Features.Combat.Targeting.View
         public ITargetable GetTargetAtMousePosition()
         {
             Vector3 mousePos = Input.mousePosition;
-            mousePos.z = -Camera.main.transform.position.z;
-            Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+            mousePos.z = -mMainCamera.transform.position.z;
+            Vector3 worldPos = mMainCamera.ScreenToWorldPoint(mousePos);
             return GetTargetAtPosition(worldPos);
+        }
+
+        public ITargetable GetCaster()
+        {
+            return Object.FindObjectsByType<MonoBehaviour>(
+                FindObjectsInactive.Exclude, FindObjectsSortMode.None
+            ).OfType<IDamageable>().FirstOrDefault(d =>
+                d.IsValidTarget && (mLayerMask & 1 << ((MonoBehaviour)d).gameObject.layer) == 0);
         }
     }
 }

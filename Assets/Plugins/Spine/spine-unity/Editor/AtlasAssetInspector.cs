@@ -328,7 +328,9 @@ namespace Spine.Unity.Editor
             string texturePath = AssetDatabase.GetAssetPath(texture.GetInstanceID());
             TextureImporter t = (TextureImporter)TextureImporter.GetAtPath(texturePath);
             t.spriteImportMode = SpriteImportMode.Multiple;
+#pragma warning disable CS0618
             SpriteMetaData[] spriteSheet = t.spritesheet;
+#pragma warning restore CS0618
             List<SpriteMetaData> sprites = new(spriteSheet);
 
             List<AtlasRegion> regions = GetRegions(atlas);
@@ -394,7 +396,9 @@ namespace Spine.Unity.Editor
                 }
             }
 
+#pragma warning disable CS0618
             t.spritesheet = sprites.ToArray();
+#pragma warning restore CS0618
             EditorUtility.SetDirty(t);
             AssetDatabase.ImportAsset(texturePath, ImportAssetOptions.ForceUpdate);
             EditorGUIUtility.PingObject(texture);

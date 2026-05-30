@@ -1,4 +1,12 @@
-﻿#if GRAPH_DESIGNER
+﻿using System;
+using Opsive.BehaviorDesigner.Runtime.Components;
+using Opsive.GraphDesigner.Runtime;
+using Opsive.Shared.Utility;
+using Unity.Burst;
+using Unity.Entities;
+using UnityEngine;
+
+#if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
 /// Copyright (c) Opsive. All Rights Reserved.
@@ -6,23 +14,16 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
 {
-    using Opsive.BehaviorDesigner.Runtime.Components;
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.Shared.Utility;
-    using System;
-    using Unity.Burst;
-    using Unity.Entities;
-    using UnityEngine;
-
     /// <summary>
-    /// A node representation of the cooldown task.
+    ///     A node representation of the cooldown task.
     /// </summary>
     [NodeIcon("b5459f67bc5033e49ad7a763cdb885bb", "480c79a18119d2a488b5d984211463f1")]
-    [Opsive.Shared.Utility.Description("Waits the specified duration after the child has completed before returning the child's status of success or failure.")]
+    [Description("Waits the specified duration after the child has completed before returning the child's status of success or failure.")]
     public class Cooldown : ECSDecoratorTask<CooldownTaskSystem, CooldownComponent>, IParentNode
     {
         [Tooltip("The duration of the cooldown.")]
-        [SerializeField] float m_Duration;
+        [SerializeField]
+        private float m_Duration;
 
         public float Duration { get => m_Duration; set => m_Duration = value; }
 
@@ -31,26 +32,26 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         public override ComponentType Flag { get => typeof(CooldownFlag); }
 
         /// <summary>
-        /// Resets the task to its default values.
+        ///     Resets the task to its default values.
         /// </summary>
         public override void Reset() { m_Duration = 1; }
 
         /// <summary>
-        /// Returns a new TBufferElement for use by the system.
+        ///     Returns a new TBufferElement for use by the system.
         /// </summary>
         /// <returns>A new TBufferElement for use by the system.</returns>
         public override CooldownComponent GetBufferElement()
         {
-            return new CooldownComponent()
+            return new CooldownComponent
             {
                 Index = RuntimeIndex,
                 Duration = m_Duration,
-                StartTime = -1,
+                StartTime = -1
             };
         }
 
         /// <summary>
-        /// Adds the IBufferElementData to the entity.
+        ///     Adds the IBufferElementData to the entity.
         /// </summary>
         /// <param name="world">The world that the entity exists in.</param>
         /// <param name="entity">The entity that the IBufferElementData should be assigned to.</param>
@@ -63,50 +64,53 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// Specifies the type of reflection that should be used to save the task.
+        ///     Specifies the type of reflection that should be used to save the task.
         /// </summary>
-        /// <param name="index">The index of the sub-task. This is used for the task set allowing each contained task to have their own save type.</param>
+        /// <param name="index">
+        ///     The index of the sub-task. This is used for the task set allowing each contained task to have their
+        ///     own save type.
+        /// </param>
         public MemberVisibility GetSaveReflectionType(int index) { return MemberVisibility.None; }
 
         /// <summary>
-        /// Returns the current task state.
+        ///     Returns the current task state.
         /// </summary>
         /// <param name="world">The DOTS world.</param>
         /// <param name="entity">The DOTS entity.</param>
         /// <returns>The current task state.</returns>
         public object Save(World world, Entity entity)
         {
-            var cooldownComponents = world.EntityManager.GetBuffer<CooldownComponent>(entity);
-            var cooldownComponent = cooldownComponents[m_ComponentIndex];
+            DynamicBuffer<CooldownComponent> cooldownComponents = world.EntityManager.GetBuffer<CooldownComponent>(entity);
+            CooldownComponent cooldownComponent = cooldownComponents[m_ComponentIndex];
 
             // Save the elapsed time.
             return Time.time - cooldownComponent.StartTime;
         }
 
         /// <summary>
-        /// Loads the previous task state.
+        ///     Loads the previous task state.
         /// </summary>
         /// <param name="saveData">The previous task state.</param>
         /// <param name="world">The DOTS world.</param>
         /// <param name="entity">The DOTS entity.</param>
         public void Load(object saveData, World world, Entity entity)
         {
-            var cooldownComponents = world.EntityManager.GetBuffer<CooldownComponent>(entity);
-            var cooldownComponent = cooldownComponents[m_ComponentIndex];
+            DynamicBuffer<CooldownComponent> cooldownComponents = world.EntityManager.GetBuffer<CooldownComponent>(entity);
+            CooldownComponent cooldownComponent = cooldownComponents[m_ComponentIndex];
 
             // saveData is the elapsed amount of time.
-            var data = (object[])saveData;
+            object[] data = (object[])saveData;
             cooldownComponent.StartTime = Time.time - (double)saveData;
             cooldownComponents[m_ComponentIndex] = cooldownComponent;
         }
 
         /// <summary>
-        /// Creates a deep clone of the component.
+        ///     Creates a deep clone of the component.
         /// </summary>
         /// <returns>A deep clone of the component.</returns>
         public object Clone()
         {
-            var clone = Activator.CreateInstance<Cooldown>();
+            Cooldown clone = Activator.CreateInstance<Cooldown>();
             clone.Index = Index;
             clone.ParentIndex = ParentIndex;
             clone.SiblingIndex = SiblingIndex;
@@ -116,7 +120,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
     }
 
     /// <summary>
-    /// The DOTS data structure for the Cooldown class.
+    ///     The DOTS data structure for the Cooldown class.
     /// </summary>
     public struct CooldownComponent : IBufferElementData
     {
@@ -129,32 +133,32 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
     }
 
     /// <summary>
-    /// A DOTS tag indicating when an Cooldown node is active.
+    ///     A DOTS tag indicating when an Cooldown node is active.
     /// </summary>
     public struct CooldownFlag : IComponentData, IEnableableComponent { }
 
     /// <summary>
-    /// Runs the Cooldown logic.
+    ///     Runs the Cooldown logic.
     /// </summary>
     [DisableAutoCreation]
     public partial struct CooldownTaskSystem : ISystem
     {
         /// <summary>
-        /// Creates the job.
+        ///     Creates the job.
         /// </summary>
         /// <param name="state">The current state of the system.</param>
         [BurstCompile]
         private void OnUpdate(ref SystemState state)
         {
-            var query = SystemAPI.QueryBuilder().WithAllRW<BranchComponent>().WithAllRW<TaskComponent>().WithAllRW<CooldownComponent>().WithAll<CooldownFlag, EvaluateFlag>().Build();
-            state.Dependency = new CooldownJob()
+            EntityQuery query = SystemAPI.QueryBuilder().WithAllRW<BranchComponent>().WithAllRW<TaskComponent>().WithAllRW<CooldownComponent>().WithAll<CooldownFlag, EvaluateFlag>().Build();
+            state.Dependency = new CooldownJob
             {
                 Time = SystemAPI.Time.ElapsedTime
             }.ScheduleParallel(query, state.Dependency);
         }
 
         /// <summary>
-        /// Job which executes the task logic.
+        ///     Job which executes the task logic.
         /// </summary>
         [BurstCompile]
         private partial struct CooldownJob : IJobEntity
@@ -163,7 +167,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
             public double Time;
 
             /// <summary>
-            /// Executes the cooldown logic.
+            ///     Executes the cooldown logic.
             /// </summary>
             /// <param name="branchComponents">An array of BranchComponents.</param>
             /// <param name="taskComponents">An array of TaskComponents.</param>
@@ -171,13 +175,15 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
             [BurstCompile]
             public void Execute(ref DynamicBuffer<BranchComponent> branchComponents, ref DynamicBuffer<TaskComponent> taskComponents, ref DynamicBuffer<CooldownComponent> cooldownComponents)
             {
-                for (int i = 0; i < cooldownComponents.Length; ++i) {
-                    var cooldownComponent = cooldownComponents[i];
-                    var taskComponent = taskComponents[cooldownComponent.Index];
-                    var branchComponent = branchComponents[taskComponent.BranchIndex];
+                for (int i = 0; i < cooldownComponents.Length; ++i)
+                {
+                    CooldownComponent cooldownComponent = cooldownComponents[i];
+                    TaskComponent taskComponent = taskComponents[cooldownComponent.Index];
+                    BranchComponent branchComponent = branchComponents[taskComponent.BranchIndex];
                     TaskComponent childTaskComponent;
 
-                    if (taskComponent.Status == TaskStatus.Queued) {
+                    if (taskComponent.Status == TaskStatus.Queued)
+                    {
                         taskComponent.Status = TaskStatus.Running;
                         taskComponents[taskComponent.Index] = taskComponent;
 
@@ -189,27 +195,34 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
                         branchComponents[taskComponent.BranchIndex] = branchComponent;
 
                         continue;
-                    } else if (taskComponent.Status != TaskStatus.Running) {
+                    }
+
+                    if (taskComponent.Status != TaskStatus.Running)
+                    {
                         continue;
                     }
 
                     // The cooldown task is currently active. Check the first child.
                     childTaskComponent = taskComponents[taskComponent.Index + 1];
-                    if (childTaskComponent.Status == TaskStatus.Queued || childTaskComponent.Status == TaskStatus.Running) {
+                    if (childTaskComponent.Status == TaskStatus.Queued || childTaskComponent.Status == TaskStatus.Running)
+                    {
                         // The child should keep running.
                         continue;
                     }
 
                     // The child has completed. Start the timer if it hasn't already started. If it has started then complete when the duration has elapsed.
-                    if (cooldownComponent.StartTime == -1) {
+                    if (cooldownComponent.StartTime == -1)
+                    {
                         cooldownComponent.StartTime = Time;
                         cooldownComponents[i] = cooldownComponent;
-                    } else if (cooldownComponent.StartTime + cooldownComponent.Duration <= Time) {
+                    }
+                    else if (cooldownComponent.StartTime + cooldownComponent.Duration <= Time)
+                    {
                         taskComponent.Status = childTaskComponent.Status;
                         taskComponents[taskComponent.Index] = taskComponent;
 
                         cooldownComponent.StartTime = -1;
-                        var cooldownComponentsBuffer = cooldownComponents;
+                        DynamicBuffer<CooldownComponent> cooldownComponentsBuffer = cooldownComponents;
                         cooldownComponentsBuffer[i] = cooldownComponent;
 
                         branchComponent.NextIndex = taskComponent.ParentIndex;

@@ -1,3 +1,7 @@
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,26 +10,22 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.Math
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
-    [Opsive.Shared.Utility.Description("Performs a math operation on the two integers.")]
-    [Shared.Utility.Category("Math")]
+    [Description("Performs a math operation on the two integers.")]
+    [Category("Math")]
     public class IntOperator : Action
     {
         /// <summary>
-        /// Specifies the type of int operation that should be performed.
+        ///     Specifies the type of int operation that should be performed.
         /// </summary>
         protected enum Operation
         {
-            Add,        // Returns the addition between two integers.
-            Subtract,   // Returns the division between two integers.
-            Multiply,   // Returns the multiplication between two integers.
-            Divide,     // Returns the division between two integers.
-            Modulo,     // Returns the modulo between two integers.
-            Min,        // Returns the minimum of two integers.
-            Max,        // Returns the maximum of two integers.
+            Add, // Returns the addition between two integers.
+            Subtract, // Returns the division between two integers.
+            Multiply, // Returns the multiplication between two integers.
+            Divide, // Returns the division between two integers.
+            Modulo, // Returns the modulo between two integers.
+            Min, // Returns the minimum of two integers.
+            Max // Returns the maximum of two integers.
         }
 
         [Tooltip("The operation to perform.")]
@@ -38,12 +38,13 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.Math
         [RequireShared] [SerializeField] protected SharedVariable<int> m_StoreResult;
 
         /// <summary>
-        /// Executes the task.
+        ///     Executes the task.
         /// </summary>
         /// <returns>The execution status of the task.</returns>
         public override TaskStatus OnUpdate()
         {
-            switch (m_Operation.Value) {
+            switch (m_Operation.Value)
+            {
                 case Operation.Add:
                     m_StoreResult.Value = m_Integer1.Value + m_Integer2.Value;
                     break;
@@ -66,6 +67,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.Math
                     m_StoreResult.Value = Mathf.Max(m_Integer1.Value, m_Integer2.Value);
                     break;
             }
+
             return TaskStatus.Success;
         }
     }

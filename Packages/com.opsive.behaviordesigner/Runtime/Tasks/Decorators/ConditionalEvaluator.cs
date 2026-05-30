@@ -1,3 +1,12 @@
+using Opsive.BehaviorDesigner.Runtime.Components;
+using Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals;
+using Opsive.BehaviorDesigner.Runtime.Utility;
+using Opsive.GraphDesigner.Runtime;
+using Opsive.GraphDesigner.Runtime.Utility;
+using Opsive.Shared.Utility;
+using Unity.Entities;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,28 +15,21 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
 {
-    using Opsive.BehaviorDesigner.Runtime.Components;
-    using Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals;
-    using Opsive.BehaviorDesigner.Runtime.Utility;
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Utility;
-    using Opsive.Shared.Utility;
-    using Unity.Entities;
-    using UnityEngine;
-
     /// <summary>
-    /// The Conditional Evaluator is a decorator that will evaluate the specified conditional task. This conditional task can be reevaluated while the current task is active.
+    ///     The Conditional Evaluator is a decorator that will evaluate the specified conditional task. This conditional task
+    ///     can be reevaluated while the current task is active.
     /// </summary>
     [NodeIcon("63d6a403c13816a49b58d1de830ca51e", "3d3c18273075b3f40b6c921943f33964")]
-    [Opsive.Shared.Utility.Description("Evaluates the specified conditional task. If the conditional task returns success then the child task is run and the child status is returned. If the conditional task does not " +
-                     "return success then the child task is not run and a failure status is immediately returned.")]
+    [Description(
+        "Evaluates the specified conditional task. If the conditional task returns success then the child task is run and the child status is returned. If the conditional task does not " +
+        "return success then the child task is not run and a failure status is immediately returned.")]
     public class ConditionalEvaluator : DecoratorNode
     {
         [Tooltip("The target conditional task that should be evaluated.")]
         [SerializeField] [InspectNode] protected Conditional m_Task;
 
         /// <summary>
-        /// Resets the task values back to their default.
+        ///     Resets the task values back to their default.
         /// </summary>
         public override void Reset()
         {
@@ -35,7 +37,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// Initializes the base task parameters.
+        ///     Initializes the base task parameters.
         /// </summary>
         /// <param name="behaviorTree">A reference to the owning BehaviorTree.</param>
         /// <param name="runtimeIndex">The runtime index of the node.</param>
@@ -43,21 +45,24 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         {
             base.Initialize(behaviorTree, runtimeIndex);
 
-            if (m_Task != null) {
+            if (m_Task != null)
+            {
                 m_Task.Initialize(behaviorTree, runtimeIndex);
 
-                if (behaviorTree.World != null) {
+                if (behaviorTree.World != null)
+                {
                     ComponentUtility.AddInterruptComponents(behaviorTree.World.EntityManager, behaviorTree.Entity);
                 }
             }
         }
 
         /// <summary>
-        /// The behavior tree has been initialized.
+        ///     The behavior tree has been initialized.
         /// </summary>
         public override void OnAwake()
         {
-            if (m_Task == null) {
+            if (m_Task == null)
+            {
                 Debug.LogError("Error: The task is null within the conditional evaluator.");
                 return;
             }
@@ -66,7 +71,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// The tree has been started.
+        ///     The tree has been started.
         /// </summary>
         public override void OnBehaviorTreeStarted()
         {
@@ -74,7 +79,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// Starts evaluating the specified task.
+        ///     Starts evaluating the specified task.
         /// </summary>
         public override void OnStart()
         {
@@ -82,30 +87,35 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// Updates the task.
+        ///     Updates the task.
         /// </summary>
         /// <returns>The status of the task.</returns>
         public override TaskStatus OnUpdate()
         {
-            if (m_Task == null) {
+            if (m_Task == null)
+            {
                 return TaskStatus.Failure;
             }
-            var status = m_Task.OnUpdate();
-            if (status == TaskStatus.Failure) {
+
+            TaskStatus status = m_Task.OnUpdate();
+            if (status == TaskStatus.Failure)
+            {
                 return TaskStatus.Failure;
             }
 
             // If the child task returns success or failure then that status should be returned. Otherwise return running.
-            var taskComponents = m_BehaviorTree.World.EntityManager.GetBuffer<TaskComponent>(m_BehaviorTree.Entity);
-            var childStatus = taskComponents[RuntimeIndex + 1].Status; // RuntimeIndex + 1 will always be the task's only child.
-            if (childStatus == TaskStatus.Success || childStatus == TaskStatus.Failure) {
+            DynamicBuffer<TaskComponent> taskComponents = m_BehaviorTree.World.EntityManager.GetBuffer<TaskComponent>(m_BehaviorTree.Entity);
+            TaskStatus childStatus = taskComponents[RuntimeIndex + 1].Status; // RuntimeIndex + 1 will always be the task's only child.
+            if (childStatus == TaskStatus.Success || childStatus == TaskStatus.Failure)
+            {
                 return childStatus;
             }
+
             return TaskStatus.Running;
         }
 
         /// <summary>
-        /// The task has stopped execution.
+        ///     The task has stopped execution.
         /// </summary>
         public override void OnEnd()
         {
@@ -113,7 +123,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// The tree has been stopped.
+        ///     The tree has been stopped.
         /// </summary>
         /// <param name="paused">Is the behavior tree paused?</param>
         public override void OnBehaviorTreeStopped(bool paused)
@@ -122,7 +132,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// The tree has been destroyed.
+        ///     The tree has been destroyed.
         /// </summary>
         public override void OnDestroy()
         {
@@ -130,12 +140,16 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// Specifies the type of reflection that should be used to save the task.
+        ///     Specifies the type of reflection that should be used to save the task.
         /// </summary>
-        /// <param name="index">The index of the sub-task. This is used for the task set allowing each contained task to have their own save type.</param>
+        /// <param name="index">
+        ///     The index of the sub-task. This is used for the task set allowing each contained task to have their
+        ///     own save type.
+        /// </param>
         public override MemberVisibility GetSaveReflectionType(int index)
         {
-            if (m_Task == null) {
+            if (m_Task == null)
+            {
                 return MemberVisibility.None;
             }
 
@@ -143,14 +157,15 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// Returns the current task state.
+        ///     Returns the current task state.
         /// </summary>
         /// <param name="world">The DOTS world.</param>
         /// <param name="entity">The DOTS entity.</param>
         /// <returns>The current task state.</returns>
         public override object Save(World world, Entity entity)
         {
-            if (m_Task == null) {
+            if (m_Task == null)
+            {
                 return null;
             }
 
@@ -158,14 +173,15 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// Loads the previous task state.
+        ///     Loads the previous task state.
         /// </summary>
         /// <param name="saveData">The previous task state.</param>
         /// <param name="world">The DOTS world.</param>
         /// <param name="entity">The DOTS entity.</param>
         public override void Load(object saveData, World world, Entity entity)
         {
-            if (m_Task == null) {
+            if (m_Task == null)
+            {
                 return;
             }
 

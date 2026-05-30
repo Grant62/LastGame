@@ -1,3 +1,7 @@
+using System;
+using UnityEngine;
+using Random = UnityEngine.Random;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,11 +10,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Utility
 {
-    using UnityEngine;
-    using System;
-
     /// <summary>
-    /// Specifies a range between two floats.
+    ///     Specifies a range between two floats.
     /// </summary>
     public struct RangeFloat
     {
@@ -19,10 +20,10 @@ namespace Opsive.BehaviorDesigner.Runtime.Utility
         [Tooltip("The maximum float value (inclusive).")]
         [SerializeField] public float Max;
 
-        public float RandomValue { get => UnityEngine.Random.Range(Min, Max); }
+        public float RandomValue { get => Random.Range(Min, Max); }
 
         /// <summary>
-        /// RangeFloat constructor.
+        ///     RangeFloat constructor.
         /// </summary>
         /// <param name="min">The minimal float value.</param>
         /// <param name="max">The maximal float value.</param>
@@ -34,9 +35,9 @@ namespace Opsive.BehaviorDesigner.Runtime.Utility
     }
 
     /// <summary>
-    /// Specifies that the task name should be hidden in the node view.
+    ///     Specifies that the task name should be hidden in the node view.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class)]
     public class HideNameInTaskControlAttribute : Attribute { }
 }
 #endif

@@ -11,17 +11,17 @@ namespace Cysharp.Threading.Tasks
         #region AsyncGPUReadbackRequest
         public static UniTask<AsyncGPUReadbackRequest>.Awaiter GetAwaiter(this AsyncGPUReadbackRequest asyncOperation)
         {
-            return ToUniTask(asyncOperation).GetAwaiter();
+            return asyncOperation.ToUniTask().GetAwaiter();
         }
 
         public static UniTask<AsyncGPUReadbackRequest> WithCancellation(this AsyncGPUReadbackRequest asyncOperation, CancellationToken cancellationToken)
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken);
         }
 
         public static UniTask<AsyncGPUReadbackRequest> WithCancellation(this AsyncGPUReadbackRequest asyncOperation, CancellationToken cancellationToken, bool cancelImmediately)
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
         }
 
         public static UniTask<AsyncGPUReadbackRequest> ToUniTask(this AsyncGPUReadbackRequest asyncOperation, PlayerLoopTiming timing = PlayerLoopTiming.Update,

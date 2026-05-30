@@ -1,3 +1,7 @@
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,12 +10,9 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals.Physics
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
-    [Opsive.Shared.Utility.Description("Returns success when an object exits the trigger. This task will only receive the physics callback if it is being reevaluated (with a conditional abort or under a parallel task).")]
-    [Shared.Utility.Category("Physics")]
+    [Description(
+        "Returns success when an object exits the trigger. This task will only receive the physics callback if it is being reevaluated (with a conditional abort or under a parallel task).")]
+    [Category("Physics")]
     public class HasExitedTrigger : Conditional
     {
         [Tooltip("The tag of the GameObject that the trigger should be checked against.")]
@@ -19,12 +20,12 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals.Physics
         [Tooltip("The exited trigger.")]
         [SerializeField] protected SharedVariable<Collider> m_StoredOtherCollider;
 
-        protected override bool ReceiveTriggerExitCallback => true;
+        protected override bool ReceiveTriggerExitCallback { get => true; }
 
         private bool m_ExitedTrigger;
 
         /// <summary>
-        /// Returns true when the agent has exited a trigger.
+        ///     Returns true when the agent has exited a trigger.
         /// </summary>
         /// <returns>True when the agent has exited a trigger.</returns>
         public override TaskStatus OnUpdate()
@@ -33,7 +34,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals.Physics
         }
 
         /// <summary>
-        /// The task has ended.
+        ///     The task has ended.
         /// </summary>
         public override void OnEnd()
         {
@@ -43,16 +44,20 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals.Physics
         }
 
         /// <summary>
-        /// The agent has exited a trigger.
+        ///     The agent has exited a trigger.
         /// </summary>
         /// <param name="other">The trigger that the agent exited.</param>
         protected override void OnTriggerExit(Collider other)
         {
-            if (!string.IsNullOrEmpty(m_Tag.Value) && !other.gameObject.CompareTag(m_Tag.Value)) {
+            if (!string.IsNullOrEmpty(m_Tag.Value) && !other.gameObject.CompareTag(m_Tag.Value))
+            {
                 return;
             }
 
-            if (m_StoredOtherCollider != null && m_StoredOtherCollider.IsShared) { m_StoredOtherCollider.Value = other; }
+            if (m_StoredOtherCollider != null && m_StoredOtherCollider.IsShared)
+            {
+                m_StoredOtherCollider.Value = other;
+            }
 
             m_ExitedTrigger = true;
         }

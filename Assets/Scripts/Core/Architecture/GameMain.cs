@@ -1,4 +1,3 @@
-using Configuration.Model;
 using Core.Systems;
 using Features.Card.Define;
 using Features.Card.Model;
@@ -8,13 +7,14 @@ using Features.Combat.Interaction;
 using Features.Combat.System;
 using Features.Combat.Targeting.Model;
 using Features.Combat.Targeting.System;
-using Features.Enemy.Model;
-using Features.Enemy.System;
 using Features.Hero.Model;
 using Features.Hero.System;
 using Features.Resource.Model;
 using Features.Resource.System;
+using Features.Sword.Model;
+using Features.Sword.System;
 using QFramework;
+using Services.ExcelTool;
 
 namespace Core.Architecture
 {
@@ -35,9 +35,9 @@ namespace Core.Architecture
             RegisterModel<ICardDefineModel>(new CardDefineModel());
             RegisterSystem<ICardSystem>(new CardSystem());
             RegisterSystem<ICardEffectSystem>(new CardEffectSystem());
-            RegisterModel<IEnemyModel>(new EnemyModel());
-            RegisterSystem<IEnemySystem>(new EnemySystem());
-            RegisterModel<IDataTableModel>(new DataTableModel());
+            RegisterModel<ISwordModel>(new SwordModel());
+            RegisterSystem<ISlotTargetSystem>(new SlotTargetSystem());
+            RegisterUtility<IBinaryDataMgr>(new BinaryDataMgr());
             RegisterSystem<IInteractionSystem>(new InteractionSystem());
         }
     }

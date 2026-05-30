@@ -21,12 +21,12 @@ namespace Cysharp.Threading.Tasks
 
         public static UniTask<Object[]> WithCancellation<T>(this AsyncInstantiateOperation asyncOperation, CancellationToken cancellationToken)
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken);
         }
 
         public static UniTask<Object[]> WithCancellation<T>(this AsyncInstantiateOperation asyncOperation, CancellationToken cancellationToken, bool cancelImmediately)
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
         }
 
         public static UniTask<Object[]> ToUniTask(this AsyncInstantiateOperation asyncOperation, IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update,
@@ -41,13 +41,13 @@ namespace Cysharp.Threading.Tasks
         public static UniTask<T[]> WithCancellation<T>(this AsyncInstantiateOperation<T> asyncOperation, CancellationToken cancellationToken)
             where T : Object
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken);
         }
 
         public static UniTask<T[]> WithCancellation<T>(this AsyncInstantiateOperation<T> asyncOperation, CancellationToken cancellationToken, bool cancelImmediately)
             where T : Object
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
+            return asyncOperation.ToUniTask(cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
         }
 
         public static UniTask<T[]> ToUniTask<T>(this AsyncInstantiateOperation<T> asyncOperation, IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update,

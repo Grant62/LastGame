@@ -10,7 +10,7 @@ namespace Core.Architecture
         {
             base.Awake();
             IArchitecture _ = GameMain.Interface;
-            LogKit.I("GameMain initialized");
+            // LogKit.I("GameMain initialized");
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

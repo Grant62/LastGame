@@ -33,7 +33,7 @@ namespace Cysharp.Threading.Tasks.Linq
         {
             private readonly int count;
             private int remaining;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             public _Repeat(TElement element, int count, CancellationToken cancellationToken)
             {

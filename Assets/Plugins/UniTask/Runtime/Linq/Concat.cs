@@ -44,7 +44,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
             private readonly IUniTaskAsyncEnumerable<TSource> first;
             private readonly IUniTaskAsyncEnumerable<TSource> second;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IteratingState iteratingState;
 

@@ -1,3 +1,8 @@
+using System;
+using Opsive.BehaviorDesigner.Runtime.Tasks;
+using Opsive.GraphDesigner.Runtime;
+using Opsive.Shared.Utility;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,18 +11,13 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime
 {
-    using Opsive.BehaviorDesigner.Runtime.Tasks;
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.Shared.Utility;
-    using System;
-
     /// <summary>
-    /// Helper class for ECS node templates.
+    ///     Helper class for ECS node templates.
     /// </summary>
     public static class ECSNodeUtility
     {
         /// <summary>
-        /// Converts a name to camelCase format.
+        ///     Converts a name to camelCase format.
         /// </summary>
         /// <param name="name">The name to convert.</param>
         /// <returns>The name in camelCase format.</returns>
@@ -25,30 +25,31 @@ namespace Opsive.BehaviorDesigner.Runtime
         {
             if (string.IsNullOrEmpty(name))
                 return name;
-            
+
             return char.ToLowerInvariant(name[0]) + name.Substring(1);
         }
     }
 
     /// <summary>
-    /// Template for creating a custom action node.
+    ///     Template for creating a custom action node.
     /// </summary>
     [Category("ECS")]
     [DisplayName("Action")]
     [Description("Create a new ECS action node.")]
     public class ECSActionNode : INodeTemplate
     {
-        public Type BaseType => typeof(IAction);
-        public bool IsLogicNode => true;
+        public Type BaseType { get => typeof(IAction); }
+
+        public bool IsLogicNode { get => true; }
 
         /// <summary>
-        /// Returns the script that should be used for the template file.
+        ///     Returns the script that should be used for the template file.
         /// </summary>
         /// <param name="name">The name of the node.</param>
         /// <returns>The node script.</returns>
         public string GetScript(string name)
         {
-            var variableName = ECSNodeUtility.ToCamelCase(name);
+            string variableName = ECSNodeUtility.ToCamelCase(name);
             return $@"using Opsive.BehaviorDesigner.Runtime.Components;
 using Opsive.BehaviorDesigner.Runtime.Tasks;
 using Opsive.GraphDesigner.Runtime;
@@ -139,24 +140,25 @@ public partial struct {name}TaskSystem : ISystem
     }
 
     /// <summary>
-    /// Template for creating a custom composite node.
+    ///     Template for creating a custom composite node.
     /// </summary>
     [Category("ECS")]
     [DisplayName("Composite")]
     [Description("Create a new ECS composite node.")]
     public class ECSCompositeNode : IParentNodeTemplate
     {
-        public Type BaseType => typeof(IComposite);
-        public bool IsLogicNode => true;
+        public Type BaseType { get => typeof(IComposite); }
+
+        public bool IsLogicNode { get => true; }
 
         /// <summary>
-        /// Returns the script that should be used for the template file.
+        ///     Returns the script that should be used for the template file.
         /// </summary>
         /// <param name="name">The name of the node.</param>
         /// <returns>The node script.</returns>
         public string GetScript(string name)
         {
-            var variableName = ECSNodeUtility.ToCamelCase(name);
+            string variableName = ECSNodeUtility.ToCamelCase(name);
             return $@"using Opsive.BehaviorDesigner.Runtime.Components;
 using Opsive.BehaviorDesigner.Runtime.Tasks;
 using Opsive.GraphDesigner.Runtime;
@@ -254,24 +256,25 @@ public partial struct {name}TaskSystem : ISystem
     }
 
     /// <summary>
-    /// Template for creating a custom conditional node.
+    ///     Template for creating a custom conditional node.
     /// </summary>
     [Category("ECS")]
     [DisplayName("Conditional")]
     [Description("Create a new ECS conditional node.")]
     public class ECSConditionalNode : INodeTemplate
     {
-        public Type BaseType => typeof(IConditional);
-        public bool IsLogicNode => true;
+        public Type BaseType { get => typeof(IConditional); }
+
+        public bool IsLogicNode { get => true; }
 
         /// <summary>
-        /// Returns the script that should be used for the template file.
+        ///     Returns the script that should be used for the template file.
         /// </summary>
         /// <param name="name">The name of the node.</param>
         /// <returns>The node script.</returns>
         public string GetScript(string name)
         {
-            var variableName = ECSNodeUtility.ToCamelCase(name);
+            string variableName = ECSNodeUtility.ToCamelCase(name);
             return $@"using Opsive.BehaviorDesigner.Runtime.Components;
 using Opsive.BehaviorDesigner.Runtime.Tasks;
 using Opsive.GraphDesigner.Runtime;
@@ -408,24 +411,25 @@ public partial struct {name}ReevaluateTaskSystem : ISystem
     }
 
     /// <summary>
-    /// Template for creating a custom decorator node.
+    ///     Template for creating a custom decorator node.
     /// </summary>
     [Category("ECS")]
     [DisplayName("Decorator")]
     [Description("Create a new ECS decorator node.")]
     public class ECSDecoratorNode : IParentNodeTemplate
     {
-        public Type BaseType => typeof(IDecorator);
-        public bool IsLogicNode => true;
+        public Type BaseType { get => typeof(IDecorator); }
+
+        public bool IsLogicNode { get => true; }
 
         /// <summary>
-        /// Returns the script that should be used for the template file.
+        ///     Returns the script that should be used for the template file.
         /// </summary>
         /// <param name="name">The name of the node.</param>
         /// <returns>The node script.</returns>
         public string GetScript(string name)
         {
-            var variableName = ECSNodeUtility.ToCamelCase(name);
+            string variableName = ECSNodeUtility.ToCamelCase(name);
             return $@"using Opsive.BehaviorDesigner.Runtime.Components;
 using Opsive.BehaviorDesigner.Runtime.Tasks;
 using Opsive.GraphDesigner.Runtime;

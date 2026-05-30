@@ -51,10 +51,10 @@ namespace Cysharp.Threading.Tasks.Linq
             private static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
 
             private readonly IUniTaskAsyncEnumerable<TSource> source;
-            private CancellationToken cancellationToken1;
+            private readonly CancellationToken cancellationToken1;
 
             private bool completed;
-            private CancellationTokenRegistration cancellationTokenRegistration1;
+            private readonly CancellationTokenRegistration cancellationTokenRegistration1;
             private IUniTaskAsyncEnumerator<TSource> enumerator;
             private UniTask<bool>.Awaiter awaiter;
             private bool continueNext;

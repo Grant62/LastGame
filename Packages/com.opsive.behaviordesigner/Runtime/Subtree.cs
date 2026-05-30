@@ -1,3 +1,9 @@
+using System;
+using Opsive.GraphDesigner.Runtime;
+using Opsive.GraphDesigner.Runtime.Variables;
+using UnityEngine;
+using Object = UnityEngine.Object;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,29 +12,33 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using System;
-    using UnityEngine;
-
     /// <summary>
-    /// The behavior tree stored on a Scriptable Object.
+    ///     The behavior tree stored on a Scriptable Object.
     /// </summary>
     [CreateAssetMenu(fileName = "Subtree", menuName = "Opsive/Behavior Designer/Subtree", order = 1)]
     public class Subtree : ScriptableObject, IGraph, ISharedVariableContainer
     {
         [Tooltip("The behavior tree data.")]
-        [SerializeField] private BehaviorTreeData m_Data = new BehaviorTreeData();
+        [SerializeField] private BehaviorTreeData m_Data = new();
 
-        public string Name { get => name; set => name = value; } 
+        public string Name { get => name; set => name = value; }
+
         public SharedVariable.SharingScope VariableScope { get => SharedVariable.SharingScope.Graph; }
+
         public BehaviorTreeData Data { get => m_Data; }
-        public UnityEngine.Object Parent { get => this; }
+
+        public Object Parent { get => this; }
+
         public ILogicNode[] LogicNodes { get => m_Data.LogicNodes; set => m_Data.LogicNodes = value as ITreeLogicNode[]; }
+
         public ITreeLogicNode[] TreeLogicNodes { get => m_Data.LogicNodes; set => m_Data.LogicNodes = value; }
+
         public IEventNode[] EventNodes { get => m_Data.EventNodes; set => m_Data.EventNodes = value; }
+
         public SharedVariable[] SharedVariables { get => m_Data.SharedVariables; set => m_Data.SharedVariables = value; }
-        public SharedVariableGroup[] SharedVariableGroups {
+
+        public SharedVariableGroup[] SharedVariableGroups
+        {
 #if UNITY_EDITOR
             get => Data.SharedVariableGroups;
             set => Data.SharedVariableGroups = value;
@@ -37,7 +47,9 @@ namespace Opsive.BehaviorDesigner.Runtime
             set { }
 #endif
         }
+
         public ushort[] DisabledLogicNodes { get => m_Data.DisabledLogicNodes; set => m_Data.DisabledLogicNodes = value; }
+
         public ushort[] DisabledEventNodes { get => m_Data.DisabledEventNodes; set => m_Data.DisabledEventNodes = value; }
 
         public LogicNodeProperties[] LogicNodeProperties
@@ -50,6 +62,7 @@ namespace Opsive.BehaviorDesigner.Runtime
             set { }
 #endif
         }
+
         public NodeProperties[] EventNodeProperties
         {
 #if UNITY_EDITOR
@@ -60,6 +73,7 @@ namespace Opsive.BehaviorDesigner.Runtime
             set { }
 #endif
         }
+
         public GroupProperties[] GroupProperties
         {
 #if UNITY_EDITOR
@@ -74,7 +88,7 @@ namespace Opsive.BehaviorDesigner.Runtime
         public int UniqueID { get => m_Data.UniqueID; }
 
         /// <summary>
-        /// Serializes the behavior tree.
+        ///     Serializes the behavior tree.
         /// </summary>
         public void Serialize()
         {
@@ -82,7 +96,7 @@ namespace Opsive.BehaviorDesigner.Runtime
         }
 
         /// <summary>
-        /// Deserialize the behavior tree.
+        ///     Deserialize the behavior tree.
         /// </summary>
         /// <param name="force">Should the behavior tree be force deserialized?</param>
         /// <returns>True if the tree was deserialized.</returns>
@@ -92,7 +106,7 @@ namespace Opsive.BehaviorDesigner.Runtime
         }
 
         /// <summary>
-        /// Deserialize the behavior tree.
+        ///     Deserialize the behavior tree.
         /// </summary>
         /// <param name="force">Should the behavior tree be force deserialized?</param>
         /// <param name="forceSharedVariables">Should the shared variables be force deserialized?</param>
@@ -105,7 +119,7 @@ namespace Opsive.BehaviorDesigner.Runtime
         }
 
         /// <summary>
-        /// Deserialize the behavior tree.
+        ///     Deserialize the behavior tree.
         /// </summary>
         /// <param name="graphComponent">The component that the graph is being deserialized from.</param>
         /// <param name="force">Should the behavior tree be force deserialized?</param>
@@ -114,9 +128,11 @@ namespace Opsive.BehaviorDesigner.Runtime
         /// <param name="canDeepCopyVariables">Can the SharedVariables be deep copied?</param>
         /// <param name="sharedVariableOverrides">A list of SharedVariables that should override the current SharedVariable value.</param>
         /// <returns>True if the tree was deserialized.</returns>
-        public bool Deserialize(IGraphComponent graphComponent, bool force, bool forceSharedVariables, bool injectSubtrees, bool canDeepCopyVariables, SharedVariableOverride[] sharedVariableOverrides)
+        public bool Deserialize(IGraphComponent graphComponent, bool force, bool forceSharedVariables, bool injectSubtrees, bool canDeepCopyVariables,
+            SharedVariableOverride[] sharedVariableOverrides)
         {
-            if (m_Data == null) {
+            if (m_Data == null)
+            {
                 return false;
             }
 
@@ -124,13 +140,14 @@ namespace Opsive.BehaviorDesigner.Runtime
         }
 
         /// <summary>
-        /// Deserializes the SharedVariables. This allows the SharedVariables to be deserialized independently.
+        ///     Deserializes the SharedVariables. This allows the SharedVariables to be deserialized independently.
         /// </summary>
         /// <param name="force">Should the variables be forced deserialized?</param>
         /// <returns>True if the SharedVariables were deserialized.</returns>
         public bool DeserializeSharedVariables(bool force)
         {
-            if (m_Data == null) {
+            if (m_Data == null)
+            {
                 return false;
             }
 
@@ -138,7 +155,7 @@ namespace Opsive.BehaviorDesigner.Runtime
         }
 
         /// <summary>
-        /// Adds the specified logic node.
+        ///     Adds the specified logic node.
         /// </summary>
         /// <param name="node">The node that should be added.</param>
         public void AddNode(ILogicNode node)
@@ -147,7 +164,7 @@ namespace Opsive.BehaviorDesigner.Runtime
         }
 
         /// <summary>
-        /// Removes the specified logic node.
+        ///     Removes the specified logic node.
         /// </summary>
         /// <param name="node">The node that should be removed.</param>
         /// <returns>True if the node was removed.</returns>
@@ -157,7 +174,7 @@ namespace Opsive.BehaviorDesigner.Runtime
         }
 
         /// <summary>
-        /// Adds the specified event node.
+        ///     Adds the specified event node.
         /// </summary>
         /// <param name="eventNode">The event node that should be added.</param>
         public void AddNode(IEventNode eventNode)
@@ -166,7 +183,7 @@ namespace Opsive.BehaviorDesigner.Runtime
         }
 
         /// <summary>
-        /// Removes the specified event node.
+        ///     Removes the specified event node.
         /// </summary>
         /// <param name="eventNode">The event node that should be removed.</param>
         /// <returns>True if the event node was removed.</returns>
@@ -176,27 +193,29 @@ namespace Opsive.BehaviorDesigner.Runtime
         }
 
         /// <summary>
-        /// Returns the Node of the specified type.
+        ///     Returns the Node of the specified type.
         /// </summary>
-        /// <param name="type">The type of Node that should be retrieved.</typeparam>
-        /// <returns>The Node of the specified type (can be null).</returns>
+        /// <param name="type">
+        ///     The type of Node that should be retrieved.</typeparam>
+        ///     <returns>The Node of the specified type (can be null).</returns>
         public ILogicNode GetNode(Type type)
         {
             return m_Data.GetNode(type);
         }
 
         /// <summary>
-        /// Returns the EventNode of the specified type.
+        ///     Returns the EventNode of the specified type.
         /// </summary>
-        /// <param name="type">The type of EventNode that should be retrieved.</typeparam>
-        /// <returns>The EventNode of the specified type (can be null). If the node is found the index will also be returned.</returns>
+        /// <param name="type">
+        ///     The type of EventNode that should be retrieved.</typeparam>
+        ///     <returns>The EventNode of the specified type (can be null). If the node is found the index will also be returned.</returns>
         public (IEventNode, ushort) GetEventNode(Type type)
         {
             return m_Data.GetEventNode(type);
         }
 
         /// <summary>
-        /// Returns the SharedVariable with the specified name.
+        ///     Returns the SharedVariable with the specified name.
         /// </summary>
         /// <param name="name">The name of the SharedVariable that should be retrieved.</param>
         /// <returns>The SharedVariable with the specified name (can be null).</returns>
@@ -208,7 +227,7 @@ namespace Opsive.BehaviorDesigner.Runtime
         }
 
         /// <summary>
-        /// Returns the SharedVariable of the specified name.
+        ///     Returns the SharedVariable of the specified name.
         /// </summary>
         /// <param name="name">The name of the SharedVariable that should be retrieved.</param>
         /// <returns>The SharedVariable with the specified name (can be null).</returns>
@@ -220,7 +239,7 @@ namespace Opsive.BehaviorDesigner.Runtime
         }
 
         /// <summary>
-        /// Sets the value of the SharedVariable.
+        ///     Sets the value of the SharedVariable.
         /// </summary>
         /// <typeparam name="T">The type of SharedVarible.</typeparam>
         /// <param name="name">The name of the SharedVariable.</param>
@@ -230,11 +249,11 @@ namespace Opsive.BehaviorDesigner.Runtime
         {
             Deserialize();
 
-            return m_Data.SetVariableValue<T>(this, name, value, SharedVariable.SharingScope.Graph);
+            return m_Data.SetVariableValue(this, name, value, SharedVariable.SharingScope.Graph);
         }
 
         /// <summary>
-        /// Is the node with the specified index enabled?
+        ///     Is the node with the specified index enabled?
         /// </summary>
         /// <param name="logicNode">Is the node a LogicNode?</param>
         /// <param name="index">The index of the node.</param>
@@ -245,7 +264,7 @@ namespace Opsive.BehaviorDesigner.Runtime
         }
 
         /// <summary>
-        /// Is the node with the specified index active?
+        ///     Is the node with the specified index active?
         /// </summary>
         /// <param name="logicNode">Is the node a LogicNode?</param>
         /// <param name="index">The index of the node.</param>
@@ -256,7 +275,7 @@ namespace Opsive.BehaviorDesigner.Runtime
         }
 
         /// <summary>
-        /// Copies the graph onto the current graph.
+        ///     Copies the graph onto the current graph.
         /// </summary>
         /// <param name="other">The graph that should be copied.</param>
         public void Clone(IGraph other)
@@ -276,7 +295,7 @@ namespace Opsive.BehaviorDesigner.Runtime
         }
 
         /// <summary>
-        /// Overrides ToString.
+        ///     Overrides ToString.
         /// </summary>
         /// <returns>The desired string value.</returns>
         public override string ToString()
@@ -286,12 +305,9 @@ namespace Opsive.BehaviorDesigner.Runtime
     }
 
     /// <summary>
-    /// Attribute indicating that a ReorderableList should be used for the Subtree array.
+    ///     Attribute indicating that a ReorderableList should be used for the Subtree array.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
-    public class SubtreeListAttribute : System.Attribute
-    {
-
-    }
+    [AttributeUsage(AttributeTargets.Field)]
+    public class SubtreeListAttribute : Attribute { }
 }
 #endif

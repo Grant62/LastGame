@@ -1,74 +1,67 @@
-using Core.Architecture;
+using DG.Tweening;
+using Features.Combat;
 using Features.Combat.Targeting;
-using Features.Enemy.Command;
-using Features.Enemy.Model;
 using QFramework;
 using UnityEngine;
 
 namespace Features.Enemy.View
 {
-    public partial class EnemyView : ViewController, IController, IDamageable
+    public partial class EnemyView : ViewController, IDamageable
     {
-        private IEnemyModel mEnemyModel;
+        private int mHealth;
+        private int mMaxHealth;
+        private Tween mHealthTween;
 
-        public IArchitecture GetArchitecture()
-        {
-            return GameMain.Interface;
-        }
+        public int MonsterId { get; private set; }
+        public int Damage { get; private set; }
 
         public Vector3 Position { get => transform.position; }
 
-        public bool IsValidTarget { get => mEnemyModel != null && mEnemyModel.Health.Value > 0; }
+        public bool IsValidTarget { get => mHealth > 0; }
 
         public void TakeDamage(int amount)
         {
-            this.SendCommand(new DamageEnemyCommand(amount));
+            if (amount <= 0)
+                return;
+
+            mHealth -= amount;
+            mHealth = Mathf.Max(0, mHealth);
+            RefreshHealthBar(true);
+
+            if (mHealth <= 0)
+            {
+                BoardView board = GetComponentInParent<BoardView>();
+                board.RemoveEnemy(this);
+            }
         }
 
-        public void TakeHeal(int amount) { }
-
-        private void Start()
+        public void TakeHeal(int amount)
         {
-            mEnemyModel = this.GetModel<IEnemyModel>();
+            if (amount <= 0)
+                return;
 
-            mEnemyModel.Health.Register(OnHealthChanged)
-                .UnRegisterWhenGameObjectDestroyed(gameObject);
-            mEnemyModel.MaxHealth.Register(OnMaxHealthChanged)
-                .UnRegisterWhenGameObjectDestroyed(gameObject);
-
-            RefreshHealthBar();
+            mHealth += amount;
+            mHealth = Mathf.Min(mMaxHealth, mHealth);
+            RefreshHealthBar(true);
         }
 
         public void Init(int monsterId, int maxHealth, int damage)
         {
-            this.SendCommand(new SetupEnemyCommand(new EnemyDefine
-            {
-                MonsterId = monsterId,
-                MaxHealth = maxHealth,
-                Damage = damage
-            }));
-        }
-
-        private void OnHealthChanged(int health)
-        {
+            MonsterId = monsterId;
+            mHealth = maxHealth;
+            mMaxHealth = maxHealth;
+            Damage = damage;
             RefreshHealthBar();
         }
 
-        private void OnMaxHealthChanged(int maxHealth)
+        private void RefreshHealthBar(bool animate = false)
         {
-            RefreshHealthBar();
-        }
-
-        private void RefreshHealthBar()
-        {
-            if (Fill == null)
-                return;
-
-            float ratio = mEnemyModel.MaxHealth.Value > 0
-                ? (float)mEnemyModel.Health.Value / mEnemyModel.MaxHealth.Value
-                : 0f;
-
-            Fill.transform.localScale = new Vector3(ratio, 1, 1);
+            mHealthTween?.Kill();
+            float ratio = mMaxHealth > 0 ? (float)mHealth / mMaxHealth : 0f;
+            if (animate)
+                mHealthTween = Fill.transform.DOScaleX(ratio, 0.3f);
+            else
+                Fill.transform.localScale = new Vector3(ratio, 1, 1);
         }
     }
 }

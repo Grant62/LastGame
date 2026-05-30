@@ -9,7 +9,7 @@ namespace Cysharp.Threading.Tasks.Linq
     {
         public static IUniTaskAsyncEnumerable<TSource> Distinct<TSource>(this IUniTaskAsyncEnumerable<TSource> source)
         {
-            return Distinct(source, EqualityComparer<TSource>.Default);
+            return source.Distinct(EqualityComparer<TSource>.Default);
         }
 
         public static IUniTaskAsyncEnumerable<TSource> Distinct<TSource>(this IUniTaskAsyncEnumerable<TSource> source, IEqualityComparer<TSource> comparer)
@@ -22,7 +22,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
         public static IUniTaskAsyncEnumerable<TSource> Distinct<TSource, TKey>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
-            return Distinct(source, keySelector, EqualityComparer<TKey>.Default);
+            return source.Distinct(keySelector, EqualityComparer<TKey>.Default);
         }
 
         public static IUniTaskAsyncEnumerable<TSource> Distinct<TSource, TKey>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
@@ -36,7 +36,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
         public static IUniTaskAsyncEnumerable<TSource> DistinctAwait<TSource, TKey>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<TKey>> keySelector)
         {
-            return DistinctAwait(source, keySelector, EqualityComparer<TKey>.Default);
+            return source.DistinctAwait(keySelector, EqualityComparer<TKey>.Default);
         }
 
         public static IUniTaskAsyncEnumerable<TSource> DistinctAwait<TSource, TKey>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<TKey>> keySelector,
@@ -52,7 +52,7 @@ namespace Cysharp.Threading.Tasks.Linq
         public static IUniTaskAsyncEnumerable<TSource> DistinctAwaitWithCancellation<TSource, TKey>(this IUniTaskAsyncEnumerable<TSource> source,
             Func<TSource, CancellationToken, UniTask<TKey>> keySelector)
         {
-            return DistinctAwaitWithCancellation(source, keySelector, EqualityComparer<TKey>.Default);
+            return source.DistinctAwaitWithCancellation(keySelector, EqualityComparer<TKey>.Default);
         }
 
         public static IUniTaskAsyncEnumerable<TSource> DistinctAwaitWithCancellation<TSource, TKey>(this IUniTaskAsyncEnumerable<TSource> source,

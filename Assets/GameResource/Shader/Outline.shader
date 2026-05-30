@@ -26,7 +26,7 @@ Shader "Unlit/Outline"
         Blend One OneMinusSrcAlpha
         ZWrite Off
         ZTest LEqual
-        
+
         Stencil
         {
             Ref [_Stencil]
@@ -109,15 +109,15 @@ Shader "Unlit/Outline"
                 {
                     return 1.0;
                 }
-                
+
                 // 边缘检测：UV接近纹理边界时强制发光
                 float edgeThreshold = 0.02;
-                if (uv.x < edgeThreshold || uv.x > 1.0 - edgeThreshold || 
+                if (uv.x < edgeThreshold || uv.x > 1.0 - edgeThreshold ||
                     uv.y < edgeThreshold || uv.y > 1.0 - edgeThreshold)
                 {
                     return 1.0;
                 }
-                
+
                 return 0.0;
             }
 
@@ -186,10 +186,10 @@ Shader "Unlit/Outline"
                 else if (col.a > 0.1)
                 {
                     #ifdef UNITY_UI_CLIP_RECT
-                        float2 clipPosition = i.worldPosition - _ClipRect.xy;
-                        float2 clipSize = _ClipRect.zw - _ClipRect.xy;
-                        if (clipPosition.x < 0 || clipPosition.y < 0 || clipPosition.x > clipSize.x || clipPosition.y > clipSize.y)
-                            discard;
+                    float2 clipPosition = i.worldPosition - _ClipRect.xy;
+                    float2 clipSize = _ClipRect.zw - _ClipRect.xy;
+                    if (clipPosition.x < 0 || clipPosition.y < 0 || clipPosition.x > clipSize.x || clipPosition.y > clipSize.y)
+                        discard;
                     #endif
                     return fixed4(col.rgb * col.a, col.a);
                 }

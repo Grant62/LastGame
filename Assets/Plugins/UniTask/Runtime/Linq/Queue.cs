@@ -28,7 +28,7 @@ namespace Cysharp.Threading.Tasks.Linq
         private sealed class _Queue : IUniTaskAsyncEnumerator<TSource>
         {
             private readonly IUniTaskAsyncEnumerable<TSource> source;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private Channel<TSource> channel;
             private IUniTaskAsyncEnumerator<TSource> channelEnumerator;

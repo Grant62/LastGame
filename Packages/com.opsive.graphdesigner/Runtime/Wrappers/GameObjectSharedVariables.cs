@@ -7,10 +7,8 @@
 namespace Opsive.GraphDesigner.Runtime.Wrappers
 {
     /// <summary>
-    /// Wrapper for the GameObject Shared Variables component.
+    ///     Wrapper for the GameObject Shared Variables component.
     /// </summary>
-    public class GameObjectSharedVariables : Runtime.Variables.GameObjectSharedVariables
-    {
-    }
+    public class GameObjectSharedVariables : Variables.GameObjectSharedVariables { }
 }
 #endif

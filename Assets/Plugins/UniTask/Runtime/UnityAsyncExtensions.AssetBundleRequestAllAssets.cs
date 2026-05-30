@@ -22,12 +22,12 @@ namespace Cysharp.Threading.Tasks
 
         public static UniTask<Object[]> AwaitForAllAssets(this AssetBundleRequest asyncOperation, CancellationToken cancellationToken)
         {
-            return AwaitForAllAssets(asyncOperation, null, PlayerLoopTiming.Update, cancellationToken);
+            return asyncOperation.AwaitForAllAssets(null, PlayerLoopTiming.Update, cancellationToken);
         }
 
         public static UniTask<Object[]> AwaitForAllAssets(this AssetBundleRequest asyncOperation, CancellationToken cancellationToken, bool cancelImmediately)
         {
-            return AwaitForAllAssets(asyncOperation, null, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
+            return asyncOperation.AwaitForAllAssets(null, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
         }
 
         public static UniTask<Object[]> AwaitForAllAssets(this AssetBundleRequest asyncOperation, IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update,

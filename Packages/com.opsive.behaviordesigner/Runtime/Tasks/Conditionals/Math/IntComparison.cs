@@ -1,3 +1,7 @@
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,16 +10,12 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals.Math
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
-    [Opsive.Shared.Utility.Description("Compares two integer values.")]
-    [Shared.Utility.Category("Math")]
+    [Description("Compares two integer values.")]
+    [Category("Math")]
     public class IntComparison : Conditional
     {
         /// <summary>
-        /// Specifies the type of comparison that should be performed.
+        ///     Specifies the type of comparison that should be performed.
         /// </summary>
         protected enum Operation
         {
@@ -35,12 +35,13 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals.Math
         [SerializeField] protected SharedVariable<int> m_Integer2;
 
         /// <summary>
-        /// Executes the task.
+        ///     Executes the task.
         /// </summary>
         /// <returns>The execution status of the task.</returns>
         public override TaskStatus OnUpdate()
         {
-            switch (m_Operation.Value) {
+            switch (m_Operation.Value)
+            {
                 case Operation.LessThan:
                     return m_Integer1.Value < m_Integer2.Value ? TaskStatus.Success : TaskStatus.Failure;
                 case Operation.LessThanOrEqualTo:
@@ -54,6 +55,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals.Math
                 case Operation.GreaterThan:
                     return m_Integer1.Value > m_Integer2.Value ? TaskStatus.Success : TaskStatus.Failure;
             }
+
             return TaskStatus.Failure;
         }
     }

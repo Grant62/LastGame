@@ -1,3 +1,7 @@
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,29 +10,27 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-    using UnityEngine.Serialization;
-
     /// <summary>
-    /// Implements the UtilityEvaluator returning a SharedVariable value.
+    ///     Implements the UtilityEvaluator returning a SharedVariable value.
     /// </summary>
-    [Opsive.Shared.Utility.Description("Sets the utility value to the evaluated curve value.")]
+    [Description("Sets the utility value to the evaluated curve value.")]
     public class UtilityCurveEvaluator : UtilityEvaluator
     {
         [Tooltip("The curve that should be evaluated for the utility value.")]
-        [FormerlySerializedAs("m_Utility")]
-        [SerializeField] SharedVariable<AnimationCurve> m_UtilityValue;
+        [UnityEngine.Serialization.FormerlySerializedAs("m_Utility")]
+        [SerializeField]
+        private SharedVariable<AnimationCurve> m_UtilityValue;
         [Tooltip("The time to evaluate the curve at. Set it to -1 to use Time.time.")]
-        [SerializeField] SharedVariable<float> m_Time;
+        [SerializeField]
+        private SharedVariable<float> m_Time;
         [Tooltip("Should the time be reset after the task stops running?")]
-        [SerializeField] SharedVariable<bool> m_ResetTimeOnEnd;
+        [SerializeField]
+        private SharedVariable<bool> m_ResetTimeOnEnd;
 
         private float m_ResetTime = -1;
 
         /// <summary>
-        /// Resets the task values back to their default.
+        ///     Resets the task values back to their default.
         /// </summary>
         public override void Reset()
         {
@@ -40,13 +42,14 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// Returns the utility of the decorator. The higher the utility the more likely the task will run next.
+        ///     Returns the utility of the decorator. The higher the utility the more likely the task will run next.
         /// </summary>
         /// <returns>The utility of the decorator.</returns>
         public override float GetUtilityValue()
         {
-            var evaluateTime = m_Time.Value == -1 ? Time.time : m_Time.Value;
-            if (m_ResetTimeOnEnd.Value && m_ResetTime != -1) {
+            float evaluateTime = m_Time.Value == -1 ? Time.time : m_Time.Value;
+            if (m_ResetTimeOnEnd.Value && m_ResetTime != -1)
+            {
                 evaluateTime = Time.time - m_ResetTime;
             }
 
@@ -54,7 +57,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Decorators
         }
 
         /// <summary>
-        /// The task has ended.
+        ///     The task has ended.
         /// </summary>
         public override void OnEnd()
         {

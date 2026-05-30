@@ -1,3 +1,8 @@
+using Opsive.GraphDesigner.Runtime;
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,13 +11,9 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Events
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
     [AllowMultipleTypes]
     [NodeIcon("06864c37115f11445b04701c616d0e14", "8b8a2793322238240b4f25171d772003")]
-    [Opsive.Shared.Utility.Description("Invoked when the agent leaves a 2D collision.")]
+    [Description("Invoked when the agent leaves a 2D collision.")]
     public class OnCollisionExit2D : EventNode
     {
         [Tooltip("The tag of the GameObject that the collision should be checked against.")]
@@ -21,7 +22,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Events
         [SerializeField] protected SharedVariable<GameObject> m_StoredCollisionGameObject;
 
         /// <summary>
-        /// Initializes the node to the specified graph.
+        ///     Initializes the node to the specified graph.
         /// </summary>
         /// <param name="graph">The graph that is initializing the task.</param>
         public override void Initialize(IGraph graph)
@@ -33,22 +34,26 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Events
         }
 
         /// <summary>
-        /// The agent has left a 2D collision.
+        ///     The agent has left a 2D collision.
         /// </summary>
         /// <param name="collision">The collision that caused the event.</param>
         private void ExitedCollision2D(Collision2D collision)
         {
-            if (!string.IsNullOrEmpty(m_Tag.Value) && !collision.gameObject.CompareTag(m_Tag.Value)) {
+            if (!string.IsNullOrEmpty(m_Tag.Value) && !collision.gameObject.CompareTag(m_Tag.Value))
+            {
                 return;
             }
 
-            if (m_StoredCollisionGameObject != null && m_StoredCollisionGameObject.IsShared) { m_StoredCollisionGameObject.Value = collision.gameObject; }
+            if (m_StoredCollisionGameObject != null && m_StoredCollisionGameObject.IsShared)
+            {
+                m_StoredCollisionGameObject.Value = collision.gameObject;
+            }
 
             m_BehaviorTree.StartBranch(this);
         }
 
         /// <summary>
-        /// The behavior tree has been destroyed.
+        ///     The behavior tree has been destroyed.
         /// </summary>
         private void Destroy()
         {

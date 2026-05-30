@@ -1,3 +1,11 @@
+using Opsive.BehaviorDesigner.Runtime.Components;
+using Opsive.BehaviorDesigner.Runtime.Groups;
+using Unity.Burst;
+using Unity.Burst.Intrinsics;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,16 +14,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Systems
 {
-    using Opsive.BehaviorDesigner.Runtime.Components;
-    using Opsive.BehaviorDesigner.Runtime.Groups;
-    using Opsive.GraphDesigner.Runtime;
-    using Unity.Burst;
-    using Unity.Burst.Intrinsics;
-    using Unity.Collections;
-    using Unity.Entities;
-
     /// <summary>
-    /// Resets the evaluation status.
+    ///     Resets the evaluation status.
     /// </summary>
     [UpdateInGroup(typeof(BehaviorTreeSystemGroup), OrderLast = true)]
     public partial struct EvaluationCleanupSystem : ISystem
@@ -25,7 +25,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Systems
         private ComponentTypeHandle<EvaluateFlag> m_EvaluateComponentHandle;
 
         /// <summary>
-        /// Creates the required objects for use within the job system.
+        ///     Creates the required objects for use within the job system.
         /// </summary>
         /// <param name="state">The current SystemState.</param>
         [BurstCompile]
@@ -40,7 +40,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Systems
         }
 
         /// <summary>
-        /// Updates the data object values for use within the job system.
+        ///     Updates the data object values for use within the job system.
         /// </summary>
         /// <param name="state">The current SystemState.</param>
         [BurstCompile]
@@ -51,27 +51,27 @@ namespace Opsive.BehaviorDesigner.Runtime.Systems
             // Reset the evaluation status.
             m_EnabledComponentHandle.Update(ref state);
             m_EvaluateComponentHandle.Update(ref state);
-            var evaluationCleanupJob = new EvaluationCleanupJob()
+            EvaluationCleanupJob evaluationCleanupJob = new()
             {
                 EnabledComponentHandle = m_EnabledComponentHandle,
-                EvaluateComponentHandle = m_EvaluateComponentHandle,
+                EvaluateComponentHandle = m_EvaluateComponentHandle
             };
             state.Dependency = evaluationCleanupJob.ScheduleParallel(m_EvaluateCleanupQuery, state.Dependency);
         }
 
         /// <summary>
-        /// Job that resets the EvaluationComponent component value.
+        ///     Job that resets the EvaluationComponent component value.
         /// </summary>
         [BurstCompile(CompileSynchronously = true)]
         public struct EvaluationCleanupJob : IJobChunk
         {
-            [UnityEngine.Tooltip("A reference to the Enabled Component Handle.")]
+            [Tooltip("A reference to the Enabled Component Handle.")]
             public ComponentTypeHandle<EnabledFlag> EnabledComponentHandle;
-            [UnityEngine.Tooltip("A reference to the Evaluate Component Handle.")]
+            [Tooltip("A reference to the Evaluate Component Handle.")]
             public ComponentTypeHandle<EvaluateFlag> EvaluateComponentHandle;
 
             /// <summary>
-            /// Resets the EvaluationComponent component value.
+            ///     Resets the EvaluationComponent component value.
             /// </summary>
             /// <param name="chunk">Block of memory that contains the entity and components.</param>
             /// <param name="unfilteredChunkIndex">The index of the chunk.</param>
@@ -80,10 +80,12 @@ namespace Opsive.BehaviorDesigner.Runtime.Systems
             [BurstCompile]
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {
-                for (int i = 0; i < chunk.Count; i++) {
+                for (int i = 0; i < chunk.Count; i++)
+                {
                     // If the chunk is enabled then it should be evaluated.
-                    if (chunk.IsComponentEnabled<EnabledFlag>(ref EnabledComponentHandle, i)) {
-                        chunk.SetComponentEnabled<EvaluateFlag>(ref EvaluateComponentHandle, i, true);
+                    if (chunk.IsComponentEnabled(ref EnabledComponentHandle, i))
+                    {
+                        chunk.SetComponentEnabled(ref EvaluateComponentHandle, i, true);
                     }
                 }
             }
@@ -91,7 +93,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Systems
     }
 
     /// <summary>
-    /// Resets the InterruptedFlag enabled value.
+    ///     Resets the InterruptedFlag enabled value.
     /// </summary>
     [UpdateInGroup(typeof(BehaviorTreeSystemGroup), OrderLast = true)]
     public partial struct InterruptedCleanupSystem : ISystem
@@ -100,7 +102,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Systems
         private ComponentTypeHandle<InterruptedFlag> m_InterruptedComponentHandle;
 
         /// <summary>
-        /// Creates the required objects for use within the job system.
+        ///     Creates the required objects for use within the job system.
         /// </summary>
         /// <param name="state">The current SystemState.</param>
         [BurstCompile]
@@ -113,7 +115,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Systems
         }
 
         /// <summary>
-        /// Updates the data object values for use within the job system.
+        ///     Updates the data object values for use within the job system.
         /// </summary>
         /// <param name="state">The current SystemState.</param>
         [BurstCompile]
@@ -121,33 +123,34 @@ namespace Opsive.BehaviorDesigner.Runtime.Systems
         {
             // Clean up the interrupted tag.
             m_InterruptedComponentHandle.Update(ref state);
-            var interruptedJob = new InterruptedCleanupJob()
+            InterruptedCleanupJob interruptedJob = new()
             {
-                InterruptedComponentHandle = m_InterruptedComponentHandle,
+                InterruptedComponentHandle = m_InterruptedComponentHandle
             };
             state.Dependency = interruptedJob.ScheduleParallel(m_InterruptedCleanupQuery, state.Dependency);
         }
 
         /// <summary>
-        /// Job that resets the InterruptedFlag value.
+        ///     Job that resets the InterruptedFlag value.
         /// </summary>
         [BurstCompile(CompileSynchronously = true)]
-        public partial struct InterruptedCleanupJob : IJobChunk
+        public struct InterruptedCleanupJob : IJobChunk
         {
-            [UnityEngine.Tooltip("A reference to the Interrupted Component Handle.")]
+            [Tooltip("A reference to the Interrupted Component Handle.")]
             public ComponentTypeHandle<InterruptedFlag> InterruptedComponentHandle;
 
             /// <summary>
-            /// Resets the InterruptedFlag value.
+            ///     Resets the InterruptedFlag value.
             /// </summary>
             /// <param name="entity">The entity that is being acted upon.</param>
             /// <param name="entityIndex">The index of the entity.</param>
             [BurstCompile]
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {
-                for (int i = 0; i < chunk.Count; i++) {
+                for (int i = 0; i < chunk.Count; i++)
+                {
                     // Only chunks with the tag enabled will be returned so there's no need to check if the tag is enabled.
-                    chunk.SetComponentEnabled<InterruptedFlag>(ref InterruptedComponentHandle, i, false);
+                    chunk.SetComponentEnabled(ref InterruptedComponentHandle, i, false);
                 }
             }
         }

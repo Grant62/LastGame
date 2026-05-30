@@ -109,7 +109,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly Action<TSource> onNext;
             private readonly Action<Exception> onError;
             private readonly Action onCompleted;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<TSource> enumerator;
             private UniTask<bool>.Awaiter awaiter;

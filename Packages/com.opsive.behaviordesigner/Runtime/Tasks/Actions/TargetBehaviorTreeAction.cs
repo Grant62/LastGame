@@ -1,3 +1,6 @@
+using Opsive.GraphDesigner.Runtime.Variables;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,11 +9,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions
 {
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
     /// <summary>
-    /// A TaskObject Action task which implements the shared TargetGameObject/TreeUserID objects.
+    ///     A TaskObject Action task which implements the shared TargetGameObject/TreeUserID objects.
     /// </summary>
     public abstract class TargetBehaviorTreeAction : Action
     {
@@ -22,7 +22,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions
         protected BehaviorTree m_ResolvedBehaviorTree;
 
         /// <summary>
-        /// Initializes the task.
+        ///     Initializes the task.
         /// </summary>
         public override void OnAwake()
         {
@@ -33,25 +33,35 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions
         }
 
         /// <summary>
-        /// Initializes the target behavior tree.
+        ///     Initializes the target behavior tree.
         /// </summary>
         protected virtual void InitializeTarget()
         {
-            if (m_TargetGameObject.Value == null) {
+            if (m_TargetGameObject.Value == null)
+            {
                 m_ResolvedBehaviorTree = m_BehaviorTree;
-            } else {
-                var behaviorTrees = m_TargetGameObject.Value.GetComponents<BehaviorTree>();
-                if (behaviorTrees.Length == 1) {
+            }
+            else
+            {
+                BehaviorTree[] behaviorTrees = m_TargetGameObject.Value.GetComponents<BehaviorTree>();
+                if (behaviorTrees.Length == 1)
+                {
                     m_ResolvedBehaviorTree = behaviorTrees[0];
-                } else if (behaviorTrees.Length > 1) {
-                    for (int i = 0; i < behaviorTrees.Length; ++i) {
-                        if (behaviorTrees[i].Index == m_TreeIndex.Value) {
+                }
+                else if (behaviorTrees.Length > 1)
+                {
+                    for (int i = 0; i < behaviorTrees.Length; ++i)
+                    {
+                        if (behaviorTrees[i].Index == m_TreeIndex.Value)
+                        {
                             m_ResolvedBehaviorTree = behaviorTrees[i];
                             break;
                         }
                     }
+
                     // If the UserID can't be found then use the first behavior tree.
-                    if (m_ResolvedBehaviorTree == null) {
+                    if (m_ResolvedBehaviorTree == null)
+                    {
                         m_ResolvedBehaviorTree = behaviorTrees[0];
                     }
                 }
@@ -59,7 +69,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions
         }
 
         /// <summary>
-        /// The behavior tree has been destroyed.
+        ///     The behavior tree has been destroyed.
         /// </summary>
         public override void OnDestroy()
         {

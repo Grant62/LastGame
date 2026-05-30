@@ -1,3 +1,10 @@
+using System;
+using System.Runtime.InteropServices;
+using Opsive.BehaviorDesigner.Runtime.Tasks;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,28 +13,27 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Components
 {
-    using Opsive.BehaviorDesigner.Runtime.Tasks;
-    using System.Runtime.InteropServices;
-    using Unity.Collections;
-    using Unity.Entities;
-    using UnityEngine;
-
     /// <summary>
-    /// The runtime DOTS data associated with a task.
+    ///     The runtime DOTS data associated with a task.
     /// </summary>
-    [System.Serializable]
+    [Serializable]
     public struct TaskComponent : IBufferElementData
     {
         [Tooltip("The current execution status of the task.")]
         //public TaskStatus Status;
         [SerializeField] private TaskStatus m_Status;
-        public TaskStatus Status { get => m_Status; 
-            set { 
+
+        public TaskStatus Status
+        {
+            get => m_Status;
+            set
+            {
                 m_Status = value;
                 CanReevaluate = value != TaskStatus.Inactive;
                 //UnityEngine.Debug.Log(string.Format("{0} status: {1}", Index, value));
-            } 
+            }
         }
+
         [Tooltip("The index of the task within the behavior tree.")]
         public ushort Index;
         [Tooltip("The index of the parent task within the behavior tree.")]
@@ -58,25 +64,26 @@ namespace Opsive.BehaviorDesigner.Runtime.Components
     }
 
     /// <summary>
-    /// Specifies when the behavior tree should be updated.
+    ///     Specifies when the behavior tree should be updated.
     /// </summary>
     public enum UpdateMode
     {
         EveryFrame, // The behavior tree should be updated every frame.
-        Manual      // The behavior tree should be updated manually via a user script.
+        Manual // The behavior tree should be updated manually via a user script.
     }
 
     /// <summary>
-    /// Specifies how many tasks should be evaluated. Evaluation will end if all branches return a status of TaskStatus.Running.
+    ///     Specifies how many tasks should be evaluated. Evaluation will end if all branches return a status of
+    ///     TaskStatus.Running.
     /// </summary>
     public enum EvaluationType : byte
     {
         EntireTree, // Evaluates up to all of the tasks within the tree.
-        Count       // Evaluates up to the specified MaxEvaluationCount.
+        Count // Evaluates up to the specified MaxEvaluationCount.
     }
 
     /// <summary>
-    /// Specifies if the tree should be evaluated.
+    ///     Specifies if the tree should be evaluated.
     /// </summary>
     public struct EvaluationComponent32 : IComponentData
     {
@@ -84,12 +91,13 @@ namespace Opsive.BehaviorDesigner.Runtime.Components
         public EvaluationType EvaluationType;
         [Tooltip("The maximum number of tasks that can run if the evaluation type is set to EvaluationType.Count.")]
         public ushort MaxEvaluationCount;
-        [Tooltip("Based on the EvaluationType, a mask of the tasks that have been evaluated or the number of tasks that have executed. For EvaluationType.Count, EvaluatedTasks[0] is used as the counter.")]
+        [Tooltip(
+            "Based on the EvaluationType, a mask of the tasks that have been evaluated or the number of tasks that have executed. For EvaluationType.Count, EvaluatedTasks[0] is used as the counter.")]
         public FixedList32Bytes<ulong> EvaluatedTasks;
     }
 
     /// <summary>
-    /// Specifies if the tree should be evaluated.
+    ///     Specifies if the tree should be evaluated.
     /// </summary>
     public struct EvaluationComponent64 : IComponentData
     {
@@ -97,12 +105,13 @@ namespace Opsive.BehaviorDesigner.Runtime.Components
         public EvaluationType EvaluationType;
         [Tooltip("The maximum number of tasks that can run if the evaluation type is set to EvaluationType.Count.")]
         public ushort MaxEvaluationCount;
-        [Tooltip("Based on the EvaluationType, a mask of the tasks that have been evaluated or the number of tasks that have executed. For EvaluationType.Count, EvaluatedTasks[0] is used as the counter.")]
+        [Tooltip(
+            "Based on the EvaluationType, a mask of the tasks that have been evaluated or the number of tasks that have executed. For EvaluationType.Count, EvaluatedTasks[0] is used as the counter.")]
         public FixedList64Bytes<ulong> EvaluatedTasks;
     }
 
     /// <summary>
-    /// Specifies if the tree should be evaluated.
+    ///     Specifies if the tree should be evaluated.
     /// </summary>
     public struct EvaluationComponent128 : IComponentData
     {
@@ -110,12 +119,13 @@ namespace Opsive.BehaviorDesigner.Runtime.Components
         public EvaluationType EvaluationType;
         [Tooltip("The maximum number of tasks that can run if the evaluation type is set to EvaluationType.Count.")]
         public ushort MaxEvaluationCount;
-        [Tooltip("Based on the EvaluationType, a mask of the tasks that have been evaluated or the number of tasks that have executed. For EvaluationType.Count, EvaluatedTasks[0] is used as the counter.")]
+        [Tooltip(
+            "Based on the EvaluationType, a mask of the tasks that have been evaluated or the number of tasks that have executed. For EvaluationType.Count, EvaluatedTasks[0] is used as the counter.")]
         public FixedList128Bytes<ulong> EvaluatedTasks;
     }
 
     /// <summary>
-    /// Specifies if the tree should be evaluated.
+    ///     Specifies if the tree should be evaluated.
     /// </summary>
     public struct EvaluationComponent512 : IComponentData
     {
@@ -123,12 +133,13 @@ namespace Opsive.BehaviorDesigner.Runtime.Components
         public EvaluationType EvaluationType;
         [Tooltip("The maximum number of tasks that can run if the evaluation type is set to EvaluationType.Count.")]
         public ushort MaxEvaluationCount;
-        [Tooltip("Based on the EvaluationType, a mask of the tasks that have been evaluated or the number of tasks that have executed. For EvaluationType.Count, EvaluatedTasks[0] is used as the counter.")]
+        [Tooltip(
+            "Based on the EvaluationType, a mask of the tasks that have been evaluated or the number of tasks that have executed. For EvaluationType.Count, EvaluatedTasks[0] is used as the counter.")]
         public FixedList512Bytes<ulong> EvaluatedTasks;
     }
 
     /// <summary>
-    /// Specifies if the tree should be evaluated.
+    ///     Specifies if the tree should be evaluated.
     /// </summary>
     public struct EvaluationComponent4096 : IComponentData
     {
@@ -136,23 +147,24 @@ namespace Opsive.BehaviorDesigner.Runtime.Components
         public EvaluationType EvaluationType;
         [Tooltip("The maximum number of tasks that can run if the evaluation type is set to EvaluationType.Count.")]
         public ushort MaxEvaluationCount;
-        [Tooltip("Based on the EvaluationType, a mask of the tasks that have been evaluated or the number of tasks that have executed. For EvaluationType.Count, EvaluatedTasks[0] is used as the counter.")]
+        [Tooltip(
+            "Based on the EvaluationType, a mask of the tasks that have been evaluated or the number of tasks that have executed. For EvaluationType.Count, EvaluatedTasks[0] is used as the counter.")]
         public FixedList4096Bytes<ulong> EvaluatedTasks;
     }
 
     /// <summary>
-    /// Specifies how the branch was interrupted.
+    ///     Specifies how the branch was interrupted.
     /// </summary>
     public enum InterruptType : byte
     {
-        None,               // No interrupt.
-        Branch,             // A conditional abort or utility selector triggered the interruption.
-        ImmediateSuccess,   // The branch was interrupted with a success status.
-        ImmediateFailure,   // The branch was interrupted with a failure status.
+        None, // No interrupt.
+        Branch, // A conditional abort or utility selector triggered the interruption.
+        ImmediateSuccess, // The branch was interrupted with a success status.
+        ImmediateFailure // The branch was interrupted with a failure status.
     }
 
     /// <summary>
-    /// The runtime DOTS data associated with a branch.
+    ///     The runtime DOTS data associated with a branch.
     /// </summary>
     public struct BranchComponent : IBufferElementData
     {
@@ -179,37 +191,37 @@ namespace Opsive.BehaviorDesigner.Runtime.Components
     }
 
     /// <summary>
-    /// Specifies if the tree can be evaluated.
+    ///     Specifies if the tree can be evaluated.
     /// </summary>
     public struct EvaluateFlag : IComponentData, IEnableableComponent { }
 
     /// <summary>
-    /// Specifies if the tree is enabled.
+    ///     Specifies if the tree is enabled.
     /// </summary>
     public struct EnabledFlag : IComponentData, IEnableableComponent { }
 
     /// <summary>
-    /// Flag used to indicate when the branch should be interrupted.
+    ///     Flag used to indicate when the branch should be interrupted.
     /// </summary>
     public struct InterruptFlag : IComponentData, IEnableableComponent { }
 
     /// <summary>
-    /// Flag used to indicate that the branch has been interrupted.
+    ///     Flag used to indicate that the branch has been interrupted.
     /// </summary>
     public struct InterruptedFlag : IComponentData, IEnableableComponent { }
 
     /// <summary>
-    /// Specifies the reevaluation status of the task.
+    ///     Specifies the reevaluation status of the task.
     /// </summary>
     public enum ReevaluateStatus : byte
     {
-        Inactive,   // The task is not being reevaluated.
-        Active,     // The task is currently being reevaluated.
-        Dirty       // The task was reevaluated and triggered a change.
+        Inactive, // The task is not being reevaluated.
+        Active, // The task is currently being reevaluated.
+        Dirty // The task was reevaluated and triggered a change.
     }
 
     /// <summary>
-    /// The runtime DOTS data associated with conditional aborts.
+    ///     The runtime DOTS data associated with conditional aborts.
     /// </summary>
     public struct ReevaluateTaskComponent : IBufferElementData
     {
@@ -232,12 +244,12 @@ namespace Opsive.BehaviorDesigner.Runtime.Components
     }
 
     /// <summary>
-    /// Runtime representation of IEventNodes that can run its own entity logic.
+    ///     Runtime representation of IEventNodes that can run its own entity logic.
     /// </summary>
     public interface IEventNodeEntityReceiver
     {
         /// <summary>
-        /// Adds the IBufferElementData to the entity.
+        ///     Adds the IBufferElementData to the entity.
         /// </summary>
         /// <param name="world">The world that the entity exists in.</param>
         /// <param name="entity">The entity that the IBufferElementData should be assigned to.</param>
@@ -246,7 +258,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Components
         void AddBufferElement(World world, Entity entity, GameObject gameObject, ushort taskOffset);
 
         /// <summary>
-        /// Clears the IBufferElementData from the entity.
+        ///     Clears the IBufferElementData from the entity.
         /// </summary>
         /// <param name="world">The world that the entity exists in.</param>
         /// <param name="entity">The entity that the IBufferElementData should be cleared from.</param>

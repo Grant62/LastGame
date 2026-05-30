@@ -52,7 +52,7 @@ namespace Editor.Excel
         {
             if (Directory.Exists(DataBinaryPath))
             {
-                string[] binaryFiles = Directory.GetFiles(DataBinaryPath, "*.txt");
+                string[] binaryFiles = Directory.GetFiles(DataBinaryPath, "*.bytes");
                 foreach (string file in binaryFiles)
                     File.Delete(file);
             }
@@ -92,7 +92,7 @@ namespace Editor.Excel
                     }
                 }
 
-                string str = $"namespace Configuration.ExcelData.DataClass\n{{\n    public class " + table.TableName + "\n    {\n";
+                string str = "namespace Configuration.ExcelData.DataClass\n{\n    public class " + table.TableName + "\n    {\n";
                 for (int i = 0; i < table.Columns.Count; i++)
                     str += "        public " + rowType[i] + " " + rowName[i] + ";\n";
                 str += "    }\n}";
@@ -151,7 +151,7 @@ namespace Configuration.ExcelData.Container
                     validRowCount++;
                 }
 
-                using (FileStream fs = new(DataBinaryPath + table.TableName + ".txt", FileMode.OpenOrCreate, FileAccess.Write))
+                using (FileStream fs = new(DataBinaryPath + table.TableName + ".bytes", FileMode.OpenOrCreate, FileAccess.Write))
                 {
                     fs.Write(BitConverter.GetBytes(validRowCount), 0, 4);
                     string keyName = GetVariableNameRow(table)[0].ToString();

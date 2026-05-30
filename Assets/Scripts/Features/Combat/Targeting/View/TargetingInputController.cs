@@ -34,7 +34,7 @@ namespace Features.Combat.Targeting.View
         {
             ITargetable target = this.SendQuery(new GetTargetAtMouseQuery());
 
-            if (target != null && target.IsValidTarget)
+            if (target is { IsValidTarget: true })
                 mCursorDisplay.ShowAt(target.Position + Vector3.up * 2.35f);
             else
                 mCursorDisplay.Hide();

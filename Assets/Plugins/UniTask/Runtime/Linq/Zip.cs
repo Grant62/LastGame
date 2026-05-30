@@ -11,7 +11,7 @@ namespace Cysharp.Threading.Tasks.Linq
             Error.ThrowArgumentNullException(first, nameof(first));
             Error.ThrowArgumentNullException(second, nameof(second));
 
-            return Zip(first, second, (x, y) => (x, y));
+            return first.Zip(second, (x, y) => (x, y));
         }
 
         public static IUniTaskAsyncEnumerable<TResult> Zip<TFirst, TSecond, TResult>(this IUniTaskAsyncEnumerable<TFirst> first, IUniTaskAsyncEnumerable<TSecond> second,
@@ -72,7 +72,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<TSecond> second;
             private readonly Func<TFirst, TSecond, TResult> resultSelector;
 
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<TFirst> firstEnumerator;
             private IUniTaskAsyncEnumerator<TSecond> secondEnumerator;
@@ -226,7 +226,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<TSecond> second;
             private readonly Func<TFirst, TSecond, UniTask<TResult>> resultSelector;
 
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<TFirst> firstEnumerator;
             private IUniTaskAsyncEnumerator<TSecond> secondEnumerator;
@@ -401,7 +401,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<TSecond> second;
             private readonly Func<TFirst, TSecond, CancellationToken, UniTask<TResult>> resultSelector;
 
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<TFirst> firstEnumerator;
             private IUniTaskAsyncEnumerator<TSecond> secondEnumerator;

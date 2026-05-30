@@ -1,3 +1,9 @@
+using Opsive.BehaviorDesigner.Runtime.Tasks.Actions;
+using Opsive.BehaviorDesigner.Runtime.Tasks.Composites;
+using Opsive.GraphDesigner.Runtime;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,27 +12,21 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks
 {
-    using Opsive.BehaviorDesigner.Runtime.Tasks.Actions;
-    using Opsive.BehaviorDesigner.Runtime.Tasks.Composites;
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.Shared.Utility;
-    using UnityEngine;
-
     /// <summary>
-    /// Represents a task node that can no longer be found.
+    ///     Represents a task node that can no longer be found.
     /// </summary>
     [HideInFilterWindow]
     public class UnknownTaskNode : ActionNode
     {
-        private string m_UnknownType;
+        private readonly string m_UnknownType;
 
         /// <summary>
-        /// Default constructor.
+        ///     Default constructor.
         /// </summary>
         public UnknownTaskNode() { }
 
         /// <summary>
-        /// UnknownTaskNode constructor.
+        ///     UnknownTaskNode constructor.
         /// </summary>
         /// <param name="unknownType">The type that cannot be found.</param>
         public UnknownTaskNode(string unknownType)
@@ -35,7 +35,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks
         }
 
         /// <summary>
-        /// Called once when the behavior tree is initialized.
+        ///     Called once when the behavior tree is initialized.
         /// </summary>
         public override void OnAwake()
         {
@@ -46,37 +46,37 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks
     }
 
     /// <summary>
-    /// Represents a task that can no longer be found.
+    ///     Represents a task that can no longer be found.
     /// </summary>
     [HideInFilterWindow]
     public class UnknownTask : Action
     {
         /// <summary>
-        /// Called once when the behavior tree is initialized.
+        ///     Called once when the behavior tree is initialized.
         /// </summary>
         public override void OnAwake()
         {
             base.OnAwake();
 
-            Debug.LogWarning($"Warning: Unable to find the original task. An unknown task has been replaced with it.");
+            Debug.LogWarning("Warning: Unable to find the original task. An unknown task has been replaced with it.");
         }
     }
 
     /// <summary>
-    /// Represents a parent task node that can no longer be found.
+    ///     Represents a parent task node that can no longer be found.
     /// </summary>
     [HideInFilterWindow]
     public class UnknownParentTaskNode : CompositeNode
     {
-        private string m_UnknownType;
+        private readonly string m_UnknownType;
 
         /// <summary>
-        /// Default constructor.
+        ///     Default constructor.
         /// </summary>
         public UnknownParentTaskNode() { }
 
         /// <summary>
-        /// UnknownParentTaskNode constructor.
+        ///     UnknownParentTaskNode constructor.
         /// </summary>
         /// <param name="unknownType">The type that cannot be found.</param>
         public UnknownParentTaskNode(string unknownType)
@@ -85,7 +85,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks
         }
 
         /// <summary>
-        /// Called once when the behavior tree is initialized.
+        ///     Called once when the behavior tree is initialized.
         /// </summary>
         public override void OnAwake()
         {
@@ -96,7 +96,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks
     }
 
     /// <summary>
-    /// Represents an event node that can no longer be found.
+    ///     Represents an event node that can no longer be found.
     /// </summary>
     [HideInFilterWindow]
     public class UnknownEventTask : IEventNode

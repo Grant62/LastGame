@@ -52,7 +52,7 @@ namespace Cysharp.Threading.Tasks.Linq
         private class _ToUniTaskAsyncEnumerable : IUniTaskAsyncEnumerator<T>
         {
             private readonly IEnumerable<T> source;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IEnumerator<T> enumerator;
 
@@ -106,7 +106,7 @@ namespace Cysharp.Threading.Tasks.Linq
         private class _ToUniTaskAsyncEnumerableTask : IUniTaskAsyncEnumerator<T>
         {
             private readonly Task<T> source;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private bool called;
 
@@ -159,7 +159,7 @@ namespace Cysharp.Threading.Tasks.Linq
         private class _ToUniTaskAsyncEnumerableUniTask : IUniTaskAsyncEnumerator<T>
         {
             private readonly UniTask<T> source;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private bool called;
 
@@ -214,7 +214,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private static readonly Action<object> OnCanceledDelegate = OnCanceled;
 
             private readonly IObservable<T> source;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
 
             private bool useCachedCurrent;
@@ -223,7 +223,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly Queue<T> queuedResult;
             private Exception error;
             private IDisposable subscription;
-            private CancellationTokenRegistration cancellationTokenRegistration;
+            private readonly CancellationTokenRegistration cancellationTokenRegistration;
 
             public _ToUniTaskAsyncEnumerableObservable(IObservable<T> source, CancellationToken cancellationToken)
             {

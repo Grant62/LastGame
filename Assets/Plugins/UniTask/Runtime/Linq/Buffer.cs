@@ -47,7 +47,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
             private readonly IUniTaskAsyncEnumerable<TSource> source;
             private readonly int count;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<TSource> enumerator;
             private UniTask<bool>.Awaiter awaiter;
@@ -201,7 +201,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly IUniTaskAsyncEnumerable<TSource> source;
             private readonly int count;
             private readonly int skip;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IUniTaskAsyncEnumerator<TSource> enumerator;
             private UniTask<bool>.Awaiter awaiter;

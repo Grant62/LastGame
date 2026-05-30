@@ -90,7 +90,9 @@ namespace Spine.Unity
                 if (rb == null)
                 {
                     rb = gameObject.AddComponent<Rigidbody2D>();
+#pragma warning disable CS0618
                     rb.isKinematic = isKinematic;
+#pragma warning restore CS0618
                     rb.gravityScale = gravityScale;
                 }
             }

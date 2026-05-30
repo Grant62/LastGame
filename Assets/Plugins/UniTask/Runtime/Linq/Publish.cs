@@ -95,8 +95,8 @@ namespace Cysharp.Threading.Tasks.Linq
             private static readonly Action<object> CancelDelegate = OnCanceled;
 
             private readonly Publish<TSource> parent;
-            private CancellationToken cancellationToken;
-            private CancellationTokenRegistration cancellationTokenRegistration;
+            private readonly CancellationToken cancellationToken;
+            private readonly CancellationTokenRegistration cancellationTokenRegistration;
             private bool isDisposed;
 
             public _Publish(Publish<TSource> parent, CancellationToken cancellationToken)

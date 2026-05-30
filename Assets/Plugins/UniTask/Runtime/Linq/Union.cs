@@ -10,7 +10,7 @@ namespace Cysharp.Threading.Tasks.Linq
             Error.ThrowArgumentNullException(first, nameof(first));
             Error.ThrowArgumentNullException(second, nameof(second));
 
-            return Union(first, second, EqualityComparer<TSource>.Default);
+            return first.Union(second, EqualityComparer<TSource>.Default);
         }
 
         public static IUniTaskAsyncEnumerable<TSource> Union<TSource>(this IUniTaskAsyncEnumerable<TSource> first, IUniTaskAsyncEnumerable<TSource> second, IEqualityComparer<TSource> comparer)

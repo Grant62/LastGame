@@ -429,7 +429,7 @@ namespace Cysharp.Threading.Tasks.Linq
         private class _OrderedAsyncEnumerator : MoveNextSource, IUniTaskAsyncEnumerator<TElement>
         {
             protected readonly OrderedAsyncEnumerable<TElement> parent;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
             private TElement[] buffer;
             private int[] map;
             private int index;

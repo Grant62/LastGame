@@ -1,3 +1,6 @@
+using Opsive.GraphDesigner.Runtime;
+using Opsive.Shared.Utility;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,19 +9,18 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals
 {
-    using Opsive.GraphDesigner.Runtime;
-
     [NodeIcon("e0a8f1df788b6274a9a24003859dfa7e")]
-    [Opsive.Shared.Utility.Description("Returns true if the specified behavior tree is active.")]
+    [Description("Returns true if the specified behavior tree is active.")]
     public class IsBehaviorTreeActive : TargetBehaviorTreeConditional
     {
         /// <summary>
-        /// Executes the task logic.
+        ///     Executes the task logic.
         /// </summary>
         /// <returns>The status of the task.</returns>
         public override TaskStatus OnUpdate()
         {
-            if (m_ResolvedBehaviorTree == null) {
+            if (m_ResolvedBehaviorTree == null)
+            {
                 return TaskStatus.Failure;
             }
 

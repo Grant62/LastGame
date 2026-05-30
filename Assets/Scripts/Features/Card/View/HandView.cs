@@ -63,10 +63,11 @@ namespace Features.Card.View
 
         private void OnHandPileChanged()
         {
-            SyncHandAsync().Forget();
+            SyncViews();
+            AnimateLayoutAsync().Forget();
         }
 
-        private async UniTaskVoid SyncHandAsync()
+        private void SyncViews()
         {
             ICardModel model = this.GetModel<ICardModel>();
 
@@ -89,7 +90,10 @@ namespace Features.Card.View
                     mCardViews.Add(newView);
                 }
             }
+        }
 
+        private async UniTaskVoid AnimateLayoutAsync()
+        {
             await SetCardLayoutAsync(0.15f);
         }
 

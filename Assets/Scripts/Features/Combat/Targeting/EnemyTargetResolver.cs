@@ -22,7 +22,7 @@ namespace Features.Combat.Targeting
                 if (type == TargetType.RandomEnemy)
                     return new ITargetable[] { enemies[Random.Range(0, enemies.Length)] };
 
-                return enemies;
+                return enemies.Cast<ITargetable>().ToArray();
             }
 
             if (type == TargetType.Self && caster != null)

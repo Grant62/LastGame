@@ -7,7 +7,8 @@ namespace Features.Card.View
 {
     public class CardHoverListener : MonoBehaviour, IController
     {
-        [SerializeField] private CardView mHoverView;
+        [SerializeField] private CardView hoverView;
+        [SerializeField] private float verticalOffset = 0.25f;
 
         public IArchitecture GetArchitecture()
         {
@@ -20,19 +21,19 @@ namespace Features.Card.View
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
             this.RegisterEvent<CardHoverEndEvent>(_ => OnCardHoverEnd())
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
-            mHoverView.GetComponent<Collider>().enabled = false;
+            hoverView.GetComponent<Collider>().enabled = false;
         }
 
         private void OnCardHover(CardHoverEvent e)
         {
-            mHoverView.Setup(e.CardData);
-            mHoverView.transform.position = e.Position + Vector3.up * 0.5f;
-            mHoverView.gameObject.SetActive(true);
+            hoverView.Setup(e.CardData);
+            hoverView.transform.position = e.Position + Vector3.up * verticalOffset;
+            hoverView.gameObject.SetActive(true);
         }
 
         private void OnCardHoverEnd()
         {
-            mHoverView.gameObject.SetActive(false);
+            hoverView.gameObject.SetActive(false);
         }
     }
 }

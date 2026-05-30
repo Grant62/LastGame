@@ -1,3 +1,6 @@
+using Opsive.BehaviorDesigner.Runtime.Systems;
+using Unity.Entities;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,41 +9,30 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Groups
 {
-    using Opsive.BehaviorDesigner.Runtime.Systems;
-    using Unity.Entities;
-
     /// <summary>
-    /// Grouping for the systems that should before other systems.
+    ///     Grouping for the systems that should before other systems.
     /// </summary>
     [UpdateInGroup(typeof(BehaviorTreeSystemGroup), OrderFirst = true)]
-    public partial class BeforeTraversalSystemGroup : ComponentSystemGroup
-    {
-    }
+    public partial class BeforeTraversalSystemGroup : ComponentSystemGroup { }
 
     /// <summary>
-    /// Grouping for the task systems that should reevaluate.
+    ///     Grouping for the task systems that should reevaluate.
     /// </summary>
     [UpdateInGroup(typeof(BeforeTraversalSystemGroup))]
-    public partial class ReevaluateTaskSystemGroup : ComponentSystemGroup
-    {
-    }
+    public partial class ReevaluateTaskSystemGroup : ComponentSystemGroup { }
 
     /// <summary>
-    /// Grouping for the systems that run before the tree execution.
+    ///     Grouping for the systems that run before the tree execution.
     /// </summary>
     [UpdateInGroup(typeof(BehaviorTreeSystemGroup))]
-    public partial class InterruptSystemGroup : ComponentSystemGroup
-    {
-    }
+    public partial class InterruptSystemGroup : ComponentSystemGroup { }
 
     /// <summary>
-    /// Grouping for the task systems that can cause interrupts.
+    ///     Grouping for the task systems that can cause interrupts.
     /// </summary>
     [UpdateInGroup(typeof(InterruptSystemGroup))]
     [UpdateAfter(typeof(InterruptSystem))]
     [UpdateBefore(typeof(InterruptCleanupSystem))]
-    public partial class InterruptTaskSystemGroup : ComponentSystemGroup
-    {
-    }
+    public partial class InterruptTaskSystemGroup : ComponentSystemGroup { }
 }
 #endif

@@ -1,3 +1,7 @@
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,26 +10,22 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.Math
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
-    [Opsive.Shared.Utility.Description("Performs a math operation on the two floats.")]
-    [Shared.Utility.Category("Math")]
+    [Description("Performs a math operation on the two floats.")]
+    [Category("Math")]
     public class FloatOperator : Action
     {
         /// <summary>
-        /// Specifies the type of float operation that should be performed.
+        ///     Specifies the type of float operation that should be performed.
         /// </summary>
         protected enum Operation
         {
-            Add,        // Returns the addition between two floats.
-            Subtract,   // Returns the division between two floats.
-            Multiply,   // Returns the multiplication between two floats.
-            Divide,     // Returns the division between two floats.
-            Modulo,     // Returns the modulo between two floats.
-            Min,        // Returns the minimum of two floats.
-            Max,        // Returns the maximum of two floats.
+            Add, // Returns the addition between two floats.
+            Subtract, // Returns the division between two floats.
+            Multiply, // Returns the multiplication between two floats.
+            Divide, // Returns the division between two floats.
+            Modulo, // Returns the modulo between two floats.
+            Min, // Returns the minimum of two floats.
+            Max // Returns the maximum of two floats.
         }
 
         [Tooltip("The operation to perform.")]
@@ -38,12 +38,13 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.Math
         [RequireShared] [SerializeField] protected SharedVariable<float> m_StoreResult;
 
         /// <summary>
-        /// Executes the task.
+        ///     Executes the task.
         /// </summary>
         /// <returns>The execution status of the task.</returns>
         public override TaskStatus OnUpdate()
         {
-            switch (m_Operation.Value) {
+            switch (m_Operation.Value)
+            {
                 case Operation.Add:
                     m_StoreResult.Value = m_Float1.Value + m_Float2.Value;
                     break;
@@ -66,6 +67,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.Math
                     m_StoreResult.Value = Mathf.Max(m_Float1.Value, m_Float2.Value);
                     break;
             }
+
             return TaskStatus.Success;
         }
     }

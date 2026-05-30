@@ -1,3 +1,8 @@
+using Opsive.BehaviorDesigner.Runtime.Groups;
+using Opsive.Shared.Utility;
+using Unity.Entities;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,12 +11,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Components
 {
-    using Opsive.BehaviorDesigner.Runtime.Groups;
-    using Unity.Entities;
-    using UnityEngine;
-
     /// <summary>
-    /// Indicates that the behavior tree was baked.
+    ///     Indicates that the behavior tree was baked.
     /// </summary>
     public class BakedBehaviorTree : IComponentData
     {
@@ -32,12 +33,12 @@ namespace Opsive.BehaviorDesigner.Runtime.Components
     }
 
     /// <summary>
-    /// The behavior tree has been baked. Start the tree using the baked data.
+    ///     The behavior tree has been baked. Start the tree using the baked data.
     /// </summary>
     public partial struct StartBakedBehaviorTreeSystem : ISystem
     {
         /// <summary>
-        /// Restricts when the system should run.
+        ///     Restricts when the system should run.
         /// </summary>
         /// <param name="state">The current SystemState.</param>
         private void OnCreate(ref SystemState state)
@@ -47,7 +48,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Components
         }
 
         /// <summary>
-        /// Starts the baked behavior tree.
+        ///     Starts the baked behavior tree.
         /// </summary>
         /// <param name="state">The current SystemState.</param>
         private void OnUpdate(ref SystemState state)
@@ -55,29 +56,34 @@ namespace Opsive.BehaviorDesigner.Runtime.Components
             state.Enabled = false;
 
             // The components are baked, but systems are not baked. Create the required systems within the current world.
-            var reevaluateTaskSystemGroup = state.World.GetOrCreateSystemManaged<ReevaluateTaskSystemGroup>();
-            var interruptTaskSystemGroup = state.World.GetOrCreateSystemManaged<InterruptTaskSystemGroup>();
-            var traversalTaskSystemGroup = state.World.GetOrCreateSystemManaged<TraversalTaskSystemGroup>();
+            ReevaluateTaskSystemGroup reevaluateTaskSystemGroup = state.World.GetOrCreateSystemManaged<ReevaluateTaskSystemGroup>();
+            InterruptTaskSystemGroup interruptTaskSystemGroup = state.World.GetOrCreateSystemManaged<InterruptTaskSystemGroup>();
+            TraversalTaskSystemGroup traversalTaskSystemGroup = state.World.GetOrCreateSystemManaged<TraversalTaskSystemGroup>();
 
-            var ecb = new EntityCommandBuffer(state.WorldUpdateAllocator);
-            foreach (var (bakedBehaviorTree, entity) in SystemAPI.Query<BakedBehaviorTree>().WithEntityAccess()) {
+            EntityCommandBuffer ecb = new(state.WorldUpdateAllocator);
+            foreach ((BakedBehaviorTree bakedBehaviorTree, Entity entity) in SystemAPI.Query<BakedBehaviorTree>().WithEntityAccess())
+            {
                 AddSystems(state.World, reevaluateTaskSystemGroup, bakedBehaviorTree.ReevaluateTaskSystems);
                 AddSystems(state.World, interruptTaskSystemGroup, bakedBehaviorTree.InterruptTaskSystems);
                 AddSystems(state.World, traversalTaskSystemGroup, bakedBehaviorTree.TraversalTaskSystems);
 
                 // ComponentTypes cannot be serialized. Convert the StableTypeHash to a ComponentType.
-                var taskComponents = state.World.EntityManager.GetBuffer<TaskComponent>(entity);
-                for (int i = 0; i < taskComponents.Length; ++i) {
-                    var taskComponent = taskComponents[i];
+                DynamicBuffer<TaskComponent> taskComponents = state.World.EntityManager.GetBuffer<TaskComponent>(entity);
+                for (int i = 0; i < taskComponents.Length; ++i)
+                {
+                    TaskComponent taskComponent = taskComponents[i];
                     taskComponent.FlagComponentType = ComponentType.FromTypeIndex(TypeManager.GetTypeIndexFromStableTypeHash(bakedBehaviorTree.TagStableTypeHashes[i]));
                     taskComponents[i] = taskComponent;
                 }
 
-                if (state.World.EntityManager.HasBuffer<ReevaluateTaskComponent>(entity)) {
-                    var reevaluateComponents = state.World.EntityManager.GetBuffer<ReevaluateTaskComponent>(entity);
-                    for (int i = 0; i < reevaluateComponents.Length; ++i) {
-                        var reevaluateComponent = reevaluateComponents[i];
-                        reevaluateComponent.ReevaluateFlagComponentType = ComponentType.FromTypeIndex(TypeManager.GetTypeIndexFromStableTypeHash(bakedBehaviorTree.ReevaluateFlagStableTypeHashes[i]));
+                if (state.World.EntityManager.HasBuffer<ReevaluateTaskComponent>(entity))
+                {
+                    DynamicBuffer<ReevaluateTaskComponent> reevaluateComponents = state.World.EntityManager.GetBuffer<ReevaluateTaskComponent>(entity);
+                    for (int i = 0; i < reevaluateComponents.Length; ++i)
+                    {
+                        ReevaluateTaskComponent reevaluateComponent = reevaluateComponents[i];
+                        reevaluateComponent.ReevaluateFlagComponentType =
+                            ComponentType.FromTypeIndex(TypeManager.GetTypeIndexFromStableTypeHash(bakedBehaviorTree.ReevaluateFlagStableTypeHashes[i]));
                         reevaluateComponents[i] = reevaluateComponent;
                     }
                 }
@@ -86,22 +92,27 @@ namespace Opsive.BehaviorDesigner.Runtime.Components
                 BehaviorTree.StartBranch(state.World, entity, (ushort)bakedBehaviorTree.StartEventConnectedIndex, bakedBehaviorTree.StartEvaluation);
                 ecb.RemoveComponent<BakedBehaviorTree>(entity);
             }
+
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
         }
 
         /// <summary>
-        /// Adds the systems indicated by the SystemTypeIndex to the specified group.
+        ///     Adds the systems indicated by the SystemTypeIndex to the specified group.
         /// </summary>
         /// <param name="world">The current World.</param>
         /// <param name="group">The group that the systems should be added to.</param>
         /// <param name="systemTypes">The types of systems that should be added.</param>
         private void AddSystems(World world, ComponentSystemGroup group, string[] systemTypes)
         {
-            if (systemTypes == null) { return; }
+            if (systemTypes == null)
+            {
+                return;
+            }
 
-            for (int i = 0; i < systemTypes.Length; ++i) {
-                group.AddSystemToUpdateList(world.GetOrCreateSystem(Shared.Utility.TypeUtility.GetType(systemTypes[i])));
+            for (int i = 0; i < systemTypes.Length; ++i)
+            {
+                group.AddSystemToUpdateList(world.GetOrCreateSystem(TypeUtility.GetType(systemTypes[i])));
             }
         }
     }

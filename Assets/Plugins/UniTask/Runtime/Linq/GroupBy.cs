@@ -269,7 +269,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly Func<TSource, TKey> keySelector;
             private readonly Func<TSource, TElement> elementSelector;
             private readonly IEqualityComparer<TKey> comparer;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IEnumerator<IGrouping<TKey, TElement>> groupEnumerator;
 
@@ -382,7 +382,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly Func<TSource, TElement> elementSelector;
             private readonly Func<TKey, IEnumerable<TElement>, TResult> resultSelector;
             private readonly IEqualityComparer<TKey> comparer;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IEnumerator<IGrouping<TKey, TElement>> groupEnumerator;
 
@@ -494,7 +494,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly Func<TSource, UniTask<TKey>> keySelector;
             private readonly Func<TSource, UniTask<TElement>> elementSelector;
             private readonly IEqualityComparer<TKey> comparer;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IEnumerator<IGrouping<TKey, TElement>> groupEnumerator;
 
@@ -609,7 +609,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly Func<TSource, UniTask<TElement>> elementSelector;
             private readonly Func<TKey, IEnumerable<TElement>, UniTask<TResult>> resultSelector;
             private readonly IEqualityComparer<TKey> comparer;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IEnumerator<IGrouping<TKey, TElement>> groupEnumerator;
             private UniTask<TResult>.Awaiter awaiter;
@@ -741,7 +741,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly Func<TSource, CancellationToken, UniTask<TKey>> keySelector;
             private readonly Func<TSource, CancellationToken, UniTask<TElement>> elementSelector;
             private readonly IEqualityComparer<TKey> comparer;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IEnumerator<IGrouping<TKey, TElement>> groupEnumerator;
 
@@ -857,7 +857,7 @@ namespace Cysharp.Threading.Tasks.Linq
             private readonly Func<TSource, CancellationToken, UniTask<TElement>> elementSelector;
             private readonly Func<TKey, IEnumerable<TElement>, CancellationToken, UniTask<TResult>> resultSelector;
             private readonly IEqualityComparer<TKey> comparer;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private IEnumerator<IGrouping<TKey, TElement>> groupEnumerator;
             private UniTask<TResult>.Awaiter awaiter;

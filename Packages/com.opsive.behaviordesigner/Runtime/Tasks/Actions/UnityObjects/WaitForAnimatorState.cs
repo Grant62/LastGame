@@ -1,3 +1,7 @@
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,12 +10,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.UnityObjects
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
-    [Opsive.Shared.Utility.Description("Returns success as soon as the current Animator state ends.")]
-    [Shared.Utility.Category("Unity")]
+    [Description("Returns success as soon as the current Animator state ends.")]
+    [Category("Unity")]
     public class WaitForAnimatorState : TargetGameObjectAction
     {
         [Tooltip("The layer to wait for the state on.")]
@@ -21,7 +21,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.UnityObjects
         private int m_StateHash;
 
         /// <summary>
-        /// Initializes the default values.
+        ///     Initializes the default values.
         /// </summary>
         public override void OnAwake()
         {
@@ -31,7 +31,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.UnityObjects
         }
 
         /// <summary>
-        /// Caches the Animator state.
+        ///     Caches the Animator state.
         /// </summary>
         public override void OnStart()
         {
@@ -39,18 +39,22 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.UnityObjects
         }
 
         /// <summary>
-        /// Executes the task.
+        ///     Executes the task.
         /// </summary>
         /// <returns>The execution status of the task.</returns>
         public override TaskStatus OnUpdate()
         {
-            if (m_Animator.IsInTransition(m_Layer.Value)) {
+            if (m_Animator.IsInTransition(m_Layer.Value))
+            {
                 return TaskStatus.Running;
             }
-            var currentState = m_Animator.GetCurrentAnimatorStateInfo(m_Layer.Value).fullPathHash;
-            if (currentState != m_StateHash) {
+
+            int currentState = m_Animator.GetCurrentAnimatorStateInfo(m_Layer.Value).fullPathHash;
+            if (currentState != m_StateHash)
+            {
                 return TaskStatus.Success;
             }
+
             return TaskStatus.Running;
         }
     }

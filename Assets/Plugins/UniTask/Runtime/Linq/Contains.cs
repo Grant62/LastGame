@@ -8,7 +8,7 @@ namespace Cysharp.Threading.Tasks.Linq
     {
         public static UniTask<bool> ContainsAsync<TSource>(this IUniTaskAsyncEnumerable<TSource> source, TSource value, CancellationToken cancellationToken = default)
         {
-            return ContainsAsync(source, value, EqualityComparer<TSource>.Default, cancellationToken);
+            return source.ContainsAsync(value, EqualityComparer<TSource>.Default, cancellationToken);
         }
 
         public static UniTask<bool> ContainsAsync<TSource>(this IUniTaskAsyncEnumerable<TSource> source, TSource value, IEqualityComparer<TSource> comparer,

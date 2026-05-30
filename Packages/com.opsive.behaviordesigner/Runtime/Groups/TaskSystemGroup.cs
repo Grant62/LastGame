@@ -1,3 +1,7 @@
+using System;
+using Unity.Entities;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,12 +10,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Groups
 {
-    using System;
-    using Unity.Entities;
-    using UnityEngine;
-
     /// <summary>
-    /// Group that executes all of the tasks.
+    ///     Group that executes all of the tasks.
     /// </summary>
     [UpdateInGroup(typeof(TraversalSystemGroup))]
     public partial class TraversalTaskSystemGroup : ComponentSystemGroup
@@ -22,17 +22,19 @@ namespace Opsive.BehaviorDesigner.Runtime.Groups
         public Action OnPostUpdate;
 
         /// <summary>
-        /// Updates the group.
+        ///     Updates the group.
         /// </summary>
         protected override void OnUpdate()
         {
-            if (OnPreUpdate != null) {
+            if (OnPreUpdate != null)
+            {
                 OnPreUpdate();
             }
 
             base.OnUpdate();
 
-            if (OnPostUpdate != null) {
+            if (OnPostUpdate != null)
+            {
                 OnPostUpdate();
             }
         }

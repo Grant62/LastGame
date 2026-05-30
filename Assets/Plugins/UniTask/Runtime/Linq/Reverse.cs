@@ -29,7 +29,7 @@ namespace Cysharp.Threading.Tasks.Linq
         private sealed class _Reverse : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
         {
             private readonly IUniTaskAsyncEnumerable<TSource> source;
-            private CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             private TSource[] array;
             private int index;

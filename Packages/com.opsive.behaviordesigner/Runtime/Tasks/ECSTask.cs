@@ -1,3 +1,8 @@
+using System;
+using Opsive.GraphDesigner.Runtime;
+using Unity.Entities;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,30 +11,30 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Unity.Entities;
-    using UnityEngine;
-
     /// <summary>
-    /// Base class for a boilerplate ECS task.
+    ///     Base class for a boilerplate ECS task.
     /// </summary>
     public abstract class ECSTask<TSystem, TBufferElement> : ITreeLogicNode, IAuthoringTask where TBufferElement : unmanaged, IBufferElementData
     {
         [Tooltip("The index of the node.")]
-        [SerializeField] ushort m_Index;
+        [SerializeField]
+        private ushort m_Index;
         [Tooltip("The parent index of the node. ushort.MaxValue indicates no parent.")]
-        [SerializeField] ushort m_ParentIndex;
+        [SerializeField]
+        private ushort m_ParentIndex;
         [Tooltip("The sibling index of the node. ushort.MaxValue indicates no sibling.")]
-        [SerializeField] ushort m_SiblingIndex;
+        [SerializeField]
+        private ushort m_SiblingIndex;
 
         /// <summary>
-        /// The type of flag that should be enabled when the task is running.
+        ///     The type of flag that should be enabled when the task is running.
         /// </summary>
         public abstract ComponentType Flag { get; }
+
         /// <summary>
-        /// The system type that the component uses.
+        ///     The system type that the component uses.
         /// </summary>
-        public System.Type SystemType => typeof(TSystem);
+        public Type SystemType { get => typeof(TSystem); }
 
         public ushort Index
         {
@@ -52,12 +57,12 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks
         public ushort RuntimeIndex { get; set; }
 
         /// <summary>
-        /// Resets the node values back to their default.
+        ///     Resets the node values back to their default.
         /// </summary>
         public virtual void Reset() { }
 
         /// <summary>
-        /// Adds the IBufferElementData to the entity.
+        ///     Adds the IBufferElementData to the entity.
         /// </summary>
         /// <param name="world">The world that the entity exists in.</param>
         /// <param name="entity">The entity that the IBufferElementData should be assigned to.</param>
@@ -66,9 +71,12 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks
         public virtual int AddBufferElement(World world, Entity entity, GameObject gameObject)
         {
             DynamicBuffer<TBufferElement> buffer;
-            if (world.EntityManager.HasBuffer<TBufferElement>(entity)) {
+            if (world.EntityManager.HasBuffer<TBufferElement>(entity))
+            {
                 buffer = world.EntityManager.GetBuffer<TBufferElement>(entity);
-            } else {
+            }
+            else
+            {
                 buffer = world.EntityManager.AddBuffer<TBufferElement>(entity);
             }
 
@@ -77,20 +85,21 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks
         }
 
         /// <summary>
-        /// Returns a new TBufferElement for use by the system.
+        ///     Returns a new TBufferElement for use by the system.
         /// </summary>
         /// <returns>A new TBufferElement for use by the system.</returns>
         public abstract TBufferElement GetBufferElement();
 
         /// <summary>
-        /// Clears the IBufferElementData from the entity.
+        ///     Clears the IBufferElementData from the entity.
         /// </summary>
         /// <param name="world">The world that the entity exists in.</param>
         /// <param name="entity">The entity that the IBufferElementData should be cleared from.</param>
         public void ClearBufferElement(World world, Entity entity)
         {
             DynamicBuffer<TBufferElement> buffer;
-            if (world.EntityManager.HasBuffer<TBufferElement>(entity)) {
+            if (world.EntityManager.HasBuffer<TBufferElement>(entity))
+            {
                 buffer = world.EntityManager.GetBuffer<TBufferElement>(entity);
                 buffer.Clear();
             }
@@ -98,33 +107,33 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks
     }
 
     /// <summary>
-    /// Base class for an ECS action task.
+    ///     Base class for an ECS action task.
     /// </summary>
     public abstract class ECSActionTask<TSystem, TComponent> : ECSTask<TSystem, TComponent>, IAction where TComponent : unmanaged, IBufferElementData { }
 
     /// <summary>
-    /// Base class for an ECS composite task.
+    ///     Base class for an ECS composite task.
     /// </summary>
     public abstract class ECSCompositeTask<TSystem, TComponent> : ECSTask<TSystem, TComponent>, IComposite, IParentNode where TComponent : unmanaged, IBufferElementData
     {
         /// <summary>
-        /// The maximum number of children the node can have.
+        ///     The maximum number of children the node can have.
         /// </summary>
         public virtual int MaxChildCount { get => ushort.MaxValue; }
     }
 
     /// <summary>
-    /// Base class for an ECS conditional task.
+    ///     Base class for an ECS conditional task.
     /// </summary>
     public abstract class ECSConditionalTask<TSystem, TComponent> : ECSTask<TSystem, TComponent>, IConditional where TComponent : unmanaged, IBufferElementData { }
 
     /// <summary>
-    /// Base class for an ECS decorator task.
+    ///     Base class for an ECS decorator task.
     /// </summary>
     public abstract class ECSDecoratorTask<TSystem, TComponent> : ECSTask<TSystem, TComponent>, IDecorator, IParentNode where TComponent : unmanaged, IBufferElementData
     {
         /// <summary>
-        /// The maximum number of children the node can have.
+        ///     The maximum number of children the node can have.
         /// </summary>
         public int MaxChildCount { get => 1; }
     }

@@ -1,3 +1,7 @@
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,12 +10,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.UnityObjects
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
-    [Opsive.Shared.Utility.Description("Sets a random GameObject value from the GameObject array.")]
-    [Shared.Utility.Category("Lists")]
+    [Description("Sets a random GameObject value from the GameObject array.")]
+    [Category("Lists")]
     public class RandomGameObjectFromArray : Action
     {
         [Tooltip("The list of possible GameObjects.")]
@@ -22,22 +22,24 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions.UnityObjects
         [SerializeField] protected int m_Seed;
 
         /// <summary>
-        /// Callback when the behavior tree is initialized.
+        ///     Callback when the behavior tree is initialized.
         /// </summary>
         public override void OnAwake()
         {
-            if (m_Seed != 0) {
+            if (m_Seed != 0)
+            {
                 Random.InitState(m_Seed);
             }
         }
 
         /// <summary>
-        /// Executes the task.
+        ///     Executes the task.
         /// </summary>
         /// <returns>The execution status of the task.</returns>
         public override TaskStatus OnUpdate()
         {
-            if (m_GameObjects.Value == null || m_GameObjects.Value.Length == 0) {
+            if (m_GameObjects.Value == null || m_GameObjects.Value.Length == 0)
+            {
                 return TaskStatus.Failure;
             }
 

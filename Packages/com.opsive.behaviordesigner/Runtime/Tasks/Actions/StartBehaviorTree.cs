@@ -1,3 +1,8 @@
+using System.Collections;
+using Opsive.GraphDesigner.Runtime;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,18 +11,14 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions
 {
-    using Opsive.GraphDesigner.Runtime;
-    using System.Collections;
-    using UnityEngine;
-
     [NodeIcon("e0a8f1df788b6274a9a24003859dfa7e")]
-    [Opsive.Shared.Utility.Description("Starts the specified behavior tree.")]
+    [Description("Starts the specified behavior tree.")]
     public class StartBehaviorTree : TargetBehaviorTreeAction
     {
         private TaskStatus m_Status;
 
         /// <summary>
-        /// The task has started.
+        ///     The task has started.
         /// </summary>
         public override void OnStart()
         {
@@ -25,17 +26,19 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions
         }
 
         /// <summary>
-        /// Executes the task logic.
+        ///     Executes the task logic.
         /// </summary>
         /// <returns>The status of the task.</returns>
         public override TaskStatus OnUpdate()
         {
             // The coroutine has already been started if the status is not queued.
-            if (m_Status != TaskStatus.Queued) {
+            if (m_Status != TaskStatus.Queued)
+            {
                 return m_Status;
             }
 
-            if (m_ResolvedBehaviorTree == null || m_ResolvedBehaviorTree.IsActive()) {
+            if (m_ResolvedBehaviorTree == null || m_ResolvedBehaviorTree.IsActive())
+            {
                 return TaskStatus.Failure;
             }
 
@@ -45,7 +48,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Actions
         }
 
         /// <summary>
-        /// Starts the behavior tree using a coroutine to allow structural changes.
+        ///     Starts the behavior tree using a coroutine to allow structural changes.
         /// </summary>
         private IEnumerator StartBehavior()
         {

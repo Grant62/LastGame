@@ -9,6 +9,12 @@ namespace Features.Combat.Targeting.View
         [SerializeField] private float mArrowOffset = 0.8f;
 
         private Vector3 mStartPos;
+        private Camera mMainCamera;
+
+        private void Awake()
+        {
+            mMainCamera = Camera.main;
+        }
 
         private void Update()
         {
@@ -30,11 +36,11 @@ namespace Features.Combat.Targeting.View
             mLineRenderer.SetPosition(1, GetMouseWorldPosition());
         }
 
-        private static Vector3 GetMouseWorldPosition()
+        private Vector3 GetMouseWorldPosition()
         {
             Vector3 mousePos = Input.mousePosition;
-            mousePos.z = -Camera.main.transform.position.z;
-            return Camera.main.ScreenToWorldPoint(mousePos);
+            mousePos.z = -mMainCamera.transform.position.z;
+            return mMainCamera.ScreenToWorldPoint(mousePos);
         }
     }
 }

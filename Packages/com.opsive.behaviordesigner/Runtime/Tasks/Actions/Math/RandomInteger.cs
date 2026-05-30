@@ -1,3 +1,9 @@
+using Opsive.BehaviorDesigner.Runtime.Tasks;
+using Opsive.BehaviorDesigner.Runtime.Tasks.Actions;
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,13 +12,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Tasks.Actions.Math
 {
-    using Opsive.BehaviorDesigner.Runtime.Tasks;
-    using Opsive.BehaviorDesigner.Runtime.Tasks.Actions;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
     [Tooltip("Returns a random integer between the specified values (inclusive).")]
-    [Shared.Utility.Category("Math")]
+    [Category("Math")]
     public class RandomInteger : Action
     {
         [Tooltip("The minimum integer value (inclusive).")]
@@ -25,17 +26,18 @@ namespace Opsive.BehaviorDesigner.Tasks.Actions.Math
         [SerializeField] protected int m_Seed;
 
         /// <summary>
-        /// Callback when the behavior tree is initialized.
+        ///     Callback when the behavior tree is initialized.
         /// </summary>
         public override void OnAwake()
         {
-            if (m_Seed != 0) {
+            if (m_Seed != 0)
+            {
                 Random.InitState(m_Seed);
             }
         }
 
         /// <summary>
-        /// Executes the task logic.
+        ///     Executes the task logic.
         /// </summary>
         /// <returns>The status of the task.</returns>
         public override TaskStatus OnUpdate()
@@ -43,7 +45,6 @@ namespace Opsive.BehaviorDesigner.Tasks.Actions.Math
             m_StoreResult.Value = Random.Range(m_MinimumInteger.Value, m_MaximumInteger.Value);
             return base.OnUpdate();
         }
-
     }
 }
 #endif

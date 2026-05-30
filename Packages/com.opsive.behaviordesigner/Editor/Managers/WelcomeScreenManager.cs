@@ -3,17 +3,20 @@
 /// Copyright (c) Opsive. All Rights Reserved.
 /// https://www.opsive.com
 /// ---------------------------------------------
+
+using System;
+using Opsive.Shared.Editor.Managers;
+using UnityEditor;
+using UnityEditor.Build;
+using UnityEngine.UIElements;
+
 namespace Opsive.BehaviorDesigner.Editor.Managers
 {
-    using Opsive.Shared.Editor.Managers;
-    using UnityEditor;
-    using UnityEngine.UIElements;
-
     /// <summary>
-    /// Shows a starting window with useful links.
+    ///     Shows a starting window with useful links.
     /// </summary>
     [OrderedEditorItem("Welcome", 0)]
-    public class WelcomeScreenManager : Opsive.Shared.Editor.Managers.WelcomeScreenManager
+    public class WelcomeScreenManager : Shared.Editor.Managers.WelcomeScreenManager
     {
         private const string c_GraphDesignerSymbol = "GRAPH_DESIGNER";
         private const string c_EditorTextureGUID = "d52eae9187aad5b41aff6dd60e49247a";
@@ -22,22 +25,22 @@ namespace Opsive.BehaviorDesigner.Editor.Managers
         private VisualElement m_EntityHelpBoxContainer;
 
         /// <summary>
-        /// The name of the asset.
+        ///     The name of the asset.
         /// </summary>
-        protected override string AssetName => AssetInfo.Name;
+        protected override string AssetName { get => AssetInfo.Name; }
 
         /// <summary>
-        /// The version of the asset.
+        ///     The version of the asset.
         /// </summary>
-        protected override string AssetVersion => AssetInfo.Version;
+        protected override string AssetVersion { get => AssetInfo.Version; }
 
         /// <summary>
-        /// Should the large documentation image be added?
+        ///     Should the large documentation image be added?
         /// </summary>
-        protected override bool AddLargeDocumentationImage => false;
+        protected override bool AddLargeDocumentationImage { get => false; }
 
         /// <summary>
-        /// Returns the URL for the documentation page.
+        ///     Returns the URL for the documentation page.
         /// </summary>
         /// <returns>The URL for the documentation page.</returns>
         protected override string GetDocumentationURL()
@@ -46,7 +49,7 @@ namespace Opsive.BehaviorDesigner.Editor.Managers
         }
 
         /// <summary>
-        /// Returns the URL for the videos page.
+        ///     Returns the URL for the videos page.
         /// </summary>
         /// <returns>The URL for the videos page.</returns>
         protected override string GetVideosURL()
@@ -55,7 +58,7 @@ namespace Opsive.BehaviorDesigner.Editor.Managers
         }
 
         /// <summary>
-        /// Returns the URL for the asset page.
+        ///     Returns the URL for the asset page.
         /// </summary>
         /// <returns>The URL for the asset page.</returns>
         protected override string GetAssetURL()
@@ -64,7 +67,7 @@ namespace Opsive.BehaviorDesigner.Editor.Managers
         }
 
         /// <summary>
-        /// Checks to ensure the required packages are installed.
+        ///     Checks to ensure the required packages are installed.
         /// </summary>
         /// <param name="parent">The parent VisualElement.</param>
         protected override void AddHeader(VisualElement parent)
@@ -72,7 +75,8 @@ namespace Opsive.BehaviorDesigner.Editor.Managers
             EditorApplication.update += CheckForEntities;
 
 #if !UNITY_ENTITIES
-            m_EntityHelpBoxContainer = ManagerUtility.AddHelpBox(parent, "Behavior Designer requires the Entities package. Press the button below to install.", HelpBoxMessageType.Error, "Install", (HelpBox helpbox, Button actionButton) =>
+            m_EntityHelpBoxContainer =
+ ManagerUtility.AddHelpBox(parent, "Behavior Designer requires the Entities package. Press the button below to install.", HelpBoxMessageType.Error, "Install", (HelpBox helpbox, Button actionButton) =>
             {
                 helpbox.text = "Installing the entities package. Unity will reimport after the package has been installed.\n\n" +
                                      "Restart Unity if you receive compiler errors after Unity has reimported.\n\n" +
@@ -90,7 +94,7 @@ namespace Opsive.BehaviorDesigner.Editor.Managers
         }
 
         /// <summary>
-        /// Checks for the Entity package installation.
+        ///     Checks for the Entity package installation.
         /// </summary>
         private void CheckForEntities()
         {
@@ -103,7 +107,8 @@ namespace Opsive.BehaviorDesigner.Editor.Managers
                 m_WelcomeLabel.style.display = DisplayStyle.Flex;
             }
 #elif GRAPH_DESIGNER
-            if (m_EntityHelpBoxContainer != null) {
+            if (m_EntityHelpBoxContainer != null)
+            {
                 m_EntityHelpBoxContainer.style.display = DisplayStyle.None;
                 m_WelcomeLabel.style.display = DisplayStyle.Flex;
             }
@@ -111,33 +116,38 @@ namespace Opsive.BehaviorDesigner.Editor.Managers
         }
 
         /// <summary>
-        /// Adds the specified symbol to the compiler definitions.
+        ///     Adds the specified symbol to the compiler definitions.
         /// </summary>
         /// <param name="symbol">The symbol to add.</param>
         private static void AddSymbol(string symbol)
         {
             // Set on all available build targets.
-            var buildTargets = System.Enum.GetValues(typeof(BuildTarget)) as BuildTarget[];
-            foreach (var buildTarget in buildTargets) {
-                if (buildTarget is BuildTarget.NoTarget) {
+            BuildTarget[] buildTargets = Enum.GetValues(typeof(BuildTarget)) as BuildTarget[];
+            foreach (BuildTarget buildTarget in buildTargets)
+            {
+                if (buildTarget is BuildTarget.NoTarget)
+                {
                     continue;
                 }
 
-                var buildTargetGroup = BuildPipeline.GetBuildTargetGroup(buildTarget);
-                if (!BuildPipeline.IsBuildTargetSupported(buildTargetGroup, buildTarget)) {
+                BuildTargetGroup buildTargetGroup = BuildPipeline.GetBuildTargetGroup(buildTarget);
+                if (!BuildPipeline.IsBuildTargetSupported(buildTargetGroup, buildTarget))
+                {
                     continue;
                 }
 
 #if UNITY_2023_1_OR_NEWER
-                var namedBuildTarget = UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(buildTargetGroup);
-                var symbols = PlayerSettings.GetScriptingDefineSymbols(namedBuildTarget);
+                NamedBuildTarget namedBuildTarget = NamedBuildTarget.FromBuildTargetGroup(buildTargetGroup);
+                string symbols = PlayerSettings.GetScriptingDefineSymbols(namedBuildTarget);
 #else
                 var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTargetGroup);
 #endif
-                if (symbols.Contains(symbol)) {
+                if (symbols.Contains(symbol))
+                {
                     continue;
                 }
-                symbols += (";" + symbol);
+
+                symbols += ";" + symbol;
 #if UNITY_2023_1_OR_NEWER
                 PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, symbols);
 #else
@@ -147,12 +157,13 @@ namespace Opsive.BehaviorDesigner.Editor.Managers
         }
 
         /// <summary>
-        /// Adds the resource images to the parent element.
+        ///     Adds the resource images to the parent element.
         /// </summary>
         /// <param name="parent">The parent that the images should be added to.</param>
         protected override void AddImages(VisualElement parent)
         {
-            AddLargeImage(parent, c_EditorTextureGUID, () => {
+            AddLargeImage(parent, c_EditorTextureGUID, () =>
+            {
 #if GRAPH_DESIGNER
                 BehaviorDesignerWindow.ShowWindow();
 #else
@@ -161,19 +172,19 @@ namespace Opsive.BehaviorDesigner.Editor.Managers
             });
 
             // Documentation and Videos.
-            AddImageRow(parent, c_SmallDocumentationTextureGUID, GetDocumentationURL(), 
-                                c_VideosTextureGUID, GetVideosURL());
+            AddImageRow(parent, c_SmallDocumentationTextureGUID, GetDocumentationURL(),
+                c_VideosTextureGUID, GetVideosURL());
 
             // Repository and Downloads.
             AddImageRow(parent, c_RepositoryTextureGUID, "https://opsive.com/assets/behavior-designer-pro-subscription",
-                                c_DownloadsTextureGUID, IntegrationsManager.GetDownloadsLink());
+                c_DownloadsTextureGUID, IntegrationsManager.GetDownloadsLink());
 
             // Forum and Discord.
             AddImageRow(parent, c_ForumTextureGUID, "https://opsive.com/forum/",
-                                c_DiscordTextureGUID, "https://discord.gg/QX6VFgc");
+                c_DiscordTextureGUID, "https://discord.gg/QX6VFgc");
             // Review and Showcase.
             AddImageRow(parent, c_ReviewTextureGUID, GetAssetURL(),
-                                c_ShowcaseTextureGUID, "https://opsive.com/showcase/");
+                c_ShowcaseTextureGUID, "https://opsive.com/showcase/");
             // Professional Services.
             AddImageRow(parent, c_ProfessionalServicesTextureGUID, "https://opsive.com", string.Empty, string.Empty);
         }

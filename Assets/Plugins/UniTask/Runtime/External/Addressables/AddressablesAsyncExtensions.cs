@@ -17,12 +17,12 @@ namespace Cysharp.Threading.Tasks
         #region AsyncOperationHandle
         public static UniTask.Awaiter GetAwaiter(this AsyncOperationHandle handle)
         {
-            return ToUniTask(handle).GetAwaiter();
+            return handle.ToUniTask().GetAwaiter();
         }
 
         public static UniTask WithCancellation(this AsyncOperationHandle handle, CancellationToken cancellationToken, bool cancelImmediately = false, bool autoReleaseWhenCanceled = false)
         {
-            return ToUniTask(handle, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately, autoReleaseWhenCanceled: autoReleaseWhenCanceled);
+            return handle.ToUniTask(cancellationToken: cancellationToken, cancelImmediately: cancelImmediately, autoReleaseWhenCanceled: autoReleaseWhenCanceled);
         }
 
         public static UniTask ToUniTask(this AsyncOperationHandle handle, IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update,
@@ -275,13 +275,13 @@ namespace Cysharp.Threading.Tasks
         #region AsyncOperationHandle_T
         public static UniTask<T>.Awaiter GetAwaiter<T>(this AsyncOperationHandle<T> handle)
         {
-            return ToUniTask(handle).GetAwaiter();
+            return handle.ToUniTask().GetAwaiter();
         }
 
         public static UniTask<T> WithCancellation<T>(this AsyncOperationHandle<T> handle, CancellationToken cancellationToken, bool cancelImmediately = false,
             bool autoReleaseWhenCanceled = false)
         {
-            return ToUniTask(handle, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately, autoReleaseWhenCanceled: autoReleaseWhenCanceled);
+            return handle.ToUniTask(cancellationToken: cancellationToken, cancelImmediately: cancelImmediately, autoReleaseWhenCanceled: autoReleaseWhenCanceled);
         }
 
         public static UniTask<T> ToUniTask<T>(this AsyncOperationHandle<T> handle, IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update,

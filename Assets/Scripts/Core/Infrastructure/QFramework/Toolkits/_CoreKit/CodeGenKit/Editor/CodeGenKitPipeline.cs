@@ -74,7 +74,6 @@ namespace QFramework
             StringBuilder writer = new();
             writer.AppendLine("using UnityEngine;");
             writer.AppendLine("using QFramework;");
-            writer.AppendLine();
 
             if (CodeGenKit.Setting.IsDefaultNamespace)
             {
@@ -99,7 +98,6 @@ namespace QFramework
 
             writer.AppendLine($"// Generate Id:{Guid.NewGuid().ToString()}");
             writer.AppendLine("using UnityEngine;");
-            writer.AppendLine();
 
             if (CodeGenKit.Setting.IsDefaultNamespace)
             {
@@ -115,7 +113,6 @@ namespace QFramework
 
             foreach (BindInfo bindData in task.BindInfos)
             {
-                writer.AppendLine();
                 if (bindData.BindScript.Comment.IsNotNullAndEmpty())
                 {
                     writer.AppendLine("\t\t/// <summary>");
@@ -135,12 +132,10 @@ namespace QFramework
                 OtherBinds referenceBinds = task.GameObject.GetComponent<OtherBinds>();
                 foreach (OtherBind referenceBind in referenceBinds.Binds)
                 {
-                    writer.AppendLine();
                     writer.AppendLine($"\t\tpublic {referenceBind.Object.GetType().FullName} {referenceBind.MemberName};");
                 }
             }
 
-            writer.AppendLine();
             writer.AppendLine("\t}");
             writer.AppendLine("}");
             task.DesignerCode = writer.ToString();

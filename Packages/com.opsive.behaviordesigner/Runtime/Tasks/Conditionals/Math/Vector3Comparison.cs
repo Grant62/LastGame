@@ -1,3 +1,7 @@
+using Opsive.GraphDesigner.Runtime.Variables;
+using Opsive.Shared.Utility;
+using UnityEngine;
+
 #if GRAPH_DESIGNER
 /// ---------------------------------------------
 /// Behavior Designer
@@ -6,12 +10,8 @@
 /// ---------------------------------------------
 namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals.Math
 {
-    using Opsive.GraphDesigner.Runtime;
-    using Opsive.GraphDesigner.Runtime.Variables;
-    using UnityEngine;
-
-    [Opsive.Shared.Utility.Description("Compares two Vector3 values.")]
-    [Shared.Utility.Category("Math")]
+    [Description("Compares two Vector3 values.")]
+    [Category("Math")]
     public class Vector3Comparison : Conditional
     {
         [Tooltip("The first Vector3.")]
@@ -20,7 +20,7 @@ namespace Opsive.BehaviorDesigner.Runtime.Tasks.Conditionals.Math
         [SerializeField] protected SharedVariable<Vector3> m_Vector2;
 
         /// <summary>
-        /// Executes the task.
+        ///     Executes the task.
         /// </summary>
         /// <returns>The execution status of the task.</returns>
         public override TaskStatus OnUpdate()
