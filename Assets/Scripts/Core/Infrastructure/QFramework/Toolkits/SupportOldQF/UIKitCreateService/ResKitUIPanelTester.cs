@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using QFramework;
 using UnityEngine;
 
-namespace QFramework
+namespace Core.Infrastructure.QFramework.Toolkits.SupportOldQF.UIKitCreateService
 {
     public class ResKitUIPanelTester : MonoBehaviour
     {

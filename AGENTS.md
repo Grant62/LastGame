@@ -75,8 +75,7 @@ Unity.exe -quit -batchmode -buildWindowsPlayer "Build/Game.exe" -projectPath "E:
 
 ### 导入（using）
 
-- `using` 指令放在文件顶部，分组顺序为：System > Unity > 第三方 > 项目。
-- 除非有明确区分，否则 `using` 组之间不空行。
+- `using` 指令放在文件顶部，按需导入即可，不强求分组顺序。
 - 不使用 `using static`（工具类除外）。
 - 不使用 `global using`。
 
@@ -1026,3 +1025,107 @@ StringEventSystem.Global.Send("TEST_TWO", 10);
 - 循环中拼接字符串使用 `StringBuilder`。
 - 方法保持简短（不超过 30 行），超过时提取辅助方法。
 - 多值匹配时使用 switch 表达式代替 `if-else` 链。
+
+## 项目渲染分层架构（2026-05-31 确定）
+
+本项目采用 **多 Canvas Overlay 分层架构**，按渲染顺序分三层：
+
+### 分层总览
+
+```
+BackgroundCanvas（order 0）
+────────────────────────────────────────
+  背景图、场景装饰
+
+GameCanvas（order 10）
+────────────────────────────────────────
+  BoardPanel（棋盘面板 + SlotUI 格子）
+    ├── EnemyUI（敌人，SkeletonGraphic + 血条 Image）
+    └── SwordUI（飞剑，Image）
+  HeroUI（玩家，SkeletonGraphic）
+  HandPanel（手牌布局，CardUI Image + TMP_Text）
+  TopBarPanel（血量/金币/层数）
+  结束回合按钮
+
+OverlayCanvas（order 20）
+────────────────────────────────────────
+  PileGridPanel（网格牌堆查看器，ScrollRect + GridLayoutGroup）
+  HoverCard（悬停放大的卡牌）
+  DragGhost（拖拽中的手牌副本）
+  弹窗 / 对话框
+```
+
+### 分层原则
+
+| 渲染层 | Sort Order | 内容 | 原因 |
+|---|---|---|---|
+| BackgroundCanvas | 0 | 背景、装饰 | 始终在最底层 |
+| GameCanvas | 10 | 所有游戏交互 UI（棋盘、敌人、英雄、手牌、状态栏） | 游戏主体内容 |
+| OverlayCanvas | 20 | 悬浮卡牌、拖拽幽灵、牌堆查看、弹窗、Arrow/Cursor | 必须覆盖在游戏 UI 之上 |
+| Spine 骨骼 | GameCanvas 下，`SkeletonGraphic` 组件 | Spine 官方提供 UGUI 支持 |
+
+### 交互输入架构
+
+```
+UGUI EventSystem（全 UGUI，无 Physics）
+─────────────────────────────────────────
+卡牌拖拽：IBeginDragHandler / IDragHandler / IEndDragHandler
+目标检测：EventSystem.RaycastAll → IEnemyTarget / ISlotTarget
+卡牌释放/点击：IPointerDownHandler / IPointerUpHandler
+```
+
+不再使用任何 Physics.Raycast / Physics2D.OverlapPoint。所有交互通过 UGUI EventSystem 的 `RaycastAll` 接口实现。
+
+### 初始化时序与 GameReadyEvent
+
+System 的 `OnInit()` 在架构注册期间（`GameMain.Init()`）执行，此时场景未加载、持有场景引用的 Utility 尚未注册。需依赖 Scene Utility 的 System 不应在 `OnInit()` 中缓存，应订阅 `GameReadyEvent`：
+
+```csharp
+// 1. 定义事件（Features/Combat/Event/GameReadyEvent.cs）
+public struct GameReadyEvent { }
+
+// 2. 在 System.OnInit() 中注册监听，延迟缓存
+protected override void OnInit()
+{
+    this.RegisterEvent<GameReadyEvent>(_ =>
+    {
+        mArrow = this.GetUtility<IArrowDisplay>();
+        mCursor = this.GetUtility<ICursorDisplay>();
+    });
+}
+
+// 3. 所有 Scene Utility 注册完毕后发送
+// 在 CombatController.RegisterUtilities() 末尾：
+GameMain.Interface.SendEvent<GameReadyEvent>();
+```
+
+### 卡牌系统三堆架构
+
+```
+牌库（Library）— 战斗开始时的初始牌组，不可变
+    ↓ StartBattleDraw()
+抽牌堆（DrawPile）— 待抽的牌，回合开始从里抽
+    ↓ DrawCards()
+手牌（HandPile）— 玩家手中的牌，可打出
+    ↓ PlayCardCommand（消耗能量）→ AddToDiscard()
+弃牌堆（DiscardPile）— 已使用或丢弃的牌
+    ↓ 抽牌堆耗尽时洗回抽牌堆
+```
+
+三堆均为 `List<CardData>`，变更时通过 `EasyEvent` 通知：
+- `OnLibraryChanged`
+- `OnDrawPileChanged`
+- `OnHandPileChanged`
+- `OnDiscardPileChanged`
+
+### UGUI 卡牌组件
+
+`CardUI`（`Features/Card/UI/CardUI.cs`）是 UGUI 版的卡牌显示组件，挂载在 `Image` + `TMP_Text` 子控件构成的预制体上。通过 `ICardUIPool` 对象池管理生命周期。
+
+- 手牌：`HandUI`（`ViewController`）监听 `ICardModel.OnHandPileChanged`，通过 `ICardUIPool` 同步视图
+- 拖拽：`HandDragHandler`（`IBeginDragHandler`/`IDragHandler`/`IEndDragHandler`）处理拖拽手势，创建拖拽幽灵卡牌，释放时走 `PlayCardCommand`
+- 网格查看器：`PileGridUI`（`ViewController` + `ScrollRect` + `GridLayoutGroup`）展示抽牌堆/弃牌堆/牌库
+
+### 卡牌定义（CardDefine → CardData）
+
+`CardDefine`（Excel 驱动）→ `CreateCardData()` → `CardData`（运行时实例）。`CardData` 的 `ManualTargetEffect` 决定卡牌是否需要瞄准敌人。

@@ -5,9 +5,10 @@ namespace Features.Combat.Interaction
     public interface IInteractionSystem : ISystem
     {
         bool IsDragging { get; }
-        bool IsArrowing { get; }
+        void BeginDrag();
+        void EndDrag();
         bool CanInteract();
         bool CanHover();
-        bool CanEndTurn(bool isProcessing = false);
+        bool CanEndTurn();
     }
 }

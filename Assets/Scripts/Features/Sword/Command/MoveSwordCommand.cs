@@ -18,8 +18,14 @@ namespace Features.Sword.Command
             if (!model.IsSummoned.Value)
                 return;
 
-            model.CurrentSlotIndex.Value = mTargetSlotIndex;
-            model.IsFollowingPlayer.Value = false;
+            if (model.IsSpinning.Value && !model.KeepSpinningOnMove)
+            {
+                model.IsSpinning.Value = false;
+                model.SpinDamage.Value = 0;
+            }
+
+            model.KeepSpinningOnMove = false;
+            model.CurSlotIndex.Value = mTargetSlotIndex;
         }
     }
 }

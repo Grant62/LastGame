@@ -42,7 +42,7 @@ namespace Features.Card.Command
                     deck.Add(define.CreateCardData());
             }
 
-            this.GetSystem<ICardSystem>().InitDrawPile(deck);
+            this.GetSystem<ICardSystem>().InitLibrary(deck);
         }
     }
 }

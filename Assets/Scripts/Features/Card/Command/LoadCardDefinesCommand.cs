@@ -2,7 +2,6 @@ using Configuration.ExcelData.Container;
 using Configuration.ExcelData.DataClass;
 using Features.Card.Define;
 using QFramework;
-using Services;
 using Services.ExcelTool;
 
 namespace Features.Card.Command
@@ -28,8 +27,12 @@ namespace Features.Card.Command
                     Name = info.Name,
                     Cost = info.Cost,
                     Desc = info.Desc,
-                    Damage = CardDescriptionParser.ParseDamage(info.Desc),
-                    Block = CardDescriptionParser.ParseBlock(info.Desc)
+                    Type = info.Type,
+                    Rarity = info.Rarity,
+                    IconAddress = info.IconAddress,
+                    Price = info.Price,
+                    UnlockLevel = info.UnlockLevel,
+                    UpgradeId = info.UpgradeId
                 });
             }
         }

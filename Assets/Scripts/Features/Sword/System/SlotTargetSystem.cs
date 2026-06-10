@@ -1,7 +1,7 @@
+using Features.Card.Data;
 using Features.Hero.Model;
 using Features.Sword.Model;
 using QFramework;
-using Services;
 using UnityEngine;
 
 namespace Features.Sword.System
@@ -10,23 +10,25 @@ namespace Features.Sword.System
     {
         protected override void OnInit() { }
 
-        public bool Validate(int cardId, string desc, int targetSlotIndex)
+        public bool Validate(CardData cardData, int targetSlotIndex)
         {
-            int distance = CardDescriptionParser.ParseDistance(desc);
-
-            if (cardId == 12002)
+            if (cardData.SlotAction == SlotAction.MoveSword)
             {
                 ISwordModel sword = this.GetModel<ISwordModel>();
                 if (!sword.IsSummoned.Value)
                     return false;
 
-                return Mathf.Abs(sword.CurrentSlotIndex.Value - targetSlotIndex) <= distance;
+                return true;
             }
 
-            if (cardId == 12003)
+            if (cardData.SlotAction == SlotAction.MovePlayer)
             {
                 IHeroModel hero = this.GetModel<IHeroModel>();
-                return Mathf.Abs(hero.CurrentSlotIndex.Value - targetSlotIndex) <= distance;
+                int distance = cardData.SlotDistance;
+                if (distance <= 0)
+                    return true;
+
+                return Mathf.Abs(hero.CurSlotIndex.Value - targetSlotIndex) <= distance;
             }
 
             return false;

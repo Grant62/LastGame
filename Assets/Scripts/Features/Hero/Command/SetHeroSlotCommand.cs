@@ -14,7 +14,7 @@ namespace Features.Hero.Command
 
         protected override void OnExecute()
         {
-            this.GetModel<IHeroModel>().CurrentSlotIndex.Value = mSlotIndex;
+            this.GetModel<IHeroModel>().CurSlotIndex.Value = mSlotIndex;
         }
     }
 }

@@ -1,7 +1,8 @@
 ﻿using System;
+using QFramework;
 using UnityEngine;
 
-namespace QFramework
+namespace Core.Infrastructure.QFramework.Toolkits.SupportOldQF
 {
     public class AudioKitWithResKitInit
     {

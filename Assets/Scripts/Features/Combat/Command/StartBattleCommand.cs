@@ -1,4 +1,3 @@
-using Features.Card.Model;
 using Features.Card.System;
 using Features.Combat.System;
 using Features.Resource.Model;
@@ -12,10 +11,9 @@ namespace Features.Combat.Command
         {
             IResourceModel resource = this.GetModel<IResourceModel>();
             resource.MaxEnergy.Value = 99;
-            resource.CurEnergy.Value = 99;
+            resource.CurEnergy.Value = resource.MaxEnergy.Value;
 
-            ICardModel cardModel = this.GetModel<ICardModel>();
-            this.GetSystem<ICardSystem>().DrawCards(cardModel.DrawPile.Count);
+            this.GetSystem<ICardSystem>().StartBattleDraw();
 
             ITurnSystem turnSystem = this.GetSystem<ITurnSystem>();
             turnSystem.StartBattle();

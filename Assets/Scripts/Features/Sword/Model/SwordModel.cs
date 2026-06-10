@@ -1,12 +1,20 @@
+using System.Collections.Generic;
 using QFramework;
 
 namespace Features.Sword.Model
 {
     public class SwordModel : AbstractModel, ISwordModel
     {
-        public BindableProperty<int> CurrentSlotIndex { get; } = new(-1);
+        public BindableProperty<int> CurSlotIndex { get; } = new(-1);
         public BindableProperty<bool> IsSummoned { get; } = new();
-        public BindableProperty<bool> IsFollowingPlayer { get; } = new();
+
+        public BindableProperty<bool> IsSpinning { get; } = new();
+        public BindableProperty<int> SpinDamage { get; } = new();
+        public bool KeepSpinningOnMove { get; set; }
+        public bool SpinHitsAdjacent { get; set; }
+
+        public List<int> SpiritSwordSlots { get; } = new();
+        public EasyEvent OnSpiritSwordsChanged { get; } = new();
 
         protected override void OnInit() { }
     }

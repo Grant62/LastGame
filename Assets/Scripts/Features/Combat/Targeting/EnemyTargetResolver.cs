@@ -1,34 +1,37 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 namespace Features.Combat.Targeting
 {
     public class EnemyTargetResolver : ITargetResolver
     {
+        private readonly Func<IReadOnlyList<IDamageable>> mEnemyProvider;
+
+        public EnemyTargetResolver(Func<IReadOnlyList<IDamageable>> enemyProvider)
+        {
+            mEnemyProvider = enemyProvider;
+        }
+
         public ITargetable[] Resolve(TargetType type, ITargetable caster)
         {
-            if (type is TargetType.RandomEnemy or TargetType.AllEnemies)
+            switch (type)
             {
-                IDamageable[] enemies = Object.FindObjectsByType<MonoBehaviour>(
-                    FindObjectsInactive.Exclude, FindObjectsSortMode.None
-                ).OfType<IDamageable>().ToArray();
-
-                if (enemies.Length == 0)
+                case TargetType.RandomEnemy:
+                {
+                    IReadOnlyList<IDamageable> enemies = mEnemyProvider();
+                    if (enemies.Count == 0)
+                        return Array.Empty<ITargetable>();
+                    return new ITargetable[] { enemies[Random.Range(0, enemies.Count)] };
+                }
+                case TargetType.AllEnemies:
+                    return mEnemyProvider().Cast<ITargetable>().ToArray();
+                case TargetType.Self:
+                    return caster != null ? new[] { caster } : Array.Empty<ITargetable>();
+                default:
                     return Array.Empty<ITargetable>();
-
-                if (type == TargetType.RandomEnemy)
-                    return new ITargetable[] { enemies[Random.Range(0, enemies.Length)] };
-
-                return enemies.Cast<ITargetable>().ToArray();
             }
-
-            if (type == TargetType.Self && caster != null)
-                return new[] { caster };
-
-            return Array.Empty<ITargetable>();
         }
     }
 }

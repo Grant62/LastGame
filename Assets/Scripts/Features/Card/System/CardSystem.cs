@@ -19,13 +19,21 @@ namespace Features.Card.System
             DrawCards(5);
         }
 
-        public void InitDrawPile(List<CardData> cards)
+        public void InitLibrary(List<CardData> cards)
+        {
+            ICardModel model = this.GetModel<ICardModel>();
+            model.Library.Clear();
+            model.Library.AddRange(cards);
+            model.OnLibraryChanged.Trigger();
+        }
+
+        public void StartBattleDraw()
         {
             ICardModel model = this.GetModel<ICardModel>();
             model.DrawPile.Clear();
-            model.DrawPile.AddRange(cards);
+            model.DrawPile.AddRange(model.Library);
             ShuffleDrawPile();
-            model.OnDrawPileChanged.Trigger();
+            DrawCards(model.DrawPile.Count);
         }
 
         public void DrawCards(int count)

@@ -6,6 +6,8 @@ namespace Features.Resource.Model
     {
         BindableProperty<int> CurEnergy { get; }
         BindableProperty<int> MaxEnergy { get; }
+        BindableProperty<int> Gold { get; }
+        BindableProperty<int> Floor { get; }
         int PerTurnIncome { get; set; }
     }
 }

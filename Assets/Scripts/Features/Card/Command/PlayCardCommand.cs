@@ -27,6 +27,7 @@ namespace Features.Card.Command
 
             resource.Spend(mCardData.Cost);
             this.GetSystem<ICardSystem>().RemoveFromHand(mCardData);
+            this.GetSystem<ICardSystem>().AddToDiscard(mCardData);
 
             this.SendEvent(new CardPlayedEvent(mCardData, mManualTarget));
         }

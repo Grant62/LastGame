@@ -4,6 +4,13 @@ using Sirenix.OdinInspector;
 
 namespace Features.Card.Data
 {
+    public enum SlotAction
+    {
+        None,
+        MoveSword,
+        MovePlayer
+    }
+
     public class CardData
     {
         [ShowInInspector]
@@ -19,7 +26,7 @@ namespace Features.Card.Data
         [ShowInInspector]
         [ReadOnly]
         [TableColumnWidth(50)]
-        public int Type { get; }
+        public string Type { get; }
 
         [ShowInInspector]
         [ReadOnly]
@@ -59,13 +66,18 @@ namespace Features.Card.Data
         public bool IsTemp { get; set; }
         public string IconAddress { get; }
 
+        public bool NeedsEnemyTarget { get; }
+        public bool NeedsSlotTarget { get; }
+        public SlotAction SlotAction { get; }
+        public int SlotDistance { get; }
+
         public List<Effect> ManualTargetEffect { get; set; } = new();
         public List<AutoTargetEffect> OtherEffects { get; set; } = new();
 
         public CardData(
             int cardId,
             string name,
-            int type,
+            string type,
             string rarity,
             string desc,
             int cost,
@@ -77,7 +89,11 @@ namespace Features.Card.Data
             int draw,
             string iconAddress,
             int upgradeId,
-            string cardParam)
+            string cardParam,
+            bool needsEnemyTarget,
+            bool needsSlotTarget,
+            SlotAction slotAction,
+            int slotDistance)
         {
             CardId = cardId;
             Name = name;
@@ -94,6 +110,10 @@ namespace Features.Card.Data
             IconAddress = iconAddress;
             UpgradeId = upgradeId;
             CardParam = cardParam;
+            NeedsEnemyTarget = needsEnemyTarget;
+            NeedsSlotTarget = needsSlotTarget;
+            SlotAction = slotAction;
+            SlotDistance = slotDistance;
         }
 
         public override string ToString()

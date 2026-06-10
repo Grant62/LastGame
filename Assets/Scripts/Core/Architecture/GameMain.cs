@@ -39,6 +39,8 @@ namespace Core.Architecture
             RegisterSystem<ISlotTargetSystem>(new SlotTargetSystem());
             RegisterUtility<IBinaryDataMgr>(new BinaryDataMgr());
             RegisterSystem<IInteractionSystem>(new InteractionSystem());
+            RegisterSystem<StatusTickSystem>(new StatusTickSystem());
+            RegisterSystem<SpinDamageSystem>(new SpinDamageSystem());
         }
     }
 }

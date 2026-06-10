@@ -1,6 +1,5 @@
 using Features.Combat.Event;
 using Features.Hero.Model;
-using Features.Sword.Model;
 using QFramework;
 
 namespace Features.Sword.Command
@@ -17,16 +16,12 @@ namespace Features.Sword.Command
         protected override void OnExecute()
         {
             IHeroModel heroModel = this.GetModel<IHeroModel>();
-            int oldSlotIndex = heroModel.CurrentSlotIndex.Value;
+            int oldSlotIndex = heroModel.CurSlotIndex.Value;
 
             if (mTargetSlotIndex == oldSlotIndex)
                 return;
 
-            heroModel.CurrentSlotIndex.Value = mTargetSlotIndex;
-
-            ISwordModel swordModel = this.GetModel<ISwordModel>();
-            if (swordModel.IsSummoned.Value && swordModel.CurrentSlotIndex.Value == oldSlotIndex)
-                swordModel.CurrentSlotIndex.Value = mTargetSlotIndex;
+            heroModel.CurSlotIndex.Value = mTargetSlotIndex;
 
             this.SendEvent(new PlayerMoveExecutedEvent(oldSlotIndex, mTargetSlotIndex));
         }

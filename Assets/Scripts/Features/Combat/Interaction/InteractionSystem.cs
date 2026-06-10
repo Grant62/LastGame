@@ -7,14 +7,17 @@ namespace Features.Combat.Interaction
     public class InteractionSystem : AbstractSystem, IInteractionSystem
     {
         public bool IsDragging { get; private set; }
-        public bool IsArrowing { get; private set; }
 
-        protected override void OnInit()
+        protected override void OnInit() { }
+
+        public void BeginDrag()
         {
-            this.RegisterEvent<DragStartEvent>(_ => IsDragging = true);
-            this.RegisterEvent<DragEndEvent>(_ => IsDragging = false);
-            this.RegisterEvent<ArrowStartEvent>(_ => IsArrowing = true);
-            this.RegisterEvent<ArrowEndEvent>(_ => IsArrowing = false);
+            IsDragging = true;
+        }
+
+        public void EndDrag()
+        {
+            IsDragging = false;
         }
 
         public bool CanInteract()
@@ -30,13 +33,6 @@ namespace Features.Combat.Interaction
             if (IsDragging)
                 return false;
 
-            if (IsArrowing)
-                return false;
-
-            // 后续扩展:
-            // if (CardSystem.IsDrawingCards) return false;
-            // if (UIPanel.IsAnyOpen()) return false;
-
             return true;
         }
 
@@ -45,15 +41,11 @@ namespace Features.Combat.Interaction
             if (IsDragging)
                 return false;
 
-            // 排除英雄死亡、敌人回合
             return CanInteract();
         }
 
-        public bool CanEndTurn(bool isProcessing = false)
+        public bool CanEndTurn()
         {
-            if (isProcessing)
-                return false;
-
             return CanInteract();
         }
     }

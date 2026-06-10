@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using Features.Card.Data;
-using Features.Card.Effects;
-using Features.Combat.Targeting;
+using Services;
 
 namespace Features.Card.Define
 {
@@ -10,30 +8,67 @@ namespace Features.Card.Define
         public int Id;
         public string Name;
         public int Cost;
-        public int Damage;
-        public int Block;
+        public string Type;
+        public string Rarity;
         public string Desc;
+        public string IconAddress;
+        public int Price;
+        public int UnlockLevel;
+        public int UpgradeId;
+
+        public int Damage { get => CardDescriptionParser.ParseDamage(Desc); }
+
+        public int Block { get => CardDescriptionParser.ParseBlock(Desc); }
+
+        public bool NeedsEnemyTarget { get => Type == "攻击" && !NeedsSlotTarget; }
+
+        public bool NeedsSlotTarget
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Desc) || Desc.Contains("随机"))
+                    return false;
+
+                return CardDescriptionParser.ContainsAnyKeyword(Desc, "御剑", "遁形");
+            }
+        }
+
+        public SlotAction SlotAction
+        {
+            get
+            {
+                if (!NeedsSlotTarget)
+                    return SlotAction.None;
+
+                if (CardDescriptionParser.ContainsKeyword(Desc, "御剑"))
+                    return SlotAction.MoveSword;
+
+                if (CardDescriptionParser.ContainsKeyword(Desc, "遁形"))
+                    return SlotAction.MovePlayer;
+
+                return SlotAction.None;
+            }
+        }
+
+        public int SlotDistance
+        {
+            get => SlotAction == SlotAction.MovePlayer
+                ? CardDescriptionParser.ParseDistance(Desc)
+                : -1;
+        }
 
         public CardData CreateCardData()
         {
-            CardData card = new(
-                Id, Name, 0, "Common", Desc,
-                Cost, 0, "", 0,
+            CardData cardData = new(
+                Id, Name, Type, Rarity, Desc,
+                Cost, Price, "", UnlockLevel,
                 Damage, Block, 0,
-                "", 0, "");
+                IconAddress, UpgradeId, "",
+                NeedsEnemyTarget, NeedsSlotTarget, SlotAction, SlotDistance);
 
-            if (Damage > 0)
-                card.ManualTargetEffect = new List<Effect> { new DealDamageEffect(Damage) };
+            CardEffectFactory.PopulateEffects(this, cardData);
 
-            if (Block > 0)
-            {
-                card.OtherEffects = new List<AutoTargetEffect>
-                {
-                    new(TargetType.Self, new DealHealEffect(Block))
-                };
-            }
-
-            return card;
+            return cardData;
         }
     }
 }
