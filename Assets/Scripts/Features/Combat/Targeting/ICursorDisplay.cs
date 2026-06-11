@@ -7,6 +7,5 @@ namespace Features.Combat.Targeting
     {
         void ShowAt(Vector3 position);
         void Hide();
-        void Cleanup();
     }
 }

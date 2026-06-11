@@ -12,6 +12,7 @@ namespace Features.Card.System
         void RemoveFromHand(CardData card);
         void DiscardFromHand(CardData card);
         void AddToDiscard(CardData card);
+        void AddToHand(CardData card);
         void ShuffleDrawPile();
     }
 }

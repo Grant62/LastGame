@@ -16,7 +16,7 @@ namespace Features.Card.Effects
             foreach (ITargetable target in targets)
             {
                 if (target is IDamageable damageable)
-                    damageable.TakeHeal(mAmount);
+                    damageable.GainArmor(mAmount);
             }
         }
     }

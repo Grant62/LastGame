@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Configuration.ExcelData.Container;
 using Configuration.ExcelData.DataClass;
 using Core.Architecture;
+using Core.Systems;
 using Features.Card.Command;
 using Features.Card.Data;
 using Features.Card.Define;
@@ -24,6 +25,7 @@ using Features.Sword.UI;
 using QFramework;
 using Services.ExcelTool;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Features.Combat
 {
@@ -70,10 +72,12 @@ namespace Features.Combat
 
         private void RegisterUtilities()
         {
+            GameMain.Interface.RegisterUtility<IBoardAccess>(new BoardAccess(board));
+
             GameMain.Interface.RegisterUtility<ICardUIPool>(new CardUIPool(cardUIPrefab));
 
             GameMain.Interface.RegisterUtility<ITargetResolver>(
-                new EnemyTargetResolver(() => board.EnemyViews));
+                new EnemyTargetResolver(() => board.EnemyViews, this.GetSystem<IRandomSystem>()));
 
             GameMain.Interface.RegisterUtility<ITargetSelector>(new TargetSelector(mHeroUI));
 
@@ -178,7 +182,7 @@ namespace Features.Combat
             {
                 SwordUI spiritView = Instantiate(swordPrefab, transform);
                 spiritView.Init(board);
-                spiritView.GetComponent<UnityEngine.UI.Image>().color = Color.black;
+                spiritView.GetComponent<Image>().color = Color.black;
                 mSpiritSwordViews.Add(spiritView);
 
                 spiritView.transform.position = board.GetSlotTransform(slotIndex).position;

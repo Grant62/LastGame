@@ -13,12 +13,6 @@ namespace Features.Card.Define
         public string Desc;
         public string IconAddress;
         public int Price;
-        public int UnlockLevel;
-        public int UpgradeId;
-
-        public int Damage { get => CardDescriptionParser.ParseDamage(Desc); }
-
-        public int Block { get => CardDescriptionParser.ParseBlock(Desc); }
 
         public bool NeedsEnemyTarget { get => Type == "攻击" && !NeedsSlotTarget; }
 
@@ -61,9 +55,7 @@ namespace Features.Card.Define
         {
             CardData cardData = new(
                 Id, Name, Type, Rarity, Desc,
-                Cost, Price, "", UnlockLevel,
-                Damage, Block, 0,
-                IconAddress, UpgradeId, "",
+                Cost, Price, IconAddress,
                 NeedsEnemyTarget, NeedsSlotTarget, SlotAction, SlotDistance);
 
             CardEffectFactory.PopulateEffects(this, cardData);

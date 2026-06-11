@@ -1,4 +1,3 @@
-using Core.Architecture;
 using Features.Combat.Targeting;
 using Features.Hero.Model;
 using Features.Sword.Model;
@@ -9,8 +8,8 @@ namespace Features.Card.Effects
     {
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
-            ISwordModel swordModel = GameMain.Interface.GetModel<ISwordModel>();
-            IHeroModel heroModel = GameMain.Interface.GetModel<IHeroModel>();
+            ISwordModel swordModel = Ctx.SwordModel;
+            IHeroModel heroModel = Ctx.HeroModel;
 
             swordModel.CurSlotIndex.Value = heroModel.CurSlotIndex.Value;
 

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Core.Architecture;
 using Features.Combat.Targeting;
 using Features.Combat.UI.Board;
 using Features.Hero.Model;
@@ -21,8 +20,8 @@ namespace Features.Card.Effects
 
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
-            ISwordModel swordModel = GameMain.Interface.GetModel<ISwordModel>();
-            IHeroModel heroModel = GameMain.Interface.GetModel<IHeroModel>();
+            ISwordModel swordModel = Ctx.SwordModel;
+            IHeroModel heroModel = Ctx.HeroModel;
             int playerSlot = heroModel.CurSlotIndex.Value;
 
             List<int> swordSlots = new();
@@ -32,7 +31,7 @@ namespace Features.Card.Effects
 
             int totalBlock = mBlockPerSword * swordSlots.Count;
             if (totalBlock > 0 && caster is IDamageable damageable)
-                damageable.TakeHeal(totalBlock);
+                damageable.GainArmor(totalBlock);
 
             if (mPenetrationEffect != null && IsPenetrated(playerSlot, swordSlots))
                 mPenetrationEffect.Execute(targets, caster);
@@ -52,9 +51,9 @@ namespace Features.Card.Effects
             return covered;
         }
 
-        private static bool IsPenetrated(int playerSlot, List<int> swordSlots)
+        private bool IsPenetrated(int playerSlot, List<int> swordSlots)
         {
-            BoardPanel board = Object.FindObjectOfType<BoardPanel>();
+            BoardPanel board = Ctx.BoardAccess.Board;
             if (board == null || swordSlots.Count == 0)
                 return false;
 
@@ -63,7 +62,7 @@ namespace Features.Card.Effects
             foreach (EnemyUI enemy in board.EnemyViews)
             {
                 if (enemy != null && enemy.isActiveAndEnabled
-                    && enemy.IsValidTarget && !covered.Contains(enemy.SlotIndex))
+                                  && enemy.IsValidTarget && !covered.Contains(enemy.SlotIndex))
                     return false;
             }
 

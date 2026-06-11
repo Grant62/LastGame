@@ -1,0 +1,44 @@
+using System.Collections.Generic;
+using Features.Combat.Targeting;
+using Features.Combat.UI.Board;
+using Features.Hero.Model;
+using Features.Sword.Model;
+
+namespace Features.Card.Effects
+{
+    public class LinkDebuffEffect : Effect
+    {
+        private readonly StatusType mStatusType;
+        private readonly int mStacks;
+
+        public LinkDebuffEffect(StatusType statusType, int stacks = 2)
+        {
+            mStatusType = statusType;
+            mStacks = stacks;
+        }
+
+        public override void Execute(ITargetable[] targets, ITargetable caster)
+        {
+            ISwordModel swordModel = Ctx.SwordModel;
+            IHeroModel heroModel = Ctx.HeroModel;
+            int playerSlot = heroModel.CurSlotIndex.Value;
+
+            BoardPanel board = Ctx.BoardAccess.Board;
+            if (board == null) return;
+
+            List<int> swordSlots = new();
+            if (swordModel.IsSummoned.Value && swordModel.CurSlotIndex.Value >= 0)
+                swordSlots.Add(swordModel.CurSlotIndex.Value);
+            swordSlots.AddRange(swordModel.SpiritSwordSlots);
+
+            HashSet<int> covered = LinkSwordsEffect.GetCoveredSlots(playerSlot, swordSlots);
+
+            foreach (EnemyUI enemy in board.EnemyViews)
+            {
+                if (enemy != null && enemy.isActiveAndEnabled
+                                  && enemy.IsValidTarget && covered.Contains(enemy.SlotIndex))
+                    StatusHelper.ApplyStatus(enemy.Statuses, mStatusType, mStacks);
+            }
+        }
+    }
+}

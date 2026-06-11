@@ -30,9 +30,7 @@ namespace Features.Card.Command
                     Type = info.Type,
                     Rarity = info.Rarity,
                     IconAddress = info.IconAddress,
-                    Price = info.Price,
-                    UnlockLevel = info.UnlockLevel,
-                    UpgradeId = info.UpgradeId
+                    Price = info.Price
                 });
             }
         }

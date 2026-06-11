@@ -1,9 +1,8 @@
 using Features.Combat.Event;
-using Features.Combat.Targeting;
+using Features.Combat.UI;
 using Features.Combat.UI.Board;
 using Features.Sword.Model;
 using QFramework;
-using UnityEngine;
 
 namespace Features.Combat.System
 {
@@ -20,7 +19,7 @@ namespace Features.Combat.System
             if (!sword.IsSpinning.Value || sword.SpinDamage.Value <= 0)
                 return;
 
-            BoardPanel board = Object.FindObjectOfType<BoardPanel>();
+            BoardPanel board = this.GetUtility<IBoardAccess>().Board;
             if (board == null)
                 return;
 

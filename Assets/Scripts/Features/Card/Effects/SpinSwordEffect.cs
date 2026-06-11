@@ -1,4 +1,3 @@
-using Core.Architecture;
 using Features.Combat.Targeting;
 using Features.Sword.Model;
 
@@ -15,7 +14,7 @@ namespace Features.Card.Effects
 
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
-            ISwordModel model = GameMain.Interface.GetModel<ISwordModel>();
+            ISwordModel model = Ctx.SwordModel;
 
             model.IsSpinning.Value = true;
             model.SpinDamage.Value += mDamagePerSpin;

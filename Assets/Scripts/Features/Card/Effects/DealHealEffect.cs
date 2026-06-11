@@ -15,8 +15,8 @@ namespace Features.Card.Effects
         {
             foreach (ITargetable target in targets)
             {
-                if (target is IDamageable damagable && damagable.IsValidTarget)
-                    damagable.TakeHeal(mAmount);
+                if (target is IDamageable damageable && damageable.IsValidTarget)
+                    damageable.TakeHeal(mAmount);
             }
         }
     }

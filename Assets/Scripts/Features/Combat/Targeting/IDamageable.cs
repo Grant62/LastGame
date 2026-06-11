@@ -4,5 +4,6 @@ namespace Features.Combat.Targeting
     {
         void TakeDamage(int amount);
         void TakeHeal(int amount);
+        void GainArmor(int amount);
     }
 }

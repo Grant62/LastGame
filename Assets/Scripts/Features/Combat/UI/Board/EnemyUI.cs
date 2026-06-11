@@ -64,6 +64,11 @@ namespace Features.Combat.UI.Board
             RefreshHealthBar(true);
         }
 
+        public void GainArmor(int amount)
+        {
+            TakeHeal(amount);
+        }
+
         private void RefreshHealthBar(bool animate)
         {
             mHealthTween?.Kill();

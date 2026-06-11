@@ -1,5 +1,3 @@
-using Core.Architecture;
-using Features.Card.System;
 using Features.Combat.Targeting;
 
 namespace Features.Card.Effects
@@ -15,7 +13,7 @@ namespace Features.Card.Effects
 
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
-            GameMain.Interface.GetSystem<ICardSystem>().DrawCards(mCount);
+            Ctx.CardSystem.DrawCards(mCount);
         }
     }
 }

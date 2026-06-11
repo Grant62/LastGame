@@ -29,12 +29,12 @@ namespace Features.Combat.Targeting.System
             mTargetResolver = this.GetUtility<ITargetResolver>();
         }
 
-        public void StartUpdate()
+        private void StartUpdate()
         {
             mOnUpdateUnregister = ActionKit.OnUpdate.Register(OnUpdate);
         }
 
-        public void StopUpdate()
+        private void StopUpdate()
         {
             mOnUpdateUnregister?.UnRegister();
             mOnUpdateUnregister = null;

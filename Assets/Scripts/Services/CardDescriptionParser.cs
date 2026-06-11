@@ -14,15 +14,50 @@ namespace Services
         private static readonly Regex SpinCountRegex = new(@"【旋剑】(\d+)次");
         private static readonly Regex StatusStacksRegex = new(@"施加(\d+)层");
 
-        public static int ParseDamage(string desc) => ParseInt(desc, DamageRegex);
-        public static int ParseBlock(string desc) => ParseInt(desc, BlockRegex);
-        public static int ParseDistance(string desc) => ParseInt(desc, DistanceRegex);
-        public static int ParseDraw(string desc) => ParseInt(desc, DrawRegex);
-        public static int ParseEnergy(string desc) => ParseInt(desc, EnergyRegex);
-        public static int ParseDiscard(string desc) => ParseInt(desc, DiscardRegex);
-        public static int ParseHeal(string desc) => ParseInt(desc, HealRegex);
-        public static int ParseSpinCount(string desc) => ParseInt(desc, SpinCountRegex);
-        public static int ParseStatusStacks(string desc) => ParseInt(desc, StatusStacksRegex);
+        public static int ParseDamage(string desc)
+        {
+            return ParseInt(desc, DamageRegex);
+        }
+
+        public static int ParseBlock(string desc)
+        {
+            return ParseInt(desc, BlockRegex);
+        }
+
+        public static int ParseDistance(string desc)
+        {
+            return ParseInt(desc, DistanceRegex);
+        }
+
+        public static int ParseDraw(string desc)
+        {
+            return ParseInt(desc, DrawRegex);
+        }
+
+        public static int ParseEnergy(string desc)
+        {
+            return ParseInt(desc, EnergyRegex);
+        }
+
+        public static int ParseDiscard(string desc)
+        {
+            return ParseInt(desc, DiscardRegex);
+        }
+
+        public static int ParseHeal(string desc)
+        {
+            return ParseInt(desc, HealRegex);
+        }
+
+        public static int ParseSpinCount(string desc)
+        {
+            return ParseInt(desc, SpinCountRegex);
+        }
+
+        public static int ParseStatusStacks(string desc)
+        {
+            return ParseInt(desc, StatusStacksRegex);
+        }
 
         public static bool ContainsKeyword(string desc, string keyword)
         {

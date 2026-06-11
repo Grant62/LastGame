@@ -34,6 +34,11 @@ namespace Features.Hero.View
             this.SendCommand(new HeroTakeHealCommand(amount));
         }
 
+        public void GainArmor(int amount)
+        {
+            this.SendCommand(new HeroGainArmorCommand(amount));
+        }
+
         private void Start()
         {
             mHeroModel = this.GetModel<IHeroModel>();

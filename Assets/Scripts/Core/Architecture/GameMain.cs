@@ -8,7 +8,6 @@ using Features.Combat.System;
 using Features.Combat.Targeting.Model;
 using Features.Combat.Targeting.System;
 using Features.Hero.Model;
-using Features.Hero.System;
 using Features.Resource.Model;
 using Features.Resource.System;
 using Features.Sword.Model;
@@ -24,7 +23,6 @@ namespace Core.Architecture
         {
             RegisterSystem<IRandomSystem>(new RandomSystem());
             RegisterSystem<ITurnSystem>(new TurnSystem());
-            RegisterSystem<IHeroSystem>(new HeroSystem());
             RegisterModel<IHeroModel>(new HeroModel());
             RegisterModel<ITargetingModel>(new TargetingModel());
             RegisterSystem<ITargetingSystem>(new TargetingSystem());
@@ -34,13 +32,13 @@ namespace Core.Architecture
             RegisterModel<ICardModel>(new CardModel());
             RegisterModel<ICardDefineModel>(new CardDefineModel());
             RegisterSystem<ICardSystem>(new CardSystem());
-            RegisterSystem<ICardEffectSystem>(new CardEffectSystem());
+            RegisterSystem(new CardEffectSystem());
             RegisterModel<ISwordModel>(new SwordModel());
             RegisterSystem<ISlotTargetSystem>(new SlotTargetSystem());
             RegisterUtility<IBinaryDataMgr>(new BinaryDataMgr());
             RegisterSystem<IInteractionSystem>(new InteractionSystem());
-            RegisterSystem<StatusTickSystem>(new StatusTickSystem());
-            RegisterSystem<SpinDamageSystem>(new SpinDamageSystem());
+            RegisterSystem(new StatusTickSystem());
+            RegisterSystem(new SpinDamageSystem());
         }
     }
 }

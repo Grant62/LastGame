@@ -24,10 +24,5 @@ namespace Features.Combat.UI
         {
             mGameObject.SetActive(false);
         }
-
-        public void Cleanup()
-        {
-            Object.Destroy(mGameObject);
-        }
     }
 }

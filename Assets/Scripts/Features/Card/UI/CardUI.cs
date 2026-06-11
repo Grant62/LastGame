@@ -29,7 +29,7 @@ namespace Features.Card.UI
             Title.text = data.Name;
             Desc.text = data.Desc;
             Cost.text = data.Cost.ToString();
-            TypeText.text = data.Rarity;
+            TypeText.text = data.Type;
             Price.text = data.Price.ToString();
 
             Sprite loaded = LoadIcon(data.IconAddress);

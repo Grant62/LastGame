@@ -1,8 +1,7 @@
-using Core.Architecture;
+using Core.Systems;
 using Features.Card.Model;
 using Features.Card.System;
 using Features.Combat.Targeting;
-using UnityEngine;
 
 namespace Features.Card.Effects
 {
@@ -17,12 +16,12 @@ namespace Features.Card.Effects
 
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
-            ICardModel model = GameMain.Interface.GetModel<ICardModel>();
-            ICardSystem system = GameMain.Interface.GetSystem<ICardSystem>();
+            ICardModel model = Ctx.CardModel;
+            ICardSystem system = Ctx.CardSystem;
 
             for (int i = 0; i < mCount && model.HandPile.Count > 0; i++)
             {
-                int index = Random.Range(0, model.HandPile.Count);
+                int index = Ctx.RandomSystem.Range(0, model.HandPile.Count, RandomModuleIds.Combat);
                 system.DiscardFromHand(model.HandPile[index]);
             }
         }

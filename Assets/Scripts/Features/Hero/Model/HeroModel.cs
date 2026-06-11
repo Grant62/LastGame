@@ -11,6 +11,7 @@ namespace Features.Hero.Model
         public BindableProperty<bool> Invincible { get; } = new();
         public BindableProperty<int> CurSlotIndex { get; } = new();
         public BindableProperty<bool> IsFacingRight { get; } = new(true);
+        public BindableProperty<int> Armor { get; } = new();
 
         public List<StatusModifier> Statuses { get; } = new();
 

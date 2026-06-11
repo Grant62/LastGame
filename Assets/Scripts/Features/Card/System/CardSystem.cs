@@ -1,9 +1,9 @@
 using System.Collections.Generic;
+using Core.Systems;
 using Features.Card.Data;
 using Features.Card.Model;
 using Features.Combat.Event;
 using QFramework;
-using UnityEngine;
 
 namespace Features.Card.System
 {
@@ -80,6 +80,13 @@ namespace Features.Card.System
             model.OnDiscardPileChanged.Trigger();
         }
 
+        public void AddToHand(CardData card)
+        {
+            ICardModel model = this.GetModel<ICardModel>();
+            model.HandPile.Add(card);
+            model.OnHandPileChanged.Trigger();
+        }
+
         public void ShuffleDrawPile()
         {
             ICardModel model = this.GetModel<ICardModel>();
@@ -87,7 +94,7 @@ namespace Features.Card.System
             model.OnDrawPileChanged.Trigger();
         }
 
-        private static void ShuffleDiscardIntoDrawPile(ICardModel model)
+        private void ShuffleDiscardIntoDrawPile(ICardModel model)
         {
             if (model.DiscardPile.Count == 0)
                 return;
@@ -99,11 +106,12 @@ namespace Features.Card.System
             model.OnDrawPileChanged.Trigger();
         }
 
-        private static void Shuffle(List<CardData> list)
+        private void Shuffle(List<CardData> list)
         {
+            IRandomSystem random = this.GetSystem<IRandomSystem>();
             for (int i = list.Count - 1; i > 0; i--)
             {
-                int j = Random.Range(0, i + 1);
+                int j = random.Range(0, i + 1, RandomModuleIds.Combat);
                 (list[i], list[j]) = (list[j], list[i]);
             }
         }

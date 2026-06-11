@@ -1052,6 +1052,7 @@ OverlayCanvas（order 20）
   PileGridPanel（网格牌堆查看器，ScrollRect + GridLayoutGroup）
   HoverCard（悬停放大的卡牌）
   DragGhost（拖拽中的手牌副本）
+  ArrowView / CursorView（拖拽指向时的箭头+光标）
   弹窗 / 对话框
 ```
 
@@ -1129,3 +1130,43 @@ GameMain.Interface.SendEvent<GameReadyEvent>();
 ### 卡牌定义（CardDefine → CardData）
 
 `CardDefine`（Excel 驱动）→ `CreateCardData()` → `CardData`（运行时实例）。`CardData` 的 `ManualTargetEffect` 决定卡牌是否需要瞄准敌人。
+
+---
+
+## 效果系统（Effect System）
+
+### 架构
+
+```
+CardEffectSystem (ISystem)
+  ├── 创建 EffectContext（聚合 IHeroModel/ISwordModel/ICardSystem 等依赖）
+  ├── effect.Ctx = context（依赖注入）
+  └── effect.Execute(targets, caster)
+
+Effect 子类（纯数据+行为，无架构感知）
+  ├── 通过 Ctx.Xxx 访问 Model/System/Utility
+  ├── 由 CardEffectFactory.PopulateEffects() 组装
+  └── 不持有状态，不注册事件
+```
+
+### 核心约定
+
+| 规则 | 说明 |
+|---|---|
+| Effect 不访问 `GameMain.Interface` | 依赖通过 `EffectContext` 注入 |
+| Effect 不注册事件 | 改为设 Model 标记，由 System 监听处理 |
+| 场景对象通过 `IBoardAccess` Utility 获取 | 不使用 `FindObjectOfType` |
+| 效果组合优于继承 | 每张卡 = `ManualTargetEffect[]` + `OtherEffects[]` |
+
+---
+
+## 随机系统
+
+| 项目 | 说明 |
+|---|---|
+| 算法 | **xoshiro128** |
+| 父种子 | `IRandomSystem.SetParentSeed(seed)`，存档/复现的核心 |
+| 模块分叉 | 不同系统使用独立生成器（`RandomModuleIds.Combat/Events/Merchant/Map/Monsters`） |
+| 位置种子 | `RangeForPosition()` 基于 Combat 模块序列，位置键影响偏移，可复现但有变化 |
+
+所有 `UnityEngine.Random` 已替换为 `IRandomSystem.Range()`。

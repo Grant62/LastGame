@@ -1,7 +1,5 @@
-using Core.Architecture;
 using Features.Combat.Targeting;
 using Features.Combat.UI.Board;
-using Features.Hero.Model;
 using UnityEngine;
 
 namespace Features.Card.Effects
@@ -17,10 +15,8 @@ namespace Features.Card.Effects
 
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
-            bool casterIsWeakened = false;
-            IHeroModel heroModel = GameMain.Interface.GetModel<IHeroModel>();
-            if (heroModel != null)
-                casterIsWeakened = StatusHelper.HasStatus(heroModel.Statuses, StatusType.Weak);
+            bool casterIsWeakened = Ctx != null
+                                    && StatusHelper.HasStatus(Ctx.HeroModel.Statuses, StatusType.Weak);
 
             float damageMultiplier = casterIsWeakened ? 0.75f : 1f;
 

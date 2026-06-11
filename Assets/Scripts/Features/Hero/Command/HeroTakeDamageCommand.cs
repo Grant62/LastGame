@@ -24,8 +24,19 @@ namespace Features.Hero.Command
             if (model.Invincible.Value)
                 return;
 
-            model.Health.Value -= mAmount;
-            model.Health.Value = Mathf.Max(0, model.Health.Value);
+            int remaining = mAmount;
+            if (model.Armor.Value > 0)
+            {
+                int absorbed = Mathf.Min(model.Armor.Value, remaining);
+                model.Armor.Value -= absorbed;
+                remaining -= absorbed;
+            }
+
+            if (remaining > 0)
+            {
+                model.Health.Value -= remaining;
+                model.Health.Value = Mathf.Max(0, model.Health.Value);
+            }
 
             if (model.Health.Value <= 0)
                 this.SendEvent<HeroDeathEvent>();
