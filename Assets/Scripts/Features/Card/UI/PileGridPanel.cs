@@ -54,8 +54,7 @@ namespace Features.Card.UI
             {
                 CardUI card = mCardPool.Get(data, Content);
                 HandDragHandler handler = card.GetComponent<HandDragHandler>();
-                if (handler != null)
-                    handler.enabled = false;
+                handler.enabled = false;
 
                 mCardViews.Add(card);
             }

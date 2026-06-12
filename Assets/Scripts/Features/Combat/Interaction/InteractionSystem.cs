@@ -7,6 +7,7 @@ namespace Features.Combat.Interaction
     public class InteractionSystem : AbstractSystem, IInteractionSystem
     {
         public bool IsDragging { get; private set; }
+        public bool IsAnimating { get; set; }
 
         protected override void OnInit() { }
 
@@ -38,9 +39,8 @@ namespace Features.Combat.Interaction
 
         public bool CanHover()
         {
-            if (IsDragging)
-                return false;
-
+            if (IsDragging) return false;
+            if (IsAnimating) return false;
             return CanInteract();
         }
 

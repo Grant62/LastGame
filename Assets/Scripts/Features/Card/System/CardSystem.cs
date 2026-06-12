@@ -12,11 +12,24 @@ namespace Features.Card.System
         protected override void OnInit()
         {
             this.RegisterEvent<PlayerTurnStartEvent>(OnPlayerTurnStart);
+            this.RegisterEvent<PlayerTurnEndEvent>(OnPlayerTurnEnd);
         }
 
         private void OnPlayerTurnStart(PlayerTurnStartEvent e)
         {
             DrawCards(5);
+        }
+
+        private void OnPlayerTurnEnd(PlayerTurnEndEvent e)
+        {
+            ICardModel model = this.GetModel<ICardModel>();
+            if (model.HandPile.Count == 0)
+                return;
+
+            model.DiscardPile.AddRange(model.HandPile);
+            model.HandPile.Clear();
+            model.OnHandPileChanged.Trigger();
+            model.OnDiscardPileChanged.Trigger();
         }
 
         public void InitLibrary(List<CardData> cards)
@@ -33,7 +46,6 @@ namespace Features.Card.System
             model.DrawPile.Clear();
             model.DrawPile.AddRange(model.Library);
             ShuffleDrawPile();
-            DrawCards(model.DrawPile.Count);
         }
 
         public void DrawCards(int count)

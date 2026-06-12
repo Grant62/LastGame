@@ -15,6 +15,7 @@ namespace Features.Card
             List<Effect> manual = new();
             List<AutoTargetEffect> auto = new();
 
+            ParsePathSuppress(desc, auto);
             ParseDamage(desc, define.NeedsEnemyTarget, manual, auto);
             ParseBlock(desc, auto);
             ParseDraw(desc, auto);
@@ -39,8 +40,6 @@ namespace Features.Card
             ParseManSwordUnity(desc, auto);
             ParseConditional(desc, auto);
             ParseSwordSpinToEnemy(desc, manual, define.NeedsEnemyTarget);
-            ParseSpinImmediate(desc, auto);
-            ParseDoubleSpin(desc, auto);
             ParseFormulaDamage(desc, manual, define.NeedsEnemyTarget);
             ParseHealIfSpirit(desc, auto);
             ParseSwordPathDamage(desc, auto);
@@ -166,34 +165,34 @@ namespace Features.Card
             if (CardDescriptionParser.ContainsKeyword(desc, "虚弱"))
             {
                 if (needsEnemy)
-                    manual.Add(new ApplyWeakEffect(stacks));
+                    manual.Add(new ApplyStatusEffect(StatusType.Weak, stacks));
                 else
-                    auto.Add(new AutoTargetEffect(TargetType.RandomEnemy, new ApplyWeakEffect(stacks)));
+                    auto.Add(new AutoTargetEffect(TargetType.RandomEnemy, new ApplyStatusEffect(StatusType.Weak, stacks)));
             }
 
             if (CardDescriptionParser.ContainsKeyword(desc, "易伤"))
             {
                 if (needsEnemy)
-                    manual.Add(new ApplyVulnerableEffect(stacks));
+                    manual.Add(new ApplyStatusEffect(StatusType.Vulnerable, stacks));
                 else
-                    auto.Add(new AutoTargetEffect(TargetType.RandomEnemy, new ApplyVulnerableEffect(stacks)));
+                    auto.Add(new AutoTargetEffect(TargetType.RandomEnemy, new ApplyStatusEffect(StatusType.Vulnerable, stacks)));
             }
         }
 
         private static void ParseSpinSpecial(string desc, List<AutoTargetEffect> auto)
         {
             if (CardDescriptionParser.ContainsKeyword(desc, "不停止"))
-                auto.Add(new AutoTargetEffect(TargetType.Self, new KeepSpinningOnMoveEffect()));
+                auto.Add(new AutoTargetEffect(TargetType.Self, new SetSwordFlagEffect(SwordFlag.KeepSpinningOnMove)));
 
             if (desc.Contains("邻格") && CardDescriptionParser.ContainsKeyword(desc, "旋剑"))
-                auto.Add(new AutoTargetEffect(TargetType.Self, new SpinHitsAdjacentEffect()));
+                auto.Add(new AutoTargetEffect(TargetType.Self, new SetSwordFlagEffect(SwordFlag.SpinHitsAdjacent)));
         }
 
         private static void ParseSpiritAttach(string desc, List<AutoTargetEffect> auto)
         {
             if (CardDescriptionParser.ContainsKeyword(desc, "附着·灵")
                 || desc.Contains("附着·灵"))
-                auto.Add(new AutoTargetEffect(TargetType.Self, new AttachSpiritEffect()));
+                auto.Add(new AutoTargetEffect(TargetType.Self, new SetSwordFlagEffect(SwordFlag.IsSpiritAttached)));
         }
 
         private static void ParsePurgeDesc(string desc, List<AutoTargetEffect> auto)
@@ -320,7 +319,7 @@ namespace Features.Card
             if (!desc.Contains("每回合开始") || !CardDescriptionParser.ContainsKeyword(desc, "灵剑"))
                 return;
 
-            auto.Add(new AutoTargetEffect(TargetType.Self, new TurnStartSpiritSpawnEffect()));
+            auto.Add(new AutoTargetEffect(TargetType.Self, new SetSwordFlagEffect(SwordFlag.HasTurnStartSpiritSpawn)));
         }
 
         private static void ParseReactiveSpiritSpawn(string desc, List<AutoTargetEffect> auto)
@@ -328,7 +327,7 @@ namespace Features.Card
             if (!desc.Contains("每摧毁") || !desc.Contains("空位置"))
                 return;
 
-            auto.Add(new AutoTargetEffect(TargetType.Self, new ReactiveSpiritSpawnEffect()));
+            auto.Add(new AutoTargetEffect(TargetType.Self, new SetSwordFlagEffect(SwordFlag.HasReactiveSpiritSpawn)));
         }
 
         private static void ParseSpinImmediate(string desc, List<AutoTargetEffect> auto)
@@ -362,6 +361,12 @@ namespace Features.Card
 
             if (reward != null)
                 auto.Add(new AutoTargetEffect(TargetType.Self, new PerSpiritSwordEffect(reward)));
+        }
+
+        private static void ParsePathSuppress(string desc, List<AutoTargetEffect> auto)
+        {
+            if (desc.Contains("但不造成途经"))
+                auto.Add(new AutoTargetEffect(TargetType.Self, new SetSwordFlagEffect(SwordFlag.SuppressPathDamage)));
         }
     }
 }

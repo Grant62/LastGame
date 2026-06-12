@@ -14,7 +14,7 @@ namespace Features.Card.Define
         public string IconAddress;
         public int Price;
 
-        public bool NeedsEnemyTarget { get => Type == "攻击" && !NeedsSlotTarget; }
+        public bool NeedsEnemyTarget { get => Type == "攻击" && CardDescriptionParser.ParseDamage(Desc) > 0; }
 
         public bool NeedsSlotTarget
         {

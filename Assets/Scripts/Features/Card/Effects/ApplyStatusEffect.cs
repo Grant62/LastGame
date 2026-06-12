@@ -3,12 +3,14 @@ using Features.Combat.UI.Board;
 
 namespace Features.Card.Effects
 {
-    public class ApplyVulnerableEffect : Effect
+    public class ApplyStatusEffect : Effect
     {
+        private readonly StatusType mStatusType;
         private readonly int mStacks;
 
-        public ApplyVulnerableEffect(int stacks = 1)
+        public ApplyStatusEffect(StatusType statusType, int stacks)
         {
+            mStatusType = statusType;
             mStacks = stacks;
         }
 
@@ -17,7 +19,7 @@ namespace Features.Card.Effects
             foreach (ITargetable target in targets)
             {
                 if (target is EnemyUI enemy)
-                    StatusHelper.ApplyStatus(enemy.Statuses, StatusType.Vulnerable, mStacks);
+                    StatusHelper.ApplyStatus(enemy.Statuses, mStatusType, mStacks);
             }
         }
     }

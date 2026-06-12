@@ -33,7 +33,15 @@ namespace Features.Card.UI
                 return;
 
             mCanvasGroup.alpha = 0f;
-            mDisplay.Show(mCardUI.CardData, transform.position);
+            HandPanel panel = GetComponentInParent<HandPanel>();
+            Vector3 hoverPos = transform.position;
+            hoverPos.y = panel.HoverCardY;
+            mDisplay.Show(mCardUI.CardData, hoverPos);
+
+            IKeywordResolver resolver = GameMain.Interface.GetUtility<IKeywordResolver>();
+            string keywords = resolver.ResolveKeywords(mCardUI.CardData.Desc);
+            if (!string.IsNullOrEmpty(keywords))
+                Debug.Log(keywords);
         }
 
         public void OnPointerExit(PointerEventData eventData)

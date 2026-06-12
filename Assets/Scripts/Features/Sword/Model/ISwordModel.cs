@@ -6,7 +6,6 @@ namespace Features.Sword.Model
     public interface ISwordModel : IModel
     {
         BindableProperty<int> CurSlotIndex { get; }
-        BindableProperty<bool> IsSummoned { get; }
 
         BindableProperty<bool> IsSpinning { get; }
         BindableProperty<int> SpinDamage { get; }
@@ -15,6 +14,7 @@ namespace Features.Sword.Model
         bool IsSpiritAttached { get; set; }
         bool HasTurnStartSpiritSpawn { get; set; }
         bool HasReactiveSpiritSpawn { get; set; }
+        bool SuppressPathDamage { get; set; }
 
         List<int> SpiritSwordSlots { get; }
         EasyEvent OnSpiritSwordsChanged { get; }

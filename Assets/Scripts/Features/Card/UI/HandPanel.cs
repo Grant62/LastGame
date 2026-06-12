@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using Core.Architecture;
 using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using Features.Card.Data;
 using Features.Card.Interfaces;
 using Features.Card.Model;
+using Features.Combat.Interaction;
 using QFramework;
 using UnityEngine;
 
@@ -16,10 +19,17 @@ namespace Features.Card.UI
         [SerializeField] private float radius = 400f;
         [SerializeField] private float centerPointY = -150f;
         [SerializeField] private float layoutDuration = 0.15f;
+        [SerializeField] private float hoverCardY = 300f;
+        [SerializeField] private Canvas overlayCanvas;
+        [SerializeField] private Vector2 drawOrigin = new(1600, -400);
+        [SerializeField] private Vector2 discardOrigin = new(200, -400);
+        [SerializeField] private float drawStagger = 0.1f;
 
         private ICardUIPool mCardPool;
         private readonly List<CardUI> mCardOrder = new();
         private readonly Dictionary<CardData, CardUI> mCardLookup = new();
+        private readonly HashSet<CardData> mCurrentSet = new();
+        private readonly HashSet<CardData> mAddedSet = new();
         private readonly List<Vector2> mCardPositions = new();
         private readonly List<float> mCardAngles = new();
 
@@ -27,6 +37,10 @@ namespace Features.Card.UI
         {
             return GameMain.Interface;
         }
+
+        public float HoverCardY { get => hoverCardY; }
+
+        public Canvas OverlayCanvas { get => overlayCanvas; }
 
         private void Start()
         {
@@ -42,21 +56,24 @@ namespace Features.Card.UI
         private void OnHandPileChanged()
         {
             SyncViews(this.GetModel<ICardModel>().HandPile);
-            SetCardLayout();
         }
 
         private void SyncViews(List<CardData> handPile)
         {
-            HashSet<CardData> current = new(handPile);
+            mCurrentSet.Clear();
+            foreach (CardData d in handPile) mCurrentSet.Add(d);
+            mAddedSet.Clear();
 
+            int totalCount = mCardOrder.Count;
             for (int i = mCardOrder.Count - 1; i >= 0; i--)
             {
                 CardUI card = mCardOrder[i];
-                if (!current.Contains(card.CardData))
+                if (!mCurrentSet.Contains(card.CardData))
                 {
                     mCardLookup.Remove(card.CardData);
                     mCardOrder.RemoveAt(i);
-                    mCardPool.Return(card);
+                    float delay = i * drawStagger;
+                    AnimateDiscard(card, delay);
                 }
             }
 
@@ -67,24 +84,44 @@ namespace Features.Card.UI
                     CardUI card = mCardPool.Get(data, LayoutRoot);
                     mCardLookup.Add(data, card);
                     mCardOrder.Add(card);
+                    mAddedSet.Add(data);
                 }
             }
+
+            SetCardLayout(mAddedSet);
         }
 
-        private void SetCardLayout()
+        private void SetCardLayout(HashSet<CardData> newCards)
         {
             int count = mCardOrder.Count;
             CalculatePositions(count);
+
+            if (newCards.Count > 0)
+                this.GetSystem<IInteractionSystem>().IsAnimating = true;
 
             for (int i = 0; i < count; i++)
             {
                 CardUI card = mCardOrder[i];
                 RectTransform rect = card.GetComponent<RectTransform>();
-                if (rect == null)
-                    continue;
 
                 rect.DOKill();
-                rect.DOAnchorPos(mCardPositions[i], layoutDuration).SetEase(Ease.OutCubic);
+                float delay = newCards.Contains(card.CardData) ? i * drawStagger : 0f;
+                bool isLast = i == count - 1;
+
+                if (delay > 0f)
+                {
+                    rect.anchoredPosition = drawOrigin;
+                    TweenerCore<Vector2, Vector2, VectorOptions> tween = rect.DOAnchorPos(mCardPositions[i], layoutDuration)
+                        .SetEase(Ease.OutCubic)
+                        .SetDelay(delay);
+                    if (isLast)
+                        tween.OnComplete(() => this.GetSystem<IInteractionSystem>().IsAnimating = false);
+                }
+                else
+                {
+                    rect.DOAnchorPos(mCardPositions[i], layoutDuration).SetEase(Ease.OutCubic);
+                }
+
                 rect.DOLocalRotate(new Vector3(0f, 0f, mCardAngles[i]), layoutDuration).SetEase(Ease.OutCubic);
                 rect.SetSiblingIndex(i);
             }
@@ -113,6 +150,17 @@ namespace Features.Card.UI
                 ));
                 mCardAngles.Add(cardAngle);
             }
+        }
+
+        private void AnimateDiscard(CardUI card, float delay)
+        {
+            RectTransform rect = card.GetComponent<RectTransform>();
+            CanvasGroup cg = card.GetComponentInChildren<CanvasGroup>();
+            rect.DOKill();
+            rect.DOAnchorPos(discardOrigin, layoutDuration).SetEase(Ease.InCubic).SetDelay(delay);
+            cg.DOFade(0f, layoutDuration).SetDelay(delay);
+
+            DOVirtual.DelayedCall(layoutDuration + delay, () => mCardPool.Return(card));
         }
     }
 }

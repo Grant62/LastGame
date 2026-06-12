@@ -21,7 +21,7 @@ namespace Features.Combat.UI
             mLineWidth = lineWidth;
 
             Canvas canvas = arrowHead.GetComponentInParent<Canvas>();
-            mCanvasRect = canvas != null ? canvas.GetComponent<RectTransform>() : null;
+            mCanvasRect = canvas.GetComponent<RectTransform>();
 
             mLineRect.gameObject.SetActive(false);
             mArrowHead.SetActive(false);
@@ -29,9 +29,6 @@ namespace Features.Combat.UI
 
         public void Show(Vector3 startPosition)
         {
-            if (mCanvasRect == null)
-                return;
-
             mStartPos = ScreenToCanvas(startPosition);
             mLineRect.gameObject.SetActive(true);
             mArrowHead.SetActive(true);
@@ -47,7 +44,7 @@ namespace Features.Combat.UI
 
         public void UpdateMouse(Vector3 mousePos)
         {
-            if (!mIsActive || mCanvasRect == null)
+            if (!mIsActive)
                 return;
 
             Vector2 canvasMouse = ScreenToCanvas(mousePos);

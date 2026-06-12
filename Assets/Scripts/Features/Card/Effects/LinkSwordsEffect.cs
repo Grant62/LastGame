@@ -25,7 +25,7 @@ namespace Features.Card.Effects
             int playerSlot = heroModel.CurSlotIndex.Value;
 
             List<int> swordSlots = new();
-            if (swordModel.IsSummoned.Value && swordModel.CurSlotIndex.Value >= 0)
+            if (swordModel.CurSlotIndex.Value >= 0)
                 swordSlots.Add(swordModel.CurSlotIndex.Value);
             swordSlots.AddRange(swordModel.SpiritSwordSlots);
 
@@ -54,15 +54,14 @@ namespace Features.Card.Effects
         private bool IsPenetrated(int playerSlot, List<int> swordSlots)
         {
             BoardPanel board = Ctx.BoardAccess.Board;
-            if (board == null || swordSlots.Count == 0)
+            if (swordSlots.Count == 0)
                 return false;
 
             HashSet<int> covered = GetCoveredSlots(playerSlot, swordSlots);
 
-            foreach (EnemyUI enemy in board.EnemyViews)
+            foreach (EnemyUI enemy in board.GetActiveEnemies())
             {
-                if (enemy != null && enemy.isActiveAndEnabled
-                                  && enemy.IsValidTarget && !covered.Contains(enemy.SlotIndex))
+                if (enemy.IsValidTarget && !covered.Contains(enemy.SlotIndex))
                     return false;
             }
 

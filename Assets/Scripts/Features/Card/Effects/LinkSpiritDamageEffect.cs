@@ -20,8 +20,8 @@ namespace Features.Card.Effects
             foreach (int slot in swordModel.SpiritSwordSlots)
             {
                 BoardPanel board = Ctx.BoardAccess.Board;
-                if (board != null && board.TryGetEnemyAtSlot(slot, out EnemyUI enemy)
-                                  && enemy.IsValidTarget)
+                if (board.TryGetEnemyAtSlot(slot, out EnemyUI enemy)
+                    && enemy.IsValidTarget)
                     enemy.TakeDamage(mDamagePerSpirit);
             }
         }

@@ -522,7 +522,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6490121369146164986, guid: 8a469a5b0caaf53469872b0dabed360b, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6490121369146164986, guid: 8a469a5b0caaf53469872b0dabed360b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -542,7 +542,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8772421498380665013, guid: 8a469a5b0caaf53469872b0dabed360b, type: 3}
       propertyPath: startingAnimation
-      value: ready
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

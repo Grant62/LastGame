@@ -20,8 +20,6 @@ namespace Features.Combat.System
                 return;
 
             BoardPanel board = this.GetUtility<IBoardAccess>().Board;
-            if (board == null)
-                return;
 
             int slot = sword.CurSlotIndex.Value;
             int damage = sword.SpinDamage.Value;

@@ -20,17 +20,13 @@ namespace Features.Combat.UI.HUD
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
             Button btn = GetComponent<Button>();
-            if (btn != null)
-                btn.onClick.AddListener(OnEndTurnClicked);
+            btn.onClick.AddListener(OnEndTurnClicked);
 
             RefreshText();
         }
 
         private void RefreshText()
         {
-            if (TurnLabel == null)
-                return;
-
             ITurnSystem turn = this.GetSystem<ITurnSystem>();
             TurnLabel.text = $"结束第{turn.TurnCount}回合";
         }

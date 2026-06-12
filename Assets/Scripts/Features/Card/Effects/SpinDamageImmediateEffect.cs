@@ -14,7 +14,6 @@ namespace Features.Card.Effects
 
             int slot = sword.CurSlotIndex.Value;
             BoardPanel board = Ctx.BoardAccess.Board;
-            if (board == null) return;
 
             DamageEnemyAtSlot(board, slot, damage);
             DamageEnemyAtSlot(board, slot - 1, damage);

@@ -338,8 +338,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -886,6 +886,7 @@ GameObject:
   - component: {fileID: 8888888888888888888}
   - component: {fileID: 2491408114450583358}
   - component: {fileID: 1967905892039082347}
+  - component: {fileID: 9092664234334872922}
   m_Layer: 5
   m_Name: CardUI
   m_TagString: Untagged
@@ -960,6 +961,18 @@ MonoBehaviour:
   Desc: {fileID: 6515871591926293754}
   TypeText: {fileID: 9086599451435199100}
   Price: {fileID: 1907412637414847172}
+--- !u!225 &9092664234334872922
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7934879449877520670}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &9149597207511920505
 GameObject:
   m_ObjectHideFlags: 0

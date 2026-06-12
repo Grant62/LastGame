@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using Core.Architecture;
 using DG.Tweening;
+using Features.Combat.Event;
 using QFramework;
 using UnityEngine;
 
@@ -31,6 +31,28 @@ namespace Features.Combat.UI.Board
         private void Awake()
         {
             CreateSlots();
+            this.RegisterEvent<EnemyDiedEvent>(OnEnemyDied).UnRegisterWhenGameObjectDestroyed(gameObject);
+        }
+
+        private void OnEnemyDied(EnemyDiedEvent e)
+        {
+            for (int i = EnemyViews.Count - 1; i >= 0; i--)
+            {
+                if (EnemyViews[i].SlotIndex == e.SlotIndex)
+                {
+                    EnemyViews.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
+        public IEnumerable<EnemyUI> GetActiveEnemies()
+        {
+            foreach (EnemyUI enemy in EnemyViews)
+            {
+                if (enemy.isActiveAndEnabled)
+                    yield return enemy;
+            }
         }
 
         private void CreateSlots()
@@ -60,8 +82,8 @@ namespace Features.Combat.UI.Board
 
         public EnemyUI GetEnemyAtSlot(int slotIndex)
         {
-            foreach (EnemyUI enemy in EnemyViews)
-                if (enemy != null && enemy.SlotIndex == slotIndex)
+            foreach (EnemyUI enemy in GetActiveEnemies())
+                if (enemy.SlotIndex == slotIndex)
                     return enemy;
             return null;
         }
@@ -87,36 +109,38 @@ namespace Features.Combat.UI.Board
             Destroy(enemy.gameObject);
         }
 
-        public void ShiftEnemies(int oldPlayerIndex, int newPlayerIndex,
-            Action<int, int> onEnemyShifted = null, Action onComplete = null)
+        public void ShiftEnemies(int oldPlayerIndex, int newPlayerIndex)
         {
             Sequence seq = DOTween.Sequence();
-            int dir = newPlayerIndex > oldPlayerIndex ? -1 : 1;
-            int start = Mathf.Min(oldPlayerIndex, newPlayerIndex);
-            int end = Mathf.Max(oldPlayerIndex, newPlayerIndex);
+            bool movingRight = newPlayerIndex > oldPlayerIndex;
+            int pushDir = movingRight ? -1 : 1;
 
-            for (int i = start; i <= end; i++)
+            if (movingRight)
             {
-                EnemyUI enemy = GetEnemyAtSlot(i);
-                if (enemy != null)
-                {
-                    int targetIndex = i + dir;
-                    if (targetIndex < 0 || targetIndex >= mSlots.Count)
-                        continue;
-
-                    RectTransform targetSlot = mSlots[targetIndex].SlotRect;
-                    int from = i;
-                    int to = targetIndex;
-                    onEnemyShifted?.Invoke(from, to);
-                    enemy.SlotIndex = to;
-                    seq.Join(enemy.transform
-                        .DOMove(targetSlot.position, moveDuration)
-                        .SetEase(Ease.OutCubic));
-                }
+                for (int i = oldPlayerIndex; i <= newPlayerIndex; i++)
+                    TryShiftEnemy(i, i + pushDir, seq);
             }
+            else
+            {
+                for (int i = oldPlayerIndex; i >= newPlayerIndex; i--)
+                    TryShiftEnemy(i, i + pushDir, seq);
+            }
+        }
 
-            if (onComplete != null)
-                seq.OnComplete(onComplete.Invoke);
+        private void TryShiftEnemy(int from, int to, Sequence seq)
+        {
+            if (to < 0 || to >= mSlots.Count)
+                return;
+
+            EnemyUI enemy = GetEnemyAtSlot(from);
+            if (enemy == null)
+                return;
+
+            enemy.SlotIndex = to;
+            enemy.transform.SetParent(mSlots[to].SlotRect, false);
+            seq.Join(enemy.transform
+                .DOMove(mSlots[to].SlotRect.position, moveDuration)
+                .SetEase(Ease.OutCubic));
         }
     }
 }

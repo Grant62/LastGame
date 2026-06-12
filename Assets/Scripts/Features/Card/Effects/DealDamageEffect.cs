@@ -15,8 +15,7 @@ namespace Features.Card.Effects
 
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
-            bool casterIsWeakened = Ctx != null
-                                    && StatusHelper.HasStatus(Ctx.HeroModel.Statuses, StatusType.Weak);
+            bool casterIsWeakened = StatusHelper.HasStatus(Ctx.HeroModel.Statuses, StatusType.Weak);
 
             float damageMultiplier = casterIsWeakened ? 0.75f : 1f;
 

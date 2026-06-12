@@ -69,14 +69,9 @@ namespace Features.Combat.System
         private void OnEnemyTurnEnd(EnemyTurnEndEvent e)
         {
             BoardPanel board = this.GetUtility<IBoardAccess>().Board;
-            if (board == null)
-                return;
 
-            foreach (EnemyUI enemy in board.EnemyViews)
-            {
-                if (enemy != null && enemy.isActiveAndEnabled)
-                    StatusHelper.TickStatuses(enemy.Statuses);
-            }
+            foreach (EnemyUI enemy in board.GetActiveEnemies())
+                StatusHelper.TickStatuses(enemy.Statuses);
         }
 
         private static void SpawnRandomSpirit(ISwordModel sword, IRandomSystem random)

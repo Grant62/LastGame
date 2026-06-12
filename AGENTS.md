@@ -1025,6 +1025,7 @@ StringEventSystem.Global.Send("TEST_TWO", 10);
 - 循环中拼接字符串使用 `StringBuilder`。
 - 方法保持简短（不超过 30 行），超过时提取辅助方法。
 - 多值匹配时使用 switch 表达式代替 `if-else` 链。
+- **禁止防御式判空**：架构保证非空的引用（`GetComponent`/`GetSystem`/`GetModel`/`GetUtility` 在已初始化的上下文中）不写 `if (x == null) return;` 或 `if (x != null)` 包裹。让异常暴露问题，不隐藏 bug。
 
 ## 项目渲染分层架构（2026-05-31 确定）
 

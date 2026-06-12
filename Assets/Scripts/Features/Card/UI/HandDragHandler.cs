@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Core.Architecture;
+using DG.Tweening;
 using Features.Card.Command;
 using Features.Card.Data;
 using Features.Card.Model;
@@ -48,6 +49,7 @@ namespace Features.Card.UI
 
             mIsDragging = true;
             this.GetSystem<IInteractionSystem>().BeginDrag();
+            GetComponent<RectTransform>().DOKill();
             CreateDragGhost(eventData.position);
 
             if (IsTargetingCard())
@@ -56,7 +58,7 @@ namespace Features.Card.UI
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (!mIsDragging)
+            if (!mIsDragging || mDragGhost == null)
                 return;
 
             mDragGhost.transform.position = eventData.position;
@@ -96,10 +98,19 @@ namespace Features.Card.UI
             if (enemyTarget == null || !enemyTarget.IsValidTarget)
                 return false;
 
+            SlotAction action = mCardUI.CardData.SlotAction;
+
             this.SendCommand(new PlayCardCommand(mCardUI.CardData, enemyTarget));
 
             if (enemyTarget.SlotIndex >= 0)
+            {
                 UpdateFacing(enemyTarget.SlotIndex);
+
+                if (action == SlotAction.MoveSword)
+                    this.SendCommand(new MoveSwordCommand(enemyTarget.SlotIndex));
+                else if (action == SlotAction.MovePlayer)
+                    this.SendCommand(new MovePlayerCommand(enemyTarget.SlotIndex));
+            }
 
             return true;
         }
@@ -176,15 +187,13 @@ namespace Features.Card.UI
         {
             mDragGhost = Instantiate(gameObject, mTargetCanvas.transform);
             mDragGhost.transform.position = position;
+            mDragGhost.transform.SetAsLastSibling();
 
             CanvasGroup cg = mDragGhost.GetComponent<CanvasGroup>();
-            if (cg == null)
-                cg = mDragGhost.AddComponent<CanvasGroup>();
             cg.blocksRaycasts = false;
 
             HandDragHandler handler = mDragGhost.GetComponent<HandDragHandler>();
-            if (handler != null)
-                Destroy(handler);
+            Destroy(handler);
         }
 
         private void DestroyDragGhost()

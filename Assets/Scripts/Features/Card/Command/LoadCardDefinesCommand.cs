@@ -16,8 +16,6 @@ namespace Features.Card.Command
                 return;
 
             CardInfoContainer container = this.GetUtility<IBinaryDataMgr>().GetTable<CardInfoContainer>();
-            if (container == null)
-                return;
 
             foreach (CardInfo info in container.DataDic.Values)
             {

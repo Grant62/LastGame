@@ -1,7 +1,6 @@
 using Core.Architecture;
 using DG.Tweening;
 using Features.Combat.UI.Board;
-using Features.Hero.Model;
 using Features.Sword.Model;
 using QFramework;
 using UnityEngine;
@@ -10,25 +9,33 @@ namespace Features.Sword.UI
 {
     public class SwordUI : MonoBehaviour, IController
     {
-        [SerializeField] private Vector2 playerOffset = new(-0.5f, 0.5f);
-        [SerializeField] private Vector2 enemyOffset = new(0.5f, 0.5f);
+        [SerializeField] private float yOffset = 80f;
+
+        public float YOffset { get => yOffset; }
+
+        [SerializeField] private float skyY = 1000f;
         [SerializeField] private float moveDuration = 0.3f;
+        [SerializeField] private float entryDuration = 0.6f;
 
         private BoardPanel mBoard;
         private ISwordModel mSwordModel;
-        private IHeroModel mHeroModel;
         private Tween mMoveTween;
+        private bool mFirstMove = true;
 
         public IArchitecture GetArchitecture()
         {
             return GameMain.Interface;
         }
 
+        private void Awake()
+        {
+            transform.position = new Vector3(0, skyY, 0);
+        }
+
         public void Init(BoardPanel board)
         {
             mBoard = board;
             mSwordModel = this.GetModel<ISwordModel>();
-            mHeroModel = this.GetModel<IHeroModel>();
 
             mSwordModel.CurSlotIndex.Register(OnSwordSlotChanged)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
@@ -36,38 +43,16 @@ namespace Features.Sword.UI
 
         private void OnSwordSlotChanged(int slotIndex)
         {
-            if (mBoard == null || slotIndex < 0)
+            if (slotIndex < 0)
                 return;
 
             RectTransform slot = mBoard.GetSlotTransform(slotIndex);
-            if (slot == null)
-                return;
+            Vector3 targetPos = slot.position + new Vector3(0, yOffset, 0);
 
-            Vector3 targetPos = CalculateTargetPosition(slotIndex, slot);
-            AnimateTo(targetPos);
-        }
-
-        private Vector3 CalculateTargetPosition(int slotIndex, RectTransform slot)
-        {
-            if (mBoard.TryGetEnemyAtSlot(slotIndex, out EnemyUI enemy))
-            {
-                float side = slotIndex > mHeroModel.CurSlotIndex.Value ? 1f : -1f;
-                return enemy.transform.position + new Vector3(side * Mathf.Abs(enemyOffset.x), enemyOffset.y, 0);
-            }
-
-            if (slotIndex == mHeroModel.CurSlotIndex.Value)
-            {
-                float behind = mHeroModel.IsFacingRight.Value ? -1f : 1f;
-                return slot.position + new Vector3(behind * Mathf.Abs(playerOffset.x), playerOffset.y, 0);
-            }
-
-            return slot.position;
-        }
-
-        private void AnimateTo(Vector3 target)
-        {
             mMoveTween?.Kill();
-            mMoveTween = transform.DOMove(target, moveDuration).SetEase(Ease.OutCubic);
+            float duration = mFirstMove ? entryDuration : moveDuration;
+            mMoveTween = transform.DOMove(targetPos, duration).SetEase(Ease.OutCubic);
+            mFirstMove = false;
         }
     }
 }

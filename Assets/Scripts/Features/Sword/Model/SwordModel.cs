@@ -6,7 +6,6 @@ namespace Features.Sword.Model
     public class SwordModel : AbstractModel, ISwordModel
     {
         public BindableProperty<int> CurSlotIndex { get; } = new(-1);
-        public BindableProperty<bool> IsSummoned { get; } = new();
 
         public BindableProperty<bool> IsSpinning { get; } = new();
         public BindableProperty<int> SpinDamage { get; } = new();
@@ -15,6 +14,7 @@ namespace Features.Sword.Model
         public bool IsSpiritAttached { get; set; }
         public bool HasTurnStartSpiritSpawn { get; set; }
         public bool HasReactiveSpiritSpawn { get; set; }
+        public bool SuppressPathDamage { get; set; }
 
         public List<int> SpiritSwordSlots { get; } = new();
         public EasyEvent OnSpiritSwordsChanged { get; } = new();

@@ -23,8 +23,7 @@ namespace Features.Combat.UI.HUD
             mPileGrid = FindFirstObjectByType<PileGridPanel>(FindObjectsInactive.Include);
 
             Button btn = GetComponent<Button>();
-            if (btn != null)
-                btn.onClick.AddListener(OnClick);
+            btn.onClick.AddListener(OnClick);
         }
 
         private void OnClick()

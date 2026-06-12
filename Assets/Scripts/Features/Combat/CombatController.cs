@@ -1,14 +1,11 @@
 using System.Collections.Generic;
 using Configuration.ExcelData.Container;
-using Configuration.ExcelData.DataClass;
 using Core.Architecture;
 using Core.Systems;
+using Features.Card;
 using Features.Card.Command;
-using Features.Card.Data;
-using Features.Card.Define;
 using Features.Card.Interfaces;
 using Features.Card.Pool;
-using Features.Card.System;
 using Features.Card.UI;
 using Features.Combat.Command;
 using Features.Combat.Event;
@@ -19,7 +16,6 @@ using Features.Hero.Command;
 using Features.Hero.Define;
 using Features.Hero.Model;
 using Features.Hero.View;
-using Features.Sword.Command;
 using Features.Sword.Model;
 using Features.Sword.UI;
 using QFramework;
@@ -43,9 +39,6 @@ namespace Features.Combat
 
         [Header("Cursor")]
         [SerializeField] private GameObject cursorViewPrefab;
-
-        [Header("Hover")]
-        [SerializeField] private float cardHoverOffset = 150f;
 
         [Header("Sword")]
         [SerializeField] private SwordUI swordPrefab;
@@ -81,11 +74,11 @@ namespace Features.Combat
 
             GameMain.Interface.RegisterUtility<ITargetSelector>(new TargetSelector(mHeroUI));
 
-            Transform overlayTrans = overlayCanvas != null ? overlayCanvas.transform : transform;
+            Transform overlayTrans = overlayCanvas.transform;
 
             CardUI hoverCard = Instantiate(cardUIPrefab, overlayTrans);
             GameMain.Interface.RegisterUtility<ICardHoverDisplay>(
-                new CardHoverDisplay(hoverCard, cardHoverOffset));
+                new CardHoverDisplay(hoverCard));
 
             GameObject arrowView = Instantiate(arrowViewPrefab, overlayTrans);
             GameObject arrowHead = arrowView.transform.Find("Head").gameObject;
@@ -95,6 +88,9 @@ namespace Features.Combat
 
             GameObject cursorView = Instantiate(cursorViewPrefab, overlayTrans);
             GameMain.Interface.RegisterUtility<ICursorDisplay>(new CursorDisplay(cursorView));
+
+            EntryInfoContainer entryContainer = this.GetUtility<IBinaryDataMgr>().GetTable<EntryInfoContainer>();
+            GameMain.Interface.RegisterUtility<IKeywordResolver>(new KeywordResolver(entryContainer));
 
             GameMain.Interface.SendEvent<GameReadyEvent>();
         }
@@ -106,7 +102,7 @@ namespace Features.Combat
             InitHero();
             InitSword();
             InitSpiritSwordTracking();
-            InitEnemies();
+            this.SendCommand<InitEnemiesCommand>();
             InitDeck();
 
             this.RegisterEvent<PlayerMoveExecutedEvent>(OnPlayerMoved)
@@ -117,23 +113,7 @@ namespace Features.Combat
 
         private void OnPlayerMoved(PlayerMoveExecutedEvent e)
         {
-            ISwordModel sword = this.GetModel<ISwordModel>();
-            int swordShiftedTo = -1;
-
-            board.ShiftEnemies(e.OldSlotIndex, e.NewSlotIndex,
-                (oldSlot, newSlot) =>
-                {
-                    if (sword.IsSummoned.Value && sword.CurSlotIndex.Value == oldSlot)
-                        swordShiftedTo = newSlot;
-                },
-                () =>
-                {
-                    if (swordShiftedTo >= 0)
-                    {
-                        this.SendCommand(new UpdateSwordSlotCommand(-1));
-                        this.SendCommand(new UpdateSwordSlotCommand(swordShiftedTo));
-                    }
-                });
+            board.ShiftEnemies(e.OldSlotIndex, e.NewSlotIndex);
         }
 
         private void InitHero()
@@ -161,7 +141,6 @@ namespace Features.Combat
             ISwordModel sword = this.GetModel<ISwordModel>();
             IHeroModel hero = this.GetModel<IHeroModel>();
             sword.CurSlotIndex.Value = hero.CurSlotIndex.Value;
-            sword.IsSummoned.Value = true;
         }
 
         private void InitSpiritSwordTracking()
@@ -185,7 +164,8 @@ namespace Features.Combat
                 spiritView.GetComponent<Image>().color = Color.black;
                 mSpiritSwordViews.Add(spiritView);
 
-                spiritView.transform.position = board.GetSlotTransform(slotIndex).position;
+                spiritView.transform.position = board.GetSlotTransform(slotIndex).position
+                                                + Vector3.up * swordPrefab.YOffset;
             }
         }
 
@@ -220,31 +200,7 @@ namespace Features.Combat
                 return;
             }
 
-            LoadDeckFromExcel();
-        }
-
-        private void LoadDeckFromExcel()
-        {
-            IBinaryDataMgr dataMgr = this.GetUtility<IBinaryDataMgr>();
-            CardInfoContainer cardContainer = dataMgr.GetTable<CardInfoContainer>();
-            StartingCardInfoContainer startContainer = dataMgr.GetTable<StartingCardInfoContainer>();
-            Dictionary<string, int> nameToId = new();
-            foreach (CardInfo info in cardContainer.DataDic.Values)
-                nameToId[info.Name] = info.CardId;
-
-            ICardDefineModel defines = this.GetModel<ICardDefineModel>();
-            List<CardData> deck = new();
-
-            foreach (StartingCardInfo start in startContainer.DataDic.Values)
-            {
-                if (nameToId.TryGetValue(start.CardName, out int cardId)
-                    && defines.TryGet(cardId, out CardDefine define))
-                {
-                    deck.Add(define.CreateCardData());
-                }
-            }
-
-            this.GetSystem<ICardSystem>().InitLibrary(deck);
+            this.SendCommand<LoadDeckFromExcelCommand>();
         }
     }
 }

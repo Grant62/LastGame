@@ -15,8 +15,6 @@ namespace Features.Sword.System
             if (cardData.SlotAction == SlotAction.MoveSword)
             {
                 ISwordModel sword = this.GetModel<ISwordModel>();
-                if (!sword.IsSummoned.Value)
-                    return false;
 
                 return true;
             }

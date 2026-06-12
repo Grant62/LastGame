@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Core.Systems;
 
 namespace Features.Combat.Targeting
@@ -9,6 +8,7 @@ namespace Features.Combat.Targeting
     {
         private readonly Func<IReadOnlyList<IDamageable>> mEnemyProvider;
         private readonly IRandomSystem mRandomSystem;
+        private readonly ITargetable[] mSingleTarget = new ITargetable[1];
 
         public EnemyTargetResolver(Func<IReadOnlyList<IDamageable>> enemyProvider, IRandomSystem randomSystem)
         {
@@ -25,15 +25,24 @@ namespace Features.Combat.Targeting
                     IReadOnlyList<IDamageable> enemies = mEnemyProvider();
                     if (enemies.Count == 0)
                         return Array.Empty<ITargetable>();
-                    return new ITargetable[] { enemies[mRandomSystem.Range(0, enemies.Count, RandomModuleIds.Combat)] };
+                    mSingleTarget[0] = enemies[mRandomSystem.Range(0, enemies.Count, RandomModuleIds.Combat)];
+                    return mSingleTarget;
                 }
                 case TargetType.AllEnemies:
-                    return mEnemyProvider().Cast<ITargetable>().ToArray();
+                    return ConvertAll(mEnemyProvider());
                 case TargetType.Self:
                     return caster != null ? new[] { caster } : Array.Empty<ITargetable>();
                 default:
                     return Array.Empty<ITargetable>();
             }
+        }
+
+        private static ITargetable[] ConvertAll(IReadOnlyList<IDamageable> list)
+        {
+            ITargetable[] result = new ITargetable[list.Count];
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i];
+            return result;
         }
     }
 }

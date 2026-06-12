@@ -10,7 +10,6 @@ namespace Configuration.ExcelData.DataClass
         public string Desc;
         public string IconAddress;
         public int Price;
-        public int UnlockLevel;
         public int UpgradeId;
     }
 }

@@ -1,4 +1,5 @@
 using Core.Architecture;
+using DG.Tweening;
 using Features.Card.Data;
 using QFramework;
 using UnityEngine;
@@ -28,12 +29,18 @@ namespace Features.Card.UI
             CardData = data;
             Title.text = data.Name;
             Desc.text = data.Desc;
-            Cost.text = data.Cost.ToString();
+            Cost.text = data.Cost == -1 ? "X" : data.Cost.ToString();
             TypeText.text = data.Type;
             Price.text = data.Price.ToString();
 
             Sprite loaded = LoadIcon(data.IconAddress);
             CardImage.sprite = loaded != null ? loaded : mDefaultSprite;
+
+            RectTransform rect = GetComponent<RectTransform>();
+            rect.DOKill();
+            CanvasGroup cg = GetComponentInChildren<CanvasGroup>();
+            cg.DOKill();
+            cg.alpha = 1f;
         }
 
         public void Reset()

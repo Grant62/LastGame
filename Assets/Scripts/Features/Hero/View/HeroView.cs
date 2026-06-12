@@ -1,6 +1,8 @@
 using Core.Architecture;
 using DG.Tweening;
 using Features.Combat.Targeting;
+using Features.Combat.UI;
+using Features.Combat.UI.Board;
 using Features.Hero.Command;
 using Features.Hero.Model;
 using QFramework;
@@ -14,6 +16,7 @@ namespace Features.Hero.View
         private IHeroModel mHeroModel;
         private Tween mHealthTween;
         private Transform mSpineTrans;
+        private SkeletonGraphic mSkeleton;
 
         public Vector3 Position { get => transform.position; }
 
@@ -42,7 +45,11 @@ namespace Features.Hero.View
         private void Start()
         {
             mHeroModel = this.GetModel<IHeroModel>();
-            mSpineTrans = GetComponentInChildren<SkeletonGraphic>().transform;
+            mSkeleton = GetComponentInChildren<SkeletonGraphic>();
+            mSpineTrans = mSkeleton.transform;
+
+            mSkeleton.AnimationState.SetAnimation(0, "appear", false)
+                .Complete += _ => mSkeleton.AnimationState.SetAnimation(0, "ready", true);
 
             mHeroModel.Health.RegisterWithInitValue(_ => RefreshHealthBar(true))
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
@@ -50,6 +57,16 @@ namespace Features.Hero.View
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
             mHeroModel.IsFacingRight.RegisterWithInitValue(OnFacingChanged)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
+            mHeroModel.CurSlotIndex.Register(OnSlotChanged)
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+        }
+
+        private void OnSlotChanged(int slotIndex)
+        {
+            BoardPanel board = GameMain.Interface.GetUtility<IBoardAccess>().Board;
+            RectTransform target = board.GetSlotTransform(slotIndex);
+            transform.SetParent(target);
+            transform.DOLocalMove(Vector3.zero, 0.15f).SetEase(Ease.OutCubic);
         }
 
         private void OnFacingChanged(bool facingRight)

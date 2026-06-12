@@ -24,19 +24,17 @@ namespace Features.Card.Effects
             int playerSlot = heroModel.CurSlotIndex.Value;
 
             BoardPanel board = Ctx.BoardAccess.Board;
-            if (board == null) return;
 
             List<int> swordSlots = new();
-            if (swordModel.IsSummoned.Value && swordModel.CurSlotIndex.Value >= 0)
+            if (swordModel.CurSlotIndex.Value >= 0)
                 swordSlots.Add(swordModel.CurSlotIndex.Value);
             swordSlots.AddRange(swordModel.SpiritSwordSlots);
 
             HashSet<int> covered = LinkSwordsEffect.GetCoveredSlots(playerSlot, swordSlots);
 
-            foreach (EnemyUI enemy in board.EnemyViews)
+            foreach (EnemyUI enemy in board.GetActiveEnemies())
             {
-                if (enemy != null && enemy.isActiveAndEnabled
-                                  && enemy.IsValidTarget && covered.Contains(enemy.SlotIndex))
+                if (enemy.IsValidTarget && covered.Contains(enemy.SlotIndex))
                     StatusHelper.ApplyStatus(enemy.Statuses, mStatusType, mStacks);
             }
         }
