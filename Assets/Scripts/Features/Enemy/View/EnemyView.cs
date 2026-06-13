@@ -3,6 +3,8 @@ using Core.Architecture;
 using DG.Tweening;
 using Features.Combat.Event;
 using Features.Combat.Targeting;
+using Features.Combat.View;
+using Features.Enemy.Command;
 using QFramework;
 using UnityEngine;
 
@@ -12,7 +14,10 @@ namespace Features.Enemy.View
     {
         private int mHealth;
         private int mMaxHealth;
+        private int mArmor;
         private Tween mHealthTween;
+
+        [SerializeField] private ShieldView shieldView;
 
         public int MonsterId { get; private set; }
         public int Damage { get; private set; }
@@ -34,23 +39,43 @@ namespace Features.Enemy.View
             MonsterId = monsterId;
             mHealth = maxHealth;
             mMaxHealth = maxHealth;
+            mArmor = 0;
             Damage = damage;
             RefreshHealthBar(false);
+            shieldView.SetArmor(0);
         }
 
         public void TakeDamage(int amount)
         {
+            this.SendCommand(new EnemyTakeDamageCommand(this, amount));
+        }
+
+        public void ApplyDamage(int amount)
+        {
             if (amount <= 0)
                 return;
 
-            mHealth -= amount;
-            mHealth = Mathf.Max(0, mHealth);
-            RefreshHealthBar(true);
+            int remaining = amount;
 
-            if (mHealth <= 0)
+            if (mArmor > 0)
             {
-                gameObject.SetActive(false);
-                GameMain.Interface.SendEvent(new EnemyDiedEvent(SlotIndex));
+                int absorbed = Mathf.Min(mArmor, remaining);
+                mArmor -= absorbed;
+                remaining -= absorbed;
+                shieldView.SetArmor(mArmor);
+            }
+
+            if (remaining > 0)
+            {
+                mHealth -= remaining;
+                mHealth = Mathf.Max(0, mHealth);
+                RefreshHealthBar(true);
+
+                if (mHealth <= 0)
+                {
+                    gameObject.SetActive(false);
+                    GameMain.Interface.SendEvent(new EnemyDiedEvent(SlotIndex));
+                }
             }
         }
 
@@ -66,7 +91,16 @@ namespace Features.Enemy.View
 
         public void GainArmor(int amount)
         {
-            TakeHeal(amount);
+            this.SendCommand(new EnemyGainArmorCommand(this, amount));
+        }
+
+        public void ApplyArmor(int amount)
+        {
+            if (amount <= 0)
+                return;
+
+            mArmor += amount;
+            shieldView.SetArmor(mArmor);
         }
 
         private void RefreshHealthBar(bool animate)

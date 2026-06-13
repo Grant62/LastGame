@@ -9,6 +9,7 @@ namespace Features.Card.Utility
     public class CardViewPool : ICardViewPool
     {
         private readonly SimpleObjectPool<CardView> mPool;
+        private readonly Transform mPoolRoot;
 
         public CardViewPool(CardView prefab)
         {
@@ -17,6 +18,11 @@ namespace Features.Card.Utility
                 null,
                 5
             );
+
+            GameObject go = new("[Pool] CardView");
+            go.SetActive(false);
+            Object.DontDestroyOnLoad(go);
+            mPoolRoot = go.transform;
         }
 
         public CardView Get(CardData data, Transform parent)
@@ -30,7 +36,7 @@ namespace Features.Card.Utility
         public void Return(CardView view)
         {
             view.Reset();
-            view.transform.SetParent(null, false);
+            view.transform.SetParent(mPoolRoot, false);
             mPool.Recycle(view);
         }
     }

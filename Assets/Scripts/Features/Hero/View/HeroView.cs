@@ -2,8 +2,8 @@ using Core.Architecture;
 using DG.Tweening;
 using Features.Combat.Targeting;
 using Features.Combat.Utility;
+using Features.Combat.View;
 using Features.Combat.View.Board;
-using Features.Enemy.View;
 using Features.Hero.Command;
 using Features.Hero.Model;
 using QFramework;
@@ -18,6 +18,7 @@ namespace Features.Hero.View
         private Tween mHealthTween;
         private Transform mSpineTrans;
         private SkeletonGraphic mSkeleton;
+        [SerializeField] private ShieldView shieldView;
 
         public Vector3 Position { get => transform.position; }
 
@@ -59,6 +60,8 @@ namespace Features.Hero.View
             mHeroModel.IsFacingRight.RegisterWithInitValue(OnFacingChanged)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
             mHeroModel.CurSlotIndex.Register(OnSlotChanged)
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+            mHeroModel.Armor.RegisterWithInitValue(shieldView.SetArmor)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 

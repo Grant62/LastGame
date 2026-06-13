@@ -3,12 +3,14 @@ using Core.Architecture;
 using DG.Tweening;
 using Features.Card.Command;
 using Features.Card.Data;
-using Features.Card.Model;
+using Features.Card.Interfaces;
+using Features.Card.UI;
 using Features.Combat.System;
 using Features.Combat.Targeting;
 using Features.Combat.Targeting.Command;
 using Features.Hero.Command;
 using Features.Hero.Model;
+using Features.Resource.System;
 using Features.Sword.Command;
 using Features.Sword.System;
 using QFramework;
@@ -17,13 +19,19 @@ using UnityEngine.EventSystems;
 
 namespace Features.Card.View
 {
-    public class HandDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IController
+    public class HandDragHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IController
     {
-        private Canvas mTargetCanvas;
         private ISlotTargetSystem mSlotSystem;
         private CardView mCardView;
-        private GameObject mDragGhost;
+        private RectTransform mLayoutRoot;
         private bool mIsDragging;
+        private Vector2 mOriginalPos;
+        private Vector3 mOriginalRotation;
+        private int mOriginalSiblingIndex;
+        private Vector2 mDragOffset;
+
+        [SerializeField] private float dragReleaseYThreshold = 300f;
+        [SerializeField] private float snapBackDuration = 0.15f;
 
         private readonly PointerEventData mCachedPed = new(EventSystem.current);
         private readonly List<RaycastResult> mCachedResults = new();
@@ -36,60 +44,98 @@ namespace Features.Card.View
         private void Start()
         {
             mCardView = GetComponent<CardView>();
-            mTargetCanvas = GetComponentInParent<Canvas>();
+            mLayoutRoot = GetComponentInParent<HandPanel>().LayoutRoot;
             mSlotSystem = this.GetSystem<ISlotTargetSystem>();
         }
 
-        public void OnBeginDrag(PointerEventData eventData)
+        public void OnPointerDown(PointerEventData eventData)
         {
-            if (mCardView == null || mCardView.CardData == null)
-                return;
             if (!this.GetSystem<IInteractionSystem>().CanInteract())
+                return;
+
+            if (!this.GetSystem<IResourceSystem>().CanSpend(mCardView.CardData.Cost))
                 return;
 
             mIsDragging = true;
             this.GetSystem<IInteractionSystem>().BeginDrag();
-            GetComponent<RectTransform>().DOKill();
-            CreateDragGhost(eventData.position);
+
+            RectTransform rect = GetComponent<RectTransform>();
+            rect.DOKill();
+            mOriginalPos = rect.anchoredPosition;
+            mOriginalRotation = rect.localEulerAngles;
+            mOriginalSiblingIndex = rect.GetSiblingIndex();
+            rect.SetAsLastSibling();
 
             if (IsTargetingCard())
+            {
                 this.SendCommand(new StartTargetingCommand(transform.position));
+            }
+            else
+            {
+                GetArchitecture().GetUtility<ICardHoverDisplay>().Hide();
+                GetComponentInChildren<CanvasGroup>().alpha = 1f;
+                rect.localEulerAngles = Vector3.zero;
+
+                Vector2 cardScreenPos = RectTransformUtility.WorldToScreenPoint(null, rect.position);
+                mDragOffset = cardScreenPos - eventData.position;
+            }
         }
 
-        public void OnDrag(PointerEventData eventData)
+        public void OnPointerUp(PointerEventData eventData)
         {
-            if (!mIsDragging || mDragGhost == null)
-                return;
-
-            mDragGhost.transform.position = eventData.position;
-        }
-
-        public void OnEndDrag(PointerEventData eventData)
-        {
-            if (!mIsDragging || mCardView == null || mCardView.CardData == null)
+            if (!mIsDragging)
                 return;
 
             mIsDragging = false;
             this.GetSystem<IInteractionSystem>().EndDrag();
             this.SendCommand<EndTargetingCommand>();
 
-            bool played = false;
+            if (IsTargetingCard())
+            {
+                GetArchitecture().GetUtility<ICardHoverDisplay>().Hide();
+                GetComponentInChildren<CanvasGroup>().alpha = 1f;
+            }
+
+            bool played;
 
             if (IsEnemyTargetCard())
                 played = PlayWithEnemyTarget(eventData.position);
             else if (IsSlotTargetCard())
                 played = PlayWithSlotTarget(eventData.position);
             else
-                played = PlayNormal();
-
-            DestroyDragGhost();
+                played = PlayNormal(eventData.position);
 
             if (!played)
             {
-                ICardModel model = this.GetModel<ICardModel>();
-                if (model.HandPile.Contains(mCardView.CardData))
-                    return;
+                if (IsTargetingCard())
+                {
+                    GetComponent<RectTransform>().SetSiblingIndex(mOriginalSiblingIndex);
+                    GetComponent<RectTransform>().localEulerAngles = mOriginalRotation;
+                }
+                else
+                {
+                    SnapBack();
+                }
             }
+        }
+
+        private void Update()
+        {
+            if (!mIsDragging || IsTargetingCard())
+                return;
+
+            Vector2 target = (Vector2)Input.mousePosition + mDragOffset;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                mLayoutRoot, target, null, out Vector2 localPos);
+            GetComponent<RectTransform>().anchoredPosition = localPos;
+        }
+
+        private void SnapBack()
+        {
+            RectTransform rect = GetComponent<RectTransform>();
+            rect.DOAnchorPos(mOriginalPos, snapBackDuration).SetEase(Ease.OutCubic);
+            rect.DOLocalRotate(mOriginalRotation, snapBackDuration).SetEase(Ease.OutCubic);
+            rect.SetSiblingIndex(mOriginalSiblingIndex);
         }
 
         private bool PlayWithEnemyTarget(Vector2 screenPos)
@@ -138,8 +184,11 @@ namespace Features.Card.View
             return true;
         }
 
-        private bool PlayNormal()
+        private bool PlayNormal(Vector2 screenPos)
         {
+            if (screenPos.y < dragReleaseYThreshold)
+                return false;
+
             this.SendCommand(new PlayCardCommand(mCardView.CardData));
             return true;
         }
@@ -181,25 +230,6 @@ namespace Features.Card.View
         private bool IsSlotTargetCard()
         {
             return mCardView.CardData.NeedsSlotTarget;
-        }
-
-        private void CreateDragGhost(Vector2 position)
-        {
-            mDragGhost = Instantiate(gameObject, mTargetCanvas.transform);
-            mDragGhost.transform.position = position;
-            mDragGhost.transform.SetAsLastSibling();
-
-            CanvasGroup cg = mDragGhost.GetComponent<CanvasGroup>();
-            cg.blocksRaycasts = false;
-
-            HandDragHandler handler = mDragGhost.GetComponent<HandDragHandler>();
-            Destroy(handler);
-        }
-
-        private void DestroyDragGhost()
-        {
-            Destroy(mDragGhost);
-            mDragGhost = null;
         }
     }
 }

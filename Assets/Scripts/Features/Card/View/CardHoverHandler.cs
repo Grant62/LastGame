@@ -23,30 +23,27 @@ namespace Features.Card.View
         {
             mCardView = GetComponent<CardView>();
             mCanvasGroup = GetComponentInChildren<CanvasGroup>();
-            mDisplay = GameMain.Interface.GetUtility<ICardHoverDisplay>();
+            mDisplay = GetArchitecture().GetUtility<ICardHoverDisplay>();
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (mCardView.CardData == null)
-                return;
             if (!this.GetSystem<IInteractionSystem>().CanHover())
                 return;
 
-            mCanvasGroup.alpha = 0f;
             HandPanel panel = GetComponentInParent<HandPanel>();
+
+            mCanvasGroup.alpha = 0f;
             Vector3 hoverPos = transform.position;
             hoverPos.y = panel.HoverCardY;
             mDisplay.Show(mCardView.CardData, hoverPos);
-
-            IKeywordResolver resolver = GameMain.Interface.GetUtility<IKeywordResolver>();
-            string keywords = resolver.ResolveKeywords(mCardView.CardData.Desc);
-            if (!string.IsNullOrEmpty(keywords))
-                Debug.Log(keywords);
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
+            if (this.GetSystem<IInteractionSystem>().IsDragging)
+                return;
+
             mCanvasGroup.alpha = 1f;
             mDisplay.Hide();
         }

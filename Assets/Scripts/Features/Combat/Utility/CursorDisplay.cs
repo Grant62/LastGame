@@ -1,4 +1,3 @@
-using Features.Combat.Targeting;
 using UnityEngine;
 
 namespace Features.Combat.Utility

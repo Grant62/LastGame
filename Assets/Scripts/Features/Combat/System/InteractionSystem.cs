@@ -1,4 +1,3 @@
-using Features.Combat.System;
 using Features.Hero.Model;
 using QFramework;
 
@@ -32,6 +31,9 @@ namespace Features.Combat.System
                 return false;
 
             if (IsDragging)
+                return false;
+
+            if (IsAnimating)
                 return false;
 
             return true;

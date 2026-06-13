@@ -65,7 +65,6 @@ namespace Features.Card.UI
             foreach (CardData d in handPile) mCurrentSet.Add(d);
             mAddedSet.Clear();
 
-            int totalCount = mCardOrder.Count;
             for (int i = mCardOrder.Count - 1; i >= 0; i--)
             {
                 CardView card = mCardOrder[i];
@@ -106,10 +105,11 @@ namespace Features.Card.UI
                 RectTransform rect = card.GetComponent<RectTransform>();
 
                 rect.DOKill();
-                float delay = newCards.Contains(card.CardData) ? i * drawStagger : 0f;
+                bool isNew = newCards.Contains(card.CardData);
+                float delay = isNew ? i * drawStagger : 0f;
                 bool isLast = i == count - 1;
 
-                if (delay > 0f)
+                if (isNew)
                 {
                     rect.anchoredPosition = drawOrigin;
                     TweenerCore<Vector2, Vector2, VectorOptions> tween = rect.DOAnchorPos(mCardPositions[i], layoutDuration)

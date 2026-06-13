@@ -20,24 +20,38 @@ MonoBehaviour:
     NameToFullName: []
     BindInfos:
     - TypeName: UnityEngine.UI.Image
-      PathToRoot: HealthBar/BarFill
-      MemberName: BarFill
+      PathToRoot: CardImage
+      MemberName: CardImage
     - TypeName: TMPro.TextMeshProUGUI
-      PathToRoot: HealthBar/Label
-      MemberName: Label
-    ScriptsFolder: Assets/Scripts/Features/Hero/View
-    ClassName: HeroView
-    Namespace: Features.Hero.View
+      PathToRoot: CardImage/Cost
+      MemberName: Cost
+    - TypeName: TMPro.TextMeshProUGUI
+      PathToRoot: CardImage/TitleImage/Title
+      MemberName: Title
+    - TypeName: TMPro.TextMeshProUGUI
+      PathToRoot: CardImage/DescImage/Desc
+      MemberName: Desc
+    - TypeName: TMPro.TextMeshProUGUI
+      PathToRoot: CardImage/TypeText
+      MemberName: TypeText
+    - TypeName: TMPro.TextMeshProUGUI
+      PathToRoot: CardImage/Price
+      MemberName: Price
+    ScriptsFolder: Assets/Scripts/Features/Card/View
+    ClassName: CardView
+    Namespace: Features.Card.View
     MainCode: "using UnityEngine;\r\nusing QFramework;\r\n// 1.\u8BF7\u5728\u83DC\u5355
       \u7F16\u8F91\u5668\u6269\u5C55/Namespace Settings \u91CC\u8BBE\u7F6E\u547D\u540D\u7A7A\u95F4\r\n//
       2.\u547D\u540D\u7A7A\u95F4\u66F4\u6539\u540E\uFF0C\u751F\u6210\u4EE3\u7801\u4E4B\u540E\uFF0C\u9700\u8981\u628A\u903B\u8F91\u4EE3\u7801\u6587\u4EF6\uFF08\u975E
       Designer\uFF09\u7684\u547D\u540D\u7A7A\u95F4\u624B\u52A8\u66F4\u6539\r\nnamespace
-      Features.Hero.View\r\n{\r\n\tpublic partial class HeroView : ViewController\r\n\t{\r\n\t\tvoid
+      Features.Card.View\r\n{\r\n\tpublic partial class CardView : ViewController\r\n\t{\r\n\t\tvoid
       Start()\r\n\t\t{\r\n\t\t\t// Code Here\r\n\t\t}\r\n\t}\r\n}\r\n"
-    DesignerCode: "// Generate Id:9890426d-9444-4f81-af72-e47c5a121304\r\nusing UnityEngine;\r\n//
+    DesignerCode: "// Generate Id:66768887-9ad4-4cb5-af56-f80020db91ba\r\nusing UnityEngine;\r\n//
       1.\u8BF7\u5728\u83DC\u5355 \u7F16\u8F91\u5668\u6269\u5C55/Namespace Settings
       \u91CC\u8BBE\u7F6E\u547D\u540D\u7A7A\u95F4\r\n// 2.\u547D\u540D\u7A7A\u95F4\u66F4\u6539\u540E\uFF0C\u751F\u6210\u4EE3\u7801\u4E4B\u540E\uFF0C\u9700\u8981\u628A\u903B\u8F91\u4EE3\u7801\u6587\u4EF6\uFF08\u975E
       Designer\uFF09\u7684\u547D\u540D\u7A7A\u95F4\u624B\u52A8\u66F4\u6539\r\nnamespace
-      Features.Hero.View\r\n{\r\n\tpublic partial class HeroView\r\n\t{\r\n\t\tpublic
-      UnityEngine.UI.Image BarFill;\r\n\t\tpublic TMPro.TextMeshProUGUI Label;\r\n\t\tpublic
-      UnityEngine.RectTransform HeroTrans;\r\n\t}\r\n}\r\n"
+      Features.Card.View\r\n{\r\n\tpublic partial class CardView\r\n\t{\r\n\t\tpublic
+      UnityEngine.UI.Image CardImage;\r\n\t\tpublic TMPro.TextMeshProUGUI Cost;\r\n\t\tpublic
+      TMPro.TextMeshProUGUI Title;\r\n\t\tpublic TMPro.TextMeshProUGUI Desc;\r\n\t\tpublic
+      TMPro.TextMeshProUGUI TypeText;\r\n\t\tpublic TMPro.TextMeshProUGUI Price;\r\n\t\tpublic
+      UnityEngine.UI.Image OutlineImage;\r\n\t}\r\n}\r\n"

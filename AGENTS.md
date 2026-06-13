@@ -1061,10 +1061,10 @@ BackgroundCanvas（order 0）
 
 GameCanvas（order 10）
 ────────────────────────────────────────
-  BoardPanel（棋盘面板 + SlotUI 格子）
-    ├── EnemyUI（敌人，SkeletonGraphic + 血条 Image）
-    └── SwordUI（飞剑，Image）
-  HeroUI（玩家，SkeletonGraphic）
+  BoardPanel（棋盘面板 + SlotView 格子）
+    ├── EnemyView（敌人，SkeletonGraphic + 血条 Image）
+    └── SwordView（飞剑，Image）
+  HeroView（玩家，SkeletonGraphic）
   HandPanel（手牌布局，CardView Image + TMP_Text）
   TopBarPanel（血量/金币/层数）
   结束回合按钮
@@ -1083,8 +1083,8 @@ OverlayCanvas（order 20）
 | 渲染层 | Sort Order | 内容 | 原因 |
 |---|---|---|---|
 | BackgroundCanvas | 0 | 背景、装饰 | 始终在最底层 |
-| GameCanvas | 10 | 所有游戏交互 UI（棋盘、敌人、英雄、手牌、状态栏） | 游戏主体内容 |
-| OverlayCanvas | 20 | 悬浮卡牌、拖拽幽灵、牌堆查看、弹窗、Arrow/Cursor | 必须覆盖在游戏 UI 之上 |
+| GameCanvas | 10 | 所有游戏交互 View（棋盘、敌人、英雄、手牌、状态栏） | 游戏主体内容 |
+| OverlayCanvas | 20 | 悬浮卡牌、拖拽幽灵、牌堆查看、界面UI、弹窗、Arrow/Cursor | 必须覆盖在游戏 View 之上 |
 | Spine 骨骼 | GameCanvas 下，`SkeletonGraphic` 组件 | Spine 官方提供 UGUI 支持 |
 
 ### 交互输入架构

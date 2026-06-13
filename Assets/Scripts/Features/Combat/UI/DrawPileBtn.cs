@@ -10,7 +10,7 @@ namespace Features.Combat.UI
     public partial class DrawPileBtn : ViewController, IController
     {
         private ICardModel mCardModel;
-        private PileGridPanel mPileGrid;
+        [SerializeField] private PileGridPanel pileGrid;
 
         public IArchitecture GetArchitecture()
         {
@@ -20,7 +20,6 @@ namespace Features.Combat.UI
         private void Start()
         {
             mCardModel = this.GetModel<ICardModel>();
-            mPileGrid = FindFirstObjectByType<PileGridPanel>(FindObjectsInactive.Include);
 
             Button btn = GetComponent<Button>();
             btn.onClick.AddListener(OnClick);
@@ -28,8 +27,7 @@ namespace Features.Combat.UI
 
         private void OnClick()
         {
-            if (mPileGrid != null)
-                mPileGrid.Open(mCardModel.Library);
+            pileGrid.Open(mCardModel.Library);
         }
     }
 }
