@@ -1,6 +1,7 @@
 using Features.Combat.Event;
-using Features.Combat.UI;
-using Features.Combat.UI.Board;
+using Features.Combat.Utility;
+using Features.Combat.View.Board;
+using Features.Enemy.View;
 using Features.Sword.Model;
 using QFramework;
 
@@ -19,7 +20,7 @@ namespace Features.Combat.System
             if (!sword.IsSpinning.Value || sword.SpinDamage.Value <= 0)
                 return;
 
-            BoardPanel board = this.GetUtility<IBoardAccess>().Board;
+            BoardView board = this.GetUtility<IBoardAccess>().Board;
 
             int slot = sword.CurSlotIndex.Value;
             int damage = sword.SpinDamage.Value;
@@ -33,9 +34,9 @@ namespace Features.Combat.System
             }
         }
 
-        private static void DamageEnemyAtSlot(BoardPanel board, int slot, int damage)
+        private static void DamageEnemyAtSlot(BoardView board, int slot, int damage)
         {
-            if (board.TryGetEnemyAtSlot(slot, out EnemyUI enemy) && enemy.IsValidTarget)
+            if (board.TryGetEnemyAtSlot(slot, out EnemyView enemy) && enemy.IsValidTarget)
             {
                 enemy.TakeDamage(damage);
             }

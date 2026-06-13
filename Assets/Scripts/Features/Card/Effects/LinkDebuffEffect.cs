@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Features.Combat.Targeting;
-using Features.Combat.UI.Board;
+using Features.Combat.View.Board;
+using Features.Enemy.View;
 using Features.Hero.Model;
 using Features.Sword.Model;
 
@@ -23,7 +24,7 @@ namespace Features.Card.Effects
             IHeroModel heroModel = Ctx.HeroModel;
             int playerSlot = heroModel.CurSlotIndex.Value;
 
-            BoardPanel board = Ctx.BoardAccess.Board;
+            BoardView board = Ctx.BoardAccess.Board;
 
             List<int> swordSlots = new();
             if (swordModel.CurSlotIndex.Value >= 0)
@@ -32,7 +33,7 @@ namespace Features.Card.Effects
 
             HashSet<int> covered = LinkSwordsEffect.GetCoveredSlots(playerSlot, swordSlots);
 
-            foreach (EnemyUI enemy in board.GetActiveEnemies())
+            foreach (EnemyView enemy in board.GetActiveEnemies())
             {
                 if (enemy.IsValidTarget && covered.Contains(enemy.SlotIndex))
                     StatusHelper.ApplyStatus(enemy.Statuses, mStatusType, mStacks);

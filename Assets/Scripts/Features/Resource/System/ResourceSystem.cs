@@ -15,7 +15,7 @@ namespace Features.Resource.System
         private void OnPlayerTurnStart(PlayerTurnStartEvent e)
         {
             IResourceModel model = this.GetModel<IResourceModel>();
-            model.CurEnergy.Value = Mathf.Min(model.CurEnergy.Value + model.PerTurnIncome, model.MaxEnergy.Value);
+            model.CurEnergy.Value = model.MaxEnergy.Value;
         }
 
         public bool CanSpend(int amount)

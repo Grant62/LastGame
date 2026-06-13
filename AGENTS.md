@@ -35,6 +35,27 @@ Assets/
 └── GameResource/         # 游戏资源
 ```
 
+#### 每个 Feature 模块的 QF 层级子目录约定
+
+每个模块按 QF 四层架构组织子目录，以 `Card/` 为例：
+
+```
+Features/Card/
+├── Command/      # AbstractCommand 实现
+├── System/       # ISystem 接口 + AbstractSystem 实现
+├── Model/        # IModel 接口 + AbstractModel 实现
+├── Utility/      # IUtility 接口 + 实现（统一放在此目录，不再散落各处）
+├── Event/        # 跨层级事件 struct
+├── Interfaces/   # 非 QF 层级的接口（如 ICardHoverDisplay 等 IUtility 接口也可放在这里）
+├── View/         # ViewController / MonoBehaviour + IController（运行时视图）
+├── UI/           # 由 CodeGenKit 生成的 ViewController（UI 面板）
+├── Effects/      # Effect 子类（纯数据+行为，无架构感知）
+├── Data/         # 纯数据类（CardData 等）
+└── Define/       # struct 定义（CardDefine 等）
+```
+
+> **关键规则：** IUtility 接口和实现统一放在 `Utility/` 目录下。System 接口和实现统一放在 `System/` 目录下。不要用业务领域名（如 `Targeting/`、`Interaction/`、`Pool/`）来替代 QF 层级目录。
+
 ## 构建 / 测试 / 代码分析命令
 
 本项目为 Unity 项目，所有命令通过 Unity Editor 或 CLI 运行。
@@ -250,7 +271,7 @@ public class GameMain : Architecture<GameMain>
 | System | `Init()` | 成就、计时、随机数 |
 | Model | `Init()` | 玩家数据、配置数据 |
 | 无状态 Utility | `Init()` | 存储(Storage)、日志(Logger) |
-| 持有场景引用的 Utility | Controller 的 `Awake()` | CursorDisplay、TargetSelector、CardViewPool |
+| 持有场景引用的 Utility | Controller 的 `Awake()` | ArrowDisplay、CursorDisplay、CardViewPool、CardHoverDisplay |
 
 运行时注册场景 Utility：
 ```csharp
@@ -1044,7 +1065,7 @@ GameCanvas（order 10）
     ├── EnemyUI（敌人，SkeletonGraphic + 血条 Image）
     └── SwordUI（飞剑，Image）
   HeroUI（玩家，SkeletonGraphic）
-  HandPanel（手牌布局，CardUI Image + TMP_Text）
+  HandPanel（手牌布局，CardView Image + TMP_Text）
   TopBarPanel（血量/金币/层数）
   结束回合按钮
 
@@ -1122,11 +1143,11 @@ GameMain.Interface.SendEvent<GameReadyEvent>();
 
 ### UGUI 卡牌组件
 
-`CardUI`（`Features/Card/UI/CardUI.cs`）是 UGUI 版的卡牌显示组件，挂载在 `Image` + `TMP_Text` 子控件构成的预制体上。通过 `ICardUIPool` 对象池管理生命周期。
+`CardView`（`Features/Card/View/CardView.cs`）是 UGUI 版的卡牌显示组件，挂载在 `Image` + `TMP_Text` 子控件构成的预制体上。通过 `ICardViewPool` 对象池管理生命周期。
 
-- 手牌：`HandUI`（`ViewController`）监听 `ICardModel.OnHandPileChanged`，通过 `ICardUIPool` 同步视图
+- 手牌：`HandPanel`（`ViewController`）监听 `ICardModel.OnHandPileChanged`，通过 `ICardViewPool` 同步视图
 - 拖拽：`HandDragHandler`（`IBeginDragHandler`/`IDragHandler`/`IEndDragHandler`）处理拖拽手势，创建拖拽幽灵卡牌，释放时走 `PlayCardCommand`
-- 网格查看器：`PileGridUI`（`ViewController` + `ScrollRect` + `GridLayoutGroup`）展示抽牌堆/弃牌堆/牌库
+- 网格查看器：`PileGridPanel`（`ViewController` + `ScrollRect` + `GridLayoutGroup`）展示抽牌堆/弃牌堆/牌库
 
 ### 卡牌定义（CardDefine → CardData）
 

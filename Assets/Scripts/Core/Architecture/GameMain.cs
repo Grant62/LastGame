@@ -1,9 +1,6 @@
 using Core.Systems;
-using Features.Card.Define;
 using Features.Card.Model;
 using Features.Card.System;
-using Features.Combat.EffectSystem;
-using Features.Combat.Interaction;
 using Features.Combat.System;
 using Features.Combat.Targeting.Model;
 using Features.Combat.Targeting.System;

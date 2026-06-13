@@ -1,6 +1,7 @@
 using Configuration.ExcelData.Container;
 using Configuration.ExcelData.DataClass;
 using Features.Card.Define;
+using Features.Card.Model;
 using QFramework;
 using Services.ExcelTool;
 

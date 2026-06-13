@@ -1,5 +1,6 @@
-using Features.Combat.UI;
-using Features.Combat.UI.Board;
+using Features.Combat.Utility;
+using Features.Combat.View.Board;
+using Features.Enemy.View;
 using QFramework;
 
 namespace Features.Combat.Command
@@ -8,7 +9,7 @@ namespace Features.Combat.Command
     {
         protected override void OnExecute()
         {
-            BoardPanel board = this.GetUtility<IBoardAccess>().Board;
+            BoardView board = this.GetUtility<IBoardAccess>().Board;
 
             const int centerSlot = 4;
             int[] hpValues = { 40, 50, 60, 70, 80 };
@@ -26,7 +27,7 @@ namespace Features.Combat.Command
             for (int i = 0; i < hpValues.Length; i++)
             {
                 int slotIndex = spawnOrder[i];
-                EnemyUI enemy = board.SpawnEnemy(slotIndex);
+                EnemyView enemy = board.SpawnEnemy(slotIndex);
                 enemy.Init(1000 + i, hpValues[i], dmgValues[i]);
             }
         }

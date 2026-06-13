@@ -1,8 +1,9 @@
 using Core.Systems;
 using Features.Combat.Event;
 using Features.Combat.Targeting;
-using Features.Combat.UI;
-using Features.Combat.UI.Board;
+using Features.Combat.Utility;
+using Features.Combat.View.Board;
+using Features.Enemy.View;
 using Features.Hero.Model;
 using Features.Sword.Model;
 using QFramework;
@@ -68,9 +69,9 @@ namespace Features.Combat.System
 
         private void OnEnemyTurnEnd(EnemyTurnEndEvent e)
         {
-            BoardPanel board = this.GetUtility<IBoardAccess>().Board;
+            BoardView board = this.GetUtility<IBoardAccess>().Board;
 
-            foreach (EnemyUI enemy in board.GetActiveEnemies())
+            foreach (EnemyView enemy in board.GetActiveEnemies())
                 StatusHelper.TickStatuses(enemy.Statuses);
         }
 

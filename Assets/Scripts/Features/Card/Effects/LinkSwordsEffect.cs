@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Features.Combat.Targeting;
-using Features.Combat.UI.Board;
+using Features.Combat.View.Board;
+using Features.Enemy.View;
 using Features.Hero.Model;
 using Features.Sword.Model;
 using UnityEngine;
@@ -53,13 +54,13 @@ namespace Features.Card.Effects
 
         private bool IsPenetrated(int playerSlot, List<int> swordSlots)
         {
-            BoardPanel board = Ctx.BoardAccess.Board;
+            BoardView board = Ctx.BoardAccess.Board;
             if (swordSlots.Count == 0)
                 return false;
 
             HashSet<int> covered = GetCoveredSlots(playerSlot, swordSlots);
 
-            foreach (EnemyUI enemy in board.GetActiveEnemies())
+            foreach (EnemyView enemy in board.GetActiveEnemies())
             {
                 if (enemy.IsValidTarget && !covered.Contains(enemy.SlotIndex))
                     return false;

@@ -10,7 +10,7 @@ namespace Features.Combat.Command
         protected override void OnExecute()
         {
             IResourceModel resource = this.GetModel<IResourceModel>();
-            resource.MaxEnergy.Value = 99;
+            resource.MaxEnergy.Value = 3;
             resource.CurEnergy.Value = resource.MaxEnergy.Value;
 
             this.GetSystem<ICardSystem>().StartBattleDraw();

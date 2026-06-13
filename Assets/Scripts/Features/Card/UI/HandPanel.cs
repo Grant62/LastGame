@@ -6,7 +6,8 @@ using DG.Tweening.Plugins.Options;
 using Features.Card.Data;
 using Features.Card.Interfaces;
 using Features.Card.Model;
-using Features.Combat.Interaction;
+using Features.Card.View;
+using Features.Combat.System;
 using QFramework;
 using UnityEngine;
 
@@ -25,9 +26,9 @@ namespace Features.Card.UI
         [SerializeField] private Vector2 discardOrigin = new(200, -400);
         [SerializeField] private float drawStagger = 0.1f;
 
-        private ICardUIPool mCardPool;
-        private readonly List<CardUI> mCardOrder = new();
-        private readonly Dictionary<CardData, CardUI> mCardLookup = new();
+        private ICardViewPool mCardPool;
+        private readonly List<CardView> mCardOrder = new();
+        private readonly Dictionary<CardData, CardView> mCardLookup = new();
         private readonly HashSet<CardData> mCurrentSet = new();
         private readonly HashSet<CardData> mAddedSet = new();
         private readonly List<Vector2> mCardPositions = new();
@@ -44,7 +45,7 @@ namespace Features.Card.UI
 
         private void Start()
         {
-            mCardPool = GameMain.Interface.GetUtility<ICardUIPool>();
+            mCardPool = GameMain.Interface.GetUtility<ICardViewPool>();
 
             ICardModel model = this.GetModel<ICardModel>();
             model.OnHandPileChanged.Register(OnHandPileChanged)
@@ -67,7 +68,7 @@ namespace Features.Card.UI
             int totalCount = mCardOrder.Count;
             for (int i = mCardOrder.Count - 1; i >= 0; i--)
             {
-                CardUI card = mCardOrder[i];
+                CardView card = mCardOrder[i];
                 if (!mCurrentSet.Contains(card.CardData))
                 {
                     mCardLookup.Remove(card.CardData);
@@ -81,7 +82,7 @@ namespace Features.Card.UI
             {
                 if (!mCardLookup.ContainsKey(data))
                 {
-                    CardUI card = mCardPool.Get(data, LayoutRoot);
+                    CardView card = mCardPool.Get(data, LayoutRoot);
                     mCardLookup.Add(data, card);
                     mCardOrder.Add(card);
                     mAddedSet.Add(data);
@@ -101,7 +102,7 @@ namespace Features.Card.UI
 
             for (int i = 0; i < count; i++)
             {
-                CardUI card = mCardOrder[i];
+                CardView card = mCardOrder[i];
                 RectTransform rect = card.GetComponent<RectTransform>();
 
                 rect.DOKill();
@@ -152,7 +153,7 @@ namespace Features.Card.UI
             }
         }
 
-        private void AnimateDiscard(CardUI card, float delay)
+        private void AnimateDiscard(CardView card, float delay)
         {
             RectTransform rect = card.GetComponent<RectTransform>();
             CanvasGroup cg = card.GetComponentInChildren<CanvasGroup>();

@@ -1,7 +1,7 @@
 using Core.Systems;
 using Features.Card.Model;
 using Features.Card.System;
-using Features.Combat.UI;
+using Features.Combat.Utility;
 using Features.Hero.Model;
 using Features.Resource.System;
 using Features.Sword.Model;

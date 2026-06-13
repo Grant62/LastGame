@@ -1,6 +1,7 @@
 using Core.Architecture;
-using Features.Combat.UI;
-using Features.Combat.UI.Board;
+using Features.Combat.Utility;
+using Features.Combat.View.Board;
+using Features.Enemy.View;
 using Features.Sword.Model;
 using QFramework;
 
@@ -36,14 +37,14 @@ namespace Features.Sword.Command
 
         private void DealPathDamageAndSpirits(int from, int to, ISwordModel model)
         {
-            BoardPanel board = GameMain.Interface.GetUtility<IBoardAccess>().Board;
+            BoardView board = GameMain.Interface.GetUtility<IBoardAccess>().Board;
             bool suppressDmg = model.SuppressPathDamage;
             model.SuppressPathDamage = false;
 
             int step = to > from ? 1 : -1;
             for (int i = from; i != to + step; i += step)
             {
-                if (board.TryGetEnemyAtSlot(i, out EnemyUI enemy) && enemy.IsValidTarget)
+                if (board.TryGetEnemyAtSlot(i, out EnemyView enemy) && enemy.IsValidTarget)
                 {
                     if (!suppressDmg)
                         enemy.TakeDamage(4);

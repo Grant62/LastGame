@@ -1,5 +1,5 @@
 using Features.Combat.Targeting;
-using Features.Combat.UI.Board;
+using Features.Enemy.View;
 
 namespace Features.Card.Effects
 {
@@ -18,7 +18,7 @@ namespace Features.Card.Effects
         {
             foreach (ITargetable target in targets)
             {
-                if (target is EnemyUI enemy)
+                if (target is EnemyView enemy)
                     StatusHelper.ApplyStatus(enemy.Statuses, mStatusType, mStacks);
             }
         }

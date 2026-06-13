@@ -1,5 +1,6 @@
 using Features.Combat.Targeting;
-using Features.Combat.UI.Board;
+using Features.Combat.View.Board;
+using Features.Enemy.View;
 using Features.Sword.Model;
 
 namespace Features.Card.Effects
@@ -19,8 +20,8 @@ namespace Features.Card.Effects
 
             foreach (int slot in swordModel.SpiritSwordSlots)
             {
-                BoardPanel board = Ctx.BoardAccess.Board;
-                if (board.TryGetEnemyAtSlot(slot, out EnemyUI enemy)
+                BoardView board = Ctx.BoardAccess.Board;
+                if (board.TryGetEnemyAtSlot(slot, out EnemyView enemy)
                     && enemy.IsValidTarget)
                     enemy.TakeDamage(mDamagePerSpirit);
             }

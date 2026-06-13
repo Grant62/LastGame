@@ -5,19 +5,20 @@ using Core.Systems;
 using Features.Card;
 using Features.Card.Command;
 using Features.Card.Interfaces;
-using Features.Card.Pool;
-using Features.Card.UI;
+using Features.Card.Utility;
+using Features.Card.View;
 using Features.Combat.Command;
 using Features.Combat.Event;
 using Features.Combat.Targeting;
-using Features.Combat.UI;
-using Features.Combat.UI.Board;
+using Features.Combat.Utility;
+using Features.Combat.View.Board;
+using Features.Enemy.View;
 using Features.Hero.Command;
 using Features.Hero.Define;
 using Features.Hero.Model;
 using Features.Hero.View;
 using Features.Sword.Model;
-using Features.Sword.UI;
+using Features.Sword.View;
 using QFramework;
 using Services.ExcelTool;
 using UnityEngine;
@@ -27,9 +28,9 @@ namespace Features.Combat
 {
     public class CombatController : MonoBehaviour, IController
     {
-        [SerializeField] private BoardPanel board;
+        [SerializeField] private BoardView board;
         [SerializeField] private HeroView heroPrefab;
-        [SerializeField] private CardUI cardUIPrefab;
+        [SerializeField] private CardView cardUIPrefab;
         [SerializeField] private bool testMode;
         [SerializeField] private TextAsset testDeckJson;
 
@@ -41,13 +42,13 @@ namespace Features.Combat
         [SerializeField] private GameObject cursorViewPrefab;
 
         [Header("Sword")]
-        [SerializeField] private SwordUI swordPrefab;
+        [SerializeField] private SwordView swordPrefab;
 
         [Header("Overlay")]
         [SerializeField] private Canvas overlayCanvas;
 
         private HeroView mHeroUI;
-        private readonly List<SwordUI> mSpiritSwordViews = new();
+        private readonly List<SwordView> mSpiritSwordViews = new();
 
         public IArchitecture GetArchitecture()
         {
@@ -67,7 +68,7 @@ namespace Features.Combat
         {
             GameMain.Interface.RegisterUtility<IBoardAccess>(new BoardAccess(board));
 
-            GameMain.Interface.RegisterUtility<ICardUIPool>(new CardUIPool(cardUIPrefab));
+            GameMain.Interface.RegisterUtility<ICardViewPool>(new CardViewPool(cardUIPrefab));
 
             GameMain.Interface.RegisterUtility<ITargetResolver>(
                 new EnemyTargetResolver(() => board.EnemyViews, this.GetSystem<IRandomSystem>()));
@@ -76,7 +77,7 @@ namespace Features.Combat
 
             Transform overlayTrans = overlayCanvas.transform;
 
-            CardUI hoverCard = Instantiate(cardUIPrefab, overlayTrans);
+            CardView hoverCard = Instantiate(cardUIPrefab, overlayTrans);
             GameMain.Interface.RegisterUtility<ICardHoverDisplay>(
                 new CardHoverDisplay(hoverCard));
 
@@ -135,8 +136,8 @@ namespace Features.Combat
 
         private void InitSword()
         {
-            SwordUI swordUI = Instantiate(swordPrefab, transform);
-            swordUI.Init(board);
+            SwordView swordView = Instantiate(swordPrefab, transform);
+            swordView.Init(board);
 
             ISwordModel sword = this.GetModel<ISwordModel>();
             IHeroModel hero = this.GetModel<IHeroModel>();
@@ -152,14 +153,14 @@ namespace Features.Combat
 
         private void SyncSpiritSwordViews()
         {
-            foreach (SwordUI view in mSpiritSwordViews)
+            foreach (SwordView view in mSpiritSwordViews)
                 Destroy(view.gameObject);
             mSpiritSwordViews.Clear();
 
             ISwordModel sword = this.GetModel<ISwordModel>();
             foreach (int slotIndex in sword.SpiritSwordSlots)
             {
-                SwordUI spiritView = Instantiate(swordPrefab, transform);
+                SwordView spiritView = Instantiate(swordPrefab, transform);
                 spiritView.Init(board);
                 spiritView.GetComponent<Image>().color = Color.black;
                 mSpiritSwordViews.Add(spiritView);
@@ -187,7 +188,7 @@ namespace Features.Combat
             for (int i = 0; i < hpValues.Length; i++)
             {
                 int slotIndex = spawnOrder[i];
-                EnemyUI enemy = board.SpawnEnemy(slotIndex);
+                EnemyView enemy = board.SpawnEnemy(slotIndex);
                 enemy.Init(1000 + i, hpValues[i], dmgValues[i]);
             }
         }

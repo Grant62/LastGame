@@ -2,14 +2,15 @@ using System.Collections.Generic;
 using Core.Architecture;
 using Features.Card.Data;
 using Features.Card.Interfaces;
+using Features.Card.View;
 using QFramework;
 
 namespace Features.Card.UI
 {
     public partial class PileGridPanel : ViewController, IController
     {
-        private ICardUIPool mCardPool;
-        private List<CardUI> mCardViews;
+        private ICardViewPool mCardPool;
+        private List<CardView> mCardViews;
 
         public IArchitecture GetArchitecture()
         {
@@ -18,8 +19,8 @@ namespace Features.Card.UI
 
         private void Awake()
         {
-            mCardViews = new List<CardUI>();
-            mCardPool = GameMain.Interface.GetUtility<ICardUIPool>();
+            mCardViews = new List<CardView>();
+            mCardPool = GameMain.Interface.GetUtility<ICardViewPool>();
             Close.onClick.AddListener(OnCloseClicked);
         }
 
@@ -52,7 +53,7 @@ namespace Features.Card.UI
 
             foreach (CardData data in cards)
             {
-                CardUI card = mCardPool.Get(data, Content);
+                CardView card = mCardPool.Get(data, Content);
                 HandDragHandler handler = card.GetComponent<HandDragHandler>();
                 handler.enabled = false;
 
@@ -62,7 +63,7 @@ namespace Features.Card.UI
 
         private void ReleaseCards()
         {
-            foreach (CardUI view in mCardViews)
+            foreach (CardView view in mCardViews)
                 mCardPool.Return(view);
 
             mCardViews.Clear();

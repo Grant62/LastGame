@@ -1,8 +1,9 @@
 using Core.Architecture;
 using DG.Tweening;
 using Features.Combat.Targeting;
-using Features.Combat.UI;
-using Features.Combat.UI.Board;
+using Features.Combat.Utility;
+using Features.Combat.View.Board;
+using Features.Enemy.View;
 using Features.Hero.Command;
 using Features.Hero.Model;
 using QFramework;
@@ -63,7 +64,7 @@ namespace Features.Hero.View
 
         private void OnSlotChanged(int slotIndex)
         {
-            BoardPanel board = GameMain.Interface.GetUtility<IBoardAccess>().Board;
+            BoardView board = GameMain.Interface.GetUtility<IBoardAccess>().Board;
             RectTransform target = board.GetSlotTransform(slotIndex);
             transform.SetParent(target);
             transform.DOLocalMove(Vector3.zero, 0.15f).SetEase(Ease.OutCubic);

@@ -1,5 +1,5 @@
 using Features.Combat.Targeting;
-using Features.Combat.UI.Board;
+using Features.Enemy.View;
 using UnityEngine;
 
 namespace Features.Card.Effects
@@ -26,7 +26,7 @@ namespace Features.Card.Effects
 
                 float finalMultiplier = damageMultiplier;
 
-                if (target is EnemyUI enemy && StatusHelper.HasStatus(enemy.Statuses, StatusType.Vulnerable))
+                if (target is EnemyView enemy && StatusHelper.HasStatus(enemy.Statuses, StatusType.Vulnerable))
                     finalMultiplier *= 1.25f;
 
                 int finalDamage = Mathf.RoundToInt(mAmount * finalMultiplier);
