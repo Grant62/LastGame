@@ -15,6 +15,7 @@ namespace Features.Card.Effects
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
             ISwordModel model = Ctx.SwordModel;
+            mPerSpiritEffect.Ctx = Ctx;
             for (int i = 0; i < model.SpiritSwordSlots.Count; i++)
                 mPerSpiritEffect.Execute(targets, caster);
         }

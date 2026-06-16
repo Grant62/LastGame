@@ -27,7 +27,7 @@ namespace Features.Card.Effects
             ISwordModel model = Ctx.SwordModel;
             switch (mFlag)
             {
-                case SwordFlag.IsSpiritAttached: model.IsSpiritAttached = true; break;
+                case SwordFlag.IsSpiritAttached: model.IsSpiritAttached.Value = true; break;
                 case SwordFlag.KeepSpinningOnMove: model.KeepSpinningOnMove = true; break;
                 case SwordFlag.HasTurnStartSpiritSpawn: model.HasTurnStartSpiritSpawn = true; break;
                 case SwordFlag.HasReactiveSpiritSpawn: model.HasReactiveSpiritSpawn = true; break;

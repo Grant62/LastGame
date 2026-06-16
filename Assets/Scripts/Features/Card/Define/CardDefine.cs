@@ -24,7 +24,8 @@ namespace Features.Card.Define
                 if (string.IsNullOrEmpty(Desc) || Desc.Contains("随机"))
                     return false;
 
-                return CardDescriptionParser.ContainsAnyKeyword(Desc, "御剑", "遁形");
+                return CardDescriptionParser.ContainsAnyKeyword(Desc, "御剑", "遁形")
+                       || Desc.Contains("指定位置");
             }
         }
 
@@ -40,6 +41,12 @@ namespace Features.Card.Define
 
                 if (CardDescriptionParser.ContainsKeyword(Desc, "遁形"))
                     return SlotAction.MovePlayer;
+
+                if (Desc.Contains("附着"))
+                    return SlotAction.SpawnSpiritAtSlot;
+
+                if (Desc.Contains("指定位置"))
+                    return SlotAction.DestroySpirit;
 
                 return SlotAction.None;
             }

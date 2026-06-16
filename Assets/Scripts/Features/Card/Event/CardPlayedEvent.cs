@@ -7,11 +7,15 @@ namespace Features.Card.Event
     {
         public CardData CardData { get; }
         public ITargetable ManualTarget { get; }
+        public int EnergySpent { get; }
+        public int SlotTargetIndex { get; }
 
-        public CardPlayedEvent(CardData cardData, ITargetable manualTarget = null)
+        public CardPlayedEvent(CardData cardData, ITargetable manualTarget = null, int energySpent = 0, int slotTargetIndex = -1)
         {
             CardData = cardData;
             ManualTarget = manualTarget;
+            EnergySpent = energySpent;
+            SlotTargetIndex = slotTargetIndex;
         }
     }
 }

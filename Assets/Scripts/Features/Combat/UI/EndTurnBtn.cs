@@ -2,12 +2,15 @@ using Core.Architecture;
 using Features.Combat.Event;
 using Features.Combat.System;
 using QFramework;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Features.Combat.UI
 {
     public partial class EndTurnBtn : ViewController, IController
     {
+        [SerializeField] private Button button;
+
         public IArchitecture GetArchitecture()
         {
             return GameMain.Interface;
@@ -18,9 +21,7 @@ namespace Features.Combat.UI
             this.RegisterEvent<PlayerTurnStartEvent>(_ => RefreshText())
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            Button btn = GetComponent<Button>();
-            btn.onClick.AddListener(OnEndTurnClicked);
-
+            button.onClick.AddListener(OnEndTurnClicked);
             RefreshText();
         }
 

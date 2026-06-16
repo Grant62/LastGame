@@ -13,7 +13,7 @@ namespace Features.Card.Effects
         private readonly int mBlockPerSword;
         private readonly Effect mPenetrationEffect;
 
-        public LinkSwordsEffect(int blockPerSword = 8, Effect penetrationEffect = null)
+        public LinkSwordsEffect(int blockPerSword = 0, Effect penetrationEffect = null)
         {
             mBlockPerSword = blockPerSword;
             mPenetrationEffect = penetrationEffect;
@@ -30,7 +30,12 @@ namespace Features.Card.Effects
                 swordSlots.Add(swordModel.CurSlotIndex.Value);
             swordSlots.AddRange(swordModel.SpiritSwordSlots);
 
-            int totalBlock = mBlockPerSword * swordSlots.Count;
+            int blockPerSword = mBlockPerSword > 0
+                ? mBlockPerSword
+                : mBlockPerSword < 0
+                    ? 0
+                    : Ctx.Config.LinkBlockPerSword;
+            int totalBlock = blockPerSword * swordSlots.Count;
             if (totalBlock > 0 && caster is IDamageable damageable)
                 damageable.GainArmor(totalBlock);
 

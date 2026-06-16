@@ -5,8 +5,11 @@ namespace Features.Combat.System
 {
     public class InteractionSystem : AbstractSystem, IInteractionSystem
     {
+        private int mAnimCounter;
+
         public bool IsDragging { get; private set; }
-        public bool IsAnimating { get; set; }
+
+        public bool IsAnimating { get => mAnimCounter > 0; }
 
         protected override void OnInit() { }
 
@@ -18,6 +21,17 @@ namespace Features.Combat.System
         public void EndDrag()
         {
             IsDragging = false;
+        }
+
+        public void BeginAnimation()
+        {
+            mAnimCounter++;
+        }
+
+        public void EndAnimation()
+        {
+            if (mAnimCounter > 0)
+                mAnimCounter--;
         }
 
         public bool CanInteract()

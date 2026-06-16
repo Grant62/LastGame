@@ -32,7 +32,7 @@ namespace Features.Resource.System
         public void Gain(int amount)
         {
             IResourceModel model = this.GetModel<IResourceModel>();
-            model.CurEnergy.Value = Mathf.Min(model.CurEnergy.Value + amount, model.MaxEnergy.Value);
+            model.CurEnergy.Value += amount;
         }
     }
 }

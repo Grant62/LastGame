@@ -64,7 +64,7 @@ namespace Features.Combat.System
             hero.Armor.Value = 0;
 
             ISwordModel sword = this.GetModel<ISwordModel>();
-            sword.IsSpiritAttached = false;
+            sword.IsSpiritAttached.Value = false;
         }
 
         private void OnEnemyTurnEnd(EnemyTurnEndEvent e)

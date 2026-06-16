@@ -1,18 +1,34 @@
 using System.Collections.Generic;
 using Core.Systems;
 using Features.Card.Data;
+using Features.Card.Event;
 using Features.Card.Model;
 using Features.Combat.Event;
 using QFramework;
+using Services;
 
 namespace Features.Card.System
 {
     public class CardSystem : AbstractSystem, ICardSystem
     {
+        private readonly Dictionary<CardData, int> mOriginalCosts = new();
+
         protected override void OnInit()
         {
             this.RegisterEvent<PlayerTurnStartEvent>(OnPlayerTurnStart);
             this.RegisterEvent<PlayerTurnEndEvent>(OnPlayerTurnEnd);
+            this.RegisterEvent<BattleVictoryEvent>(OnBattleVictory);
+            this.RegisterEvent<BattleDefeatEvent>(OnBattleDefeat);
+        }
+
+        private void OnBattleVictory(BattleVictoryEvent e)
+        {
+            RestoreCardCosts();
+        }
+
+        private void OnBattleDefeat(BattleDefeatEvent e)
+        {
+            RestoreCardCosts();
         }
 
         private void OnPlayerTurnStart(PlayerTurnStartEvent e)
@@ -116,6 +132,31 @@ namespace Features.Card.System
             Shuffle(model.DrawPile);
             model.OnDiscardPileChanged.Trigger();
             model.OnDrawPileChanged.Trigger();
+        }
+
+        public void ReduceSpinCardCosts()
+        {
+            ICardModel model = this.GetModel<ICardModel>();
+            foreach (CardData card in model.HandPile)
+            {
+                if (CardDescriptionParser.ContainsKeyword(card.Desc, "旋剑") && card.Cost > 0)
+                {
+                    if (!mOriginalCosts.ContainsKey(card))
+                        mOriginalCosts[card] = card.Cost;
+
+                    card.Cost -= 1;
+                }
+            }
+
+            this.SendEvent<HandCardCostChangedEvent>();
+        }
+
+        public void RestoreCardCosts()
+        {
+            foreach (KeyValuePair<CardData, int> kv in mOriginalCosts)
+                kv.Key.Cost = kv.Value;
+
+            mOriginalCosts.Clear();
         }
 
         private void Shuffle(List<CardData> list)

@@ -1,5 +1,6 @@
 using Features.Combat.Targeting;
-using Features.Sword.Model;
+using Features.Combat.View.Board;
+using Features.Enemy.View;
 
 namespace Features.Card.Effects
 {
@@ -7,14 +8,17 @@ namespace Features.Card.Effects
     {
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
-            ISwordModel sword = Ctx.SwordModel;
-            int formulaDamage = 5 * (sword.SpinDamage.Value + 1);
+            int energySpent = Ctx.EnergySpent;
+            if (energySpent <= 0)
+                return;
 
-            foreach (ITargetable target in targets)
-            {
-                if (target is IDamageable d && d.IsValidTarget)
-                    d.TakeDamage(formulaDamage);
-            }
+            int formulaDamage = 5 * (energySpent + 1);
+
+            BoardView board = Ctx.BoardAccess.Board;
+            int swordSlot = Ctx.SwordModel.CurSlotIndex.Value;
+
+            if (board.TryGetEnemyAtSlot(swordSlot, out EnemyView enemy) && enemy.IsValidTarget)
+                enemy.TakeDamage(formulaDamage);
         }
     }
 }

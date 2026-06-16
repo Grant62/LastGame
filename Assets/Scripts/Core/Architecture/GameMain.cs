@@ -1,6 +1,7 @@
 using Core.Systems;
 using Features.Card.Model;
 using Features.Card.System;
+using Features.Combat.Model;
 using Features.Combat.System;
 using Features.Combat.Targeting.Model;
 using Features.Combat.Targeting.System;
@@ -31,6 +32,7 @@ namespace Core.Architecture
             RegisterSystem<ICardSystem>(new CardSystem());
             RegisterSystem(new CardEffectSystem());
             RegisterModel<ISwordModel>(new SwordModel());
+            RegisterModel<IGameConfigModel>(new GameConfigModel());
             RegisterSystem<ISlotTargetSystem>(new SlotTargetSystem());
             RegisterUtility<IBinaryDataMgr>(new BinaryDataMgr());
             RegisterSystem<IInteractionSystem>(new InteractionSystem());

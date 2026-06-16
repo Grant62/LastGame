@@ -4,6 +4,9 @@ using Features.Card.Data;
 using Features.Card.Interfaces;
 using Features.Card.View;
 using QFramework;
+using Sirenix.OdinInspector;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Features.Card.UI
 {
@@ -11,6 +14,9 @@ namespace Features.Card.UI
     {
         private ICardViewPool mCardPool;
         private List<CardView> mCardViews;
+
+        [BoxGroup("滚动")]
+        [SerializeField] private float scrollSensitivity = 30f;
 
         public IArchitecture GetArchitecture()
         {
@@ -20,7 +26,8 @@ namespace Features.Card.UI
         private void Awake()
         {
             mCardViews = new List<CardView>();
-            mCardPool = GameMain.Interface.GetUtility<ICardViewPool>();
+            mCardPool = GetArchitecture().GetUtility<ICardViewPool>();
+            GetComponent<ScrollRect>().scrollSensitivity = scrollSensitivity;
             Close.onClick.AddListener(OnCloseClicked);
         }
 
@@ -53,9 +60,10 @@ namespace Features.Card.UI
 
             foreach (CardData data in cards)
             {
-                CardView card = mCardPool.Get(data, Content);
-                HandDragHandler handler = card.GetComponent<HandDragHandler>();
-                handler.enabled = false;
+                CardView card = mCardPool.Get(data, Content, false);
+                card.HandDragHandler.enabled = false;
+                card.CardHoverHandler.enabled = false;
+                card.RectTransform.localEulerAngles = Vector3.zero;
 
                 mCardViews.Add(card);
             }

@@ -25,11 +25,11 @@ namespace Features.Card.Utility
             mPoolRoot = go.transform;
         }
 
-        public CardView Get(CardData data, Transform parent)
+        public CardView Get(CardData data, Transform parent, bool enableEffects = true)
         {
             CardView card = mPool.Allocate();
             card.transform.SetParent(parent, false);
-            card.Setup(data);
+            card.Setup(data, enableEffects);
             return card;
         }
 

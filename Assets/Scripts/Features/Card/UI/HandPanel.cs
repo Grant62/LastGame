@@ -4,27 +4,42 @@ using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using Features.Card.Data;
+using Features.Card.Event;
 using Features.Card.Interfaces;
 using Features.Card.Model;
 using Features.Card.View;
 using Features.Combat.System;
 using QFramework;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Features.Card.UI
 {
-    public partial class HandPanel : ViewController, IController
+    public partial class HandPanel : MonoBehaviour, IController, IHoverContext
     {
-        [SerializeField] private float maxTotalAngle = 26f;
-        [SerializeField] private float angleBetweenCards = 4f;
-        [SerializeField] private float radius = 400f;
-        [SerializeField] private float centerPointY = -150f;
+        [BoxGroup("卡牌布局")]
+        [SerializeField] private float maxTotalAngle = 35f;
+        [BoxGroup("卡牌布局")]
+        [SerializeField] private float angleBetweenCards = 3.5f;
+        [BoxGroup("卡牌布局")]
+        [SerializeField] private float radius = 3000f;
+        [BoxGroup("卡牌布局")]
+        [SerializeField] private float centerPointY = -3380f;
+        [BoxGroup("卡牌布局")]
+        [SerializeField] private float hoverCardY = 190f;
+
+        [BoxGroup("动画")]
         [SerializeField] private float layoutDuration = 0.15f;
-        [SerializeField] private float hoverCardY = 300f;
-        [SerializeField] private Canvas overlayCanvas;
-        [SerializeField] private Vector2 drawOrigin = new(1600, -400);
-        [SerializeField] private Vector2 discardOrigin = new(200, -400);
+        [BoxGroup("动画")]
         [SerializeField] private float drawStagger = 0.1f;
+
+        [BoxGroup("坐标")]
+        [SerializeField] private Vector2 drawOrigin = new(1110, -400);
+        [BoxGroup("坐标")]
+        [SerializeField] private Vector2 discardOrigin = new(-900, -400);
+
+        [BoxGroup("引用")]
+        [SerializeField] private Canvas overlayCanvas;
 
         private ICardViewPool mCardPool;
         private readonly List<CardView> mCardOrder = new();
@@ -45,10 +60,13 @@ namespace Features.Card.UI
 
         private void Start()
         {
-            mCardPool = GameMain.Interface.GetUtility<ICardViewPool>();
+            mCardPool = GetArchitecture().GetUtility<ICardViewPool>();
 
             ICardModel model = this.GetModel<ICardModel>();
             model.OnHandPileChanged.Register(OnHandPileChanged)
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<HandCardCostChangedEvent>(OnHandCardCostChanged)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
             OnHandPileChanged();
@@ -57,6 +75,12 @@ namespace Features.Card.UI
         private void OnHandPileChanged()
         {
             SyncViews(this.GetModel<ICardModel>().HandPile);
+        }
+
+        private void OnHandCardCostChanged(HandCardCostChangedEvent e)
+        {
+            foreach (CardView card in mCardOrder)
+                card.RefreshCost();
         }
 
         private void SyncViews(List<CardData> handPile)
@@ -91,18 +115,29 @@ namespace Features.Card.UI
             SetCardLayout(mAddedSet);
         }
 
+        private void AnimateDiscard(CardView card, float delay)
+        {
+            RectTransform rect = card.RectTransform;
+            CanvasGroup cg = card.CanvasGroup;
+            rect.DOKill();
+            rect.DOAnchorPos(discardOrigin, layoutDuration).SetEase(Ease.InCubic).SetDelay(delay);
+            cg.DOFade(0f, layoutDuration).SetDelay(delay);
+
+            DOVirtual.DelayedCall(layoutDuration + delay, () => mCardPool.Return(card));
+        }
+
         private void SetCardLayout(HashSet<CardData> newCards)
         {
             int count = mCardOrder.Count;
             CalculatePositions(count);
 
             if (newCards.Count > 0)
-                this.GetSystem<IInteractionSystem>().IsAnimating = true;
+                this.GetSystem<IInteractionSystem>().BeginAnimation();
 
             for (int i = 0; i < count; i++)
             {
                 CardView card = mCardOrder[i];
-                RectTransform rect = card.GetComponent<RectTransform>();
+                RectTransform rect = card.RectTransform;
 
                 rect.DOKill();
                 bool isNew = newCards.Contains(card.CardData);
@@ -116,7 +151,7 @@ namespace Features.Card.UI
                         .SetEase(Ease.OutCubic)
                         .SetDelay(delay);
                     if (isLast)
-                        tween.OnComplete(() => this.GetSystem<IInteractionSystem>().IsAnimating = false);
+                        tween.OnComplete(() => this.GetSystem<IInteractionSystem>().EndAnimation());
                 }
                 else
                 {
@@ -151,17 +186,6 @@ namespace Features.Card.UI
                 ));
                 mCardAngles.Add(cardAngle);
             }
-        }
-
-        private void AnimateDiscard(CardView card, float delay)
-        {
-            RectTransform rect = card.GetComponent<RectTransform>();
-            CanvasGroup cg = card.GetComponentInChildren<CanvasGroup>();
-            rect.DOKill();
-            rect.DOAnchorPos(discardOrigin, layoutDuration).SetEase(Ease.InCubic).SetDelay(delay);
-            cg.DOFade(0f, layoutDuration).SetDelay(delay);
-
-            DOVirtual.DelayedCall(layoutDuration + delay, () => mCardPool.Return(card));
         }
     }
 }

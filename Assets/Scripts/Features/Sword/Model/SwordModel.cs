@@ -11,7 +11,7 @@ namespace Features.Sword.Model
         public BindableProperty<int> SpinDamage { get; } = new();
         public bool KeepSpinningOnMove { get; set; }
         public bool SpinHitsAdjacent { get; set; }
-        public bool IsSpiritAttached { get; set; }
+        public BindableProperty<bool> IsSpiritAttached { get; } = new();
         public bool HasTurnStartSpiritSpawn { get; set; }
         public bool HasReactiveSpiritSpawn { get; set; }
         public bool SuppressPathDamage { get; set; }

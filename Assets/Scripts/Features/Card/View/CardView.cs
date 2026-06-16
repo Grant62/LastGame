@@ -9,18 +9,35 @@ namespace Features.Card.View
 {
     public partial class CardView : ViewController, IController
     {
+        [SerializeField] private HandDragHandler handDragHandler;
+        [SerializeField] private CardHoverHandler cardHoverHandler;
+        [SerializeField] private CanvasGroup canvasGroup;
+
         private Sprite mDefaultSprite;
         private bool mDefaultCached;
         private IUnRegister mEnergyUnregister;
 
         public CardData CardData { get; private set; }
 
+        public HandDragHandler HandDragHandler { get => handDragHandler; }
+
+        public CardHoverHandler CardHoverHandler { get => cardHoverHandler; }
+
+        public CanvasGroup CanvasGroup { get => canvasGroup; }
+
+        public RectTransform RectTransform { get; private set; }
+
         public IArchitecture GetArchitecture()
         {
             return GameMain.Interface;
         }
 
-        public void Setup(CardData data)
+        private void Awake()
+        {
+            RectTransform = GetComponent<RectTransform>();
+        }
+
+        public void Setup(CardData data, bool enableEffects = true)
         {
             if (!mDefaultCached)
             {
@@ -40,16 +57,17 @@ namespace Features.Card.View
             OutlineImage.sprite = CardImage.sprite;
             OutlineImage.gameObject.SetActive(false);
 
-            RectTransform rect = GetComponent<RectTransform>();
-            rect.DOKill();
-            CanvasGroup cg = GetComponentInChildren<CanvasGroup>();
-            cg.DOKill();
-            cg.alpha = 1f;
+            RectTransform.DOKill();
+            canvasGroup.DOKill();
+            canvasGroup.alpha = 1f;
 
-            mEnergyUnregister?.UnRegister();
-            mEnergyUnregister = this.GetModel<IResourceModel>().CurEnergy
-                .Register(_ => UpdateOutline());
-            UpdateOutline();
+            if (enableEffects)
+            {
+                mEnergyUnregister?.UnRegister();
+                mEnergyUnregister = this.GetModel<IResourceModel>().CurEnergy
+                    .Register(_ => UpdateOutline());
+                UpdateOutline();
+            }
         }
 
         public void Reset()
@@ -58,7 +76,18 @@ namespace Features.Card.View
             mEnergyUnregister = null;
             CardData = null;
             CardImage.sprite = mDefaultSprite;
-            GetComponent<HandDragHandler>().enabled = true;
+            handDragHandler.enabled = true;
+            cardHoverHandler.enabled = true;
+
+            RectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            RectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            RectTransform.pivot = new Vector2(0.5f, 0.5f);
+        }
+
+        public void RefreshCost()
+        {
+            Cost.text = CardData.Cost == -1 ? "X" : CardData.Cost.ToString();
+            UpdateOutline();
         }
 
         private void UpdateOutline()

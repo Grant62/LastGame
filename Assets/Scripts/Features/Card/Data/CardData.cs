@@ -8,7 +8,9 @@ namespace Features.Card.Data
     {
         None,
         MoveSword,
-        MovePlayer
+        MovePlayer,
+        DestroySpirit,
+        SpawnSpiritAtSlot
     }
 
     public class CardData

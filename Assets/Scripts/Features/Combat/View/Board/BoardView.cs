@@ -4,17 +4,29 @@ using DG.Tweening;
 using Features.Combat.Event;
 using Features.Enemy.View;
 using QFramework;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Features.Combat.View.Board
 {
-    public class BoardView : ViewController, IController
+    public class BoardView : MonoBehaviour, IController
     {
+        [BoxGroup("引用")]
         [SerializeField] private RectTransform boardPanel;
+
+        public RectTransform BoardPanel { get => boardPanel; }
+
+        [BoxGroup("引用")]
         [SerializeField] private SlotView slotPrefab;
+        [BoxGroup("引用")]
         [SerializeField] private EnemyView enemyPrefab;
+
+        [BoxGroup("棋盘布局")]
         [SerializeField] private int slotCount = 9;
+        [BoxGroup("棋盘布局")]
         [SerializeField] private float slotSpacing = 2f;
+
+        [BoxGroup("动画")]
         [SerializeField] private float moveDuration = 0.15f;
 
         private readonly List<SlotView> mSlots = new();

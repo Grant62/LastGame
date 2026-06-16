@@ -3,10 +3,12 @@ using Features.Card.Event;
 using Features.Card.Model;
 using Features.Card.System;
 using Features.Combat.Event;
+using Features.Combat.Model;
 using Features.Combat.Targeting;
 using Features.Combat.Targeting.System;
 using Features.Combat.Utility;
 using Features.Hero.Model;
+using Features.Resource.Model;
 using Features.Resource.System;
 using Features.Sword.Model;
 using QFramework;
@@ -34,14 +36,19 @@ namespace Features.Combat.System
                 this.GetModel<ICardModel>(),
                 this.GetSystem<ICardSystem>(),
                 this.GetSystem<IResourceSystem>(),
+                this.GetModel<IResourceModel>(),
                 this.GetUtility<IBoardAccess>(),
-                this.GetSystem<IRandomSystem>());
+                this.GetSystem<IRandomSystem>(),
+                this.GetModel<IGameConfigModel>());
         }
 
         private void OnCardPlayed(CardPlayedEvent @event)
         {
             ITargetingSystem targeting = this.GetSystem<ITargetingSystem>();
             ITargetable caster = mTargetSelector.GetCaster();
+
+            mCtx.EnergySpent = @event.EnergySpent;
+            mCtx.SlotTargetIndex = @event.SlotTargetIndex;
 
             foreach (Effect effect in @event.CardData.ManualTargetEffect)
             {

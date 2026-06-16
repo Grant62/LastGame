@@ -24,6 +24,8 @@ namespace Features.Card.View
         private ISlotTargetSystem mSlotSystem;
         private CardView mCardView;
         private RectTransform mLayoutRoot;
+        private RectTransform mRectTransform;
+        private CanvasGroup mCanvasGroup;
         private bool mIsDragging;
         private Vector2 mOriginalPos;
         private Vector3 mOriginalRotation;
@@ -45,6 +47,8 @@ namespace Features.Card.View
         {
             mCardView = GetComponent<CardView>();
             mLayoutRoot = GetComponentInParent<HandPanel>().LayoutRoot;
+            mRectTransform = GetComponent<RectTransform>();
+            mCanvasGroup = GetComponentInChildren<CanvasGroup>();
             mSlotSystem = this.GetSystem<ISlotTargetSystem>();
         }
 
@@ -59,12 +63,11 @@ namespace Features.Card.View
             mIsDragging = true;
             this.GetSystem<IInteractionSystem>().BeginDrag();
 
-            RectTransform rect = GetComponent<RectTransform>();
-            rect.DOKill();
-            mOriginalPos = rect.anchoredPosition;
-            mOriginalRotation = rect.localEulerAngles;
-            mOriginalSiblingIndex = rect.GetSiblingIndex();
-            rect.SetAsLastSibling();
+            mRectTransform.DOKill();
+            mOriginalPos = mRectTransform.anchoredPosition;
+            mOriginalRotation = mRectTransform.localEulerAngles;
+            mOriginalSiblingIndex = mRectTransform.GetSiblingIndex();
+            mRectTransform.SetAsLastSibling();
 
             if (IsTargetingCard())
             {
@@ -73,10 +76,10 @@ namespace Features.Card.View
             else
             {
                 GetArchitecture().GetUtility<ICardHoverDisplay>().Hide();
-                GetComponentInChildren<CanvasGroup>().alpha = 1f;
-                rect.localEulerAngles = Vector3.zero;
+                mCanvasGroup.alpha = 1f;
+                mRectTransform.localEulerAngles = Vector3.zero;
 
-                Vector2 cardScreenPos = RectTransformUtility.WorldToScreenPoint(null, rect.position);
+                Vector2 cardScreenPos = RectTransformUtility.WorldToScreenPoint(null, mRectTransform.position);
                 mDragOffset = cardScreenPos - eventData.position;
             }
         }
@@ -93,7 +96,7 @@ namespace Features.Card.View
             if (IsTargetingCard())
             {
                 GetArchitecture().GetUtility<ICardHoverDisplay>().Hide();
-                GetComponentInChildren<CanvasGroup>().alpha = 1f;
+                mCanvasGroup.alpha = 1f;
             }
 
             bool played;
@@ -109,8 +112,8 @@ namespace Features.Card.View
             {
                 if (IsTargetingCard())
                 {
-                    GetComponent<RectTransform>().SetSiblingIndex(mOriginalSiblingIndex);
-                    GetComponent<RectTransform>().localEulerAngles = mOriginalRotation;
+                    mRectTransform.SetSiblingIndex(mOriginalSiblingIndex);
+                    mRectTransform.localEulerAngles = mOriginalRotation;
                 }
                 else
                 {
@@ -127,15 +130,14 @@ namespace Features.Card.View
             Vector2 target = (Vector2)Input.mousePosition + mDragOffset;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 mLayoutRoot, target, null, out Vector2 localPos);
-            GetComponent<RectTransform>().anchoredPosition = localPos;
+            mRectTransform.anchoredPosition = localPos;
         }
 
         private void SnapBack()
         {
-            RectTransform rect = GetComponent<RectTransform>();
-            rect.DOAnchorPos(mOriginalPos, snapBackDuration).SetEase(Ease.OutCubic);
-            rect.DOLocalRotate(mOriginalRotation, snapBackDuration).SetEase(Ease.OutCubic);
-            rect.SetSiblingIndex(mOriginalSiblingIndex);
+            mRectTransform.DOAnchorPos(mOriginalPos, snapBackDuration).SetEase(Ease.OutCubic);
+            mRectTransform.DOLocalRotate(mOriginalRotation, snapBackDuration).SetEase(Ease.OutCubic);
+            mRectTransform.SetSiblingIndex(mOriginalSiblingIndex);
         }
 
         private bool PlayWithEnemyTarget(Vector2 screenPos)
@@ -173,7 +175,7 @@ namespace Features.Card.View
 
             SlotAction action = mCardView.CardData.SlotAction;
 
-            this.SendCommand(new PlayCardCommand(mCardView.CardData));
+            this.SendCommand(new PlayCardCommand(mCardView.CardData, null, slotIndex));
             UpdateFacing(slotIndex);
 
             if (action == SlotAction.MoveSword)

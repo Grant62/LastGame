@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Configuration.ExcelData.Container;
 using Core.Architecture;
 using Core.Systems;
@@ -13,37 +14,43 @@ using Features.Combat.View.Board;
 using Features.Enemy.View;
 using Features.Hero.Command;
 using Features.Hero.Define;
+using Features.Hero.Event;
 using Features.Hero.Model;
 using Features.Hero.View;
 using Features.Sword.Model;
 using Features.Sword.View;
 using QFramework;
 using Services.ExcelTool;
+using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Features.Combat
 {
     public class CombatController : MonoBehaviour, IController
     {
+        [BoxGroup("预制体")]
         [SerializeField] private BoardView board;
+        [BoxGroup("预制体")]
         [SerializeField] private HeroView heroPrefab;
+        [BoxGroup("预制体")]
         [SerializeField] private CardView cardUIPrefab;
-        [SerializeField] private bool testMode;
-        [SerializeField] private TextAsset testDeckJson;
-
-        [Header("Arrow")]
+        [BoxGroup("预制体")]
         [SerializeField] private GameObject arrowViewPrefab;
-        [SerializeField] private float arrowOffset = 0.8f;
-
-        [Header("Cursor")]
+        [BoxGroup("预制体")]
         [SerializeField] private GameObject cursorViewPrefab;
-
-        [Header("Sword")]
+        [BoxGroup("预制体")]
         [SerializeField] private SwordView swordPrefab;
 
-        [Header("Overlay")]
+        [BoxGroup("卡牌测试")]
+        [SerializeField] private bool testMode;
+        [BoxGroup("卡牌测试")]
+        [SerializeField] private TextAsset testDeckJson;
+
+        [BoxGroup("Overlay")]
         [SerializeField] private Canvas overlayCanvas;
+
+        [BoxGroup("箭头偏移量")]
+        [SerializeField] private float arrowOffset = 80f;
 
         private HeroView mHeroUI;
         private readonly List<SwordView> mSpiritSwordViews = new();
@@ -107,12 +114,29 @@ namespace Features.Combat
             this.RegisterEvent<PlayerMoveExecutedEvent>(OnPlayerMoved)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
+            this.RegisterEvent<HeroDeathEvent>(OnHeroDeath)
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<EnemyDiedEvent>(OnEnemyDied)
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+
             this.SendCommand<StartBattleCommand>();
         }
 
         private void OnPlayerMoved(PlayerMoveExecutedEvent e)
         {
             board.ShiftEnemies(e.OldSlotIndex, e.NewSlotIndex);
+        }
+
+        private void OnHeroDeath(HeroDeathEvent e)
+        {
+            this.SendCommand<SendBattleDefeatCommand>();
+        }
+
+        private void OnEnemyDied(EnemyDiedEvent e)
+        {
+            if (!board.GetActiveEnemies().Any())
+                this.SendCommand<SendBattleVictoryCommand>();
         }
 
         private void InitHero()
@@ -134,7 +158,9 @@ namespace Features.Combat
 
         private void InitSword()
         {
-            SwordView swordView = Instantiate(swordPrefab, transform);
+            Transform boardPanelParent = board.BoardPanel.parent;
+            SwordView swordView = Instantiate(swordPrefab, boardPanelParent);
+            swordView.transform.SetSiblingIndex(board.BoardPanel.GetSiblingIndex() + 1);
             swordView.Init(board);
 
             ISwordModel sword = this.GetModel<ISwordModel>();
@@ -156,11 +182,14 @@ namespace Features.Combat
             mSpiritSwordViews.Clear();
 
             ISwordModel sword = this.GetModel<ISwordModel>();
+            Transform boardPanelParent = board.BoardPanel.parent;
+            int targetSiblingIndex = board.BoardPanel.GetSiblingIndex() + 1;
             foreach (int slotIndex in sword.SpiritSwordSlots)
             {
-                SwordView spiritView = Instantiate(swordPrefab, transform);
-                spiritView.Init(board);
-                spiritView.GetComponent<Image>().color = Color.black;
+                SwordView spiritView = Instantiate(swordPrefab, boardPanelParent);
+                spiritView.transform.SetSiblingIndex(targetSiblingIndex);
+                spiritView.Init(board, false);
+                spiritView.SetColor(Color.black);
                 mSpiritSwordViews.Add(spiritView);
 
                 spiritView.transform.position = board.GetSlotTransform(slotIndex).position

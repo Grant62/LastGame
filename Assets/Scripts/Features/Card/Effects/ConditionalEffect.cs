@@ -1,4 +1,6 @@
 using Features.Combat.Targeting;
+using Features.Combat.View.Board;
+using Features.Enemy.View;
 using Features.Sword.Model;
 
 namespace Features.Card.Effects
@@ -18,6 +20,7 @@ namespace Features.Card.Effects
 
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
+            mConditionEffect.Ctx = Ctx;
             bool result = false;
 
             if (mConditionEffect is ConditionCheckEffect check)
@@ -31,9 +34,21 @@ namespace Features.Card.Effects
             }
 
             if (result)
-                mIfTrue?.Execute(targets, caster);
+            {
+                if (mIfTrue != null)
+                {
+                    mIfTrue.Ctx = Ctx;
+                    mIfTrue.Execute(targets, caster);
+                }
+            }
             else
-                mIfFalse?.Execute(targets, caster);
+            {
+                if (mIfFalse != null)
+                {
+                    mIfFalse.Ctx = Ctx;
+                    mIfFalse.Execute(targets, caster);
+                }
+            }
         }
     }
 
@@ -58,7 +73,7 @@ namespace Features.Card.Effects
         public override bool Check(ITargetable[] targets, ITargetable caster)
         {
             ISwordModel model = Ctx.SwordModel;
-            return model.IsSpiritAttached;
+            return model.IsSpiritAttached.Value;
         }
     }
 
@@ -68,6 +83,19 @@ namespace Features.Card.Effects
         {
             ISwordModel model = Ctx.SwordModel;
             return model.IsSpinning.Value;
+        }
+    }
+
+    public class SlotHasEnemyCondition : ConditionCheckEffect
+    {
+        public override bool Check(ITargetable[] targets, ITargetable caster)
+        {
+            BoardView board = Ctx.BoardAccess.Board;
+            int slot = Ctx.SlotTargetIndex;
+            if (slot < 0)
+                return false;
+
+            return board.TryGetEnemyAtSlot(slot, out EnemyView enemy) && enemy.IsValidTarget;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Features.Card.Effects
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
             ISwordModel model = Ctx.SwordModel;
-            if (model.IsSpiritAttached && caster is IDamageable d)
+            if (model.IsSpiritAttached.Value && caster is IDamageable d)
                 d.TakeHeal(mAmount);
         }
     }

@@ -29,6 +29,15 @@ namespace Features.Sword.System
                 return Mathf.Abs(hero.CurSlotIndex.Value - targetSlotIndex) <= distance;
             }
 
+            if (cardData.SlotAction == SlotAction.DestroySpirit)
+            {
+                ISwordModel sword = this.GetModel<ISwordModel>();
+                return sword.SpiritSwordSlots.Contains(targetSlotIndex);
+            }
+
+            if (cardData.SlotAction == SlotAction.SpawnSpiritAtSlot)
+                return true;
+
             return false;
         }
     }

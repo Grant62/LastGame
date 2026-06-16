@@ -1,4 +1,5 @@
 using Core.Architecture;
+using Features.Combat.Model;
 using Features.Combat.Utility;
 using Features.Combat.View.Board;
 using Features.Enemy.View;
@@ -19,6 +20,7 @@ namespace Features.Sword.Command
         protected override void OnExecute()
         {
             ISwordModel model = this.GetModel<ISwordModel>();
+            int pathDamage = this.GetModel<IGameConfigModel>().SwordPathDamage;
 
             int oldSlot = model.CurSlotIndex.Value;
 
@@ -30,12 +32,12 @@ namespace Features.Sword.Command
 
             model.KeepSpinningOnMove = false;
 
-            DealPathDamageAndSpirits(oldSlot, mTargetSlotIndex, model);
+            DealPathDamageAndSpirits(oldSlot, mTargetSlotIndex, model, pathDamage);
 
             model.CurSlotIndex.Value = mTargetSlotIndex;
         }
 
-        private void DealPathDamageAndSpirits(int from, int to, ISwordModel model)
+        private void DealPathDamageAndSpirits(int from, int to, ISwordModel model, int pathDamage)
         {
             BoardView board = GameMain.Interface.GetUtility<IBoardAccess>().Board;
             bool suppressDmg = model.SuppressPathDamage;
@@ -47,14 +49,14 @@ namespace Features.Sword.Command
                 if (board.TryGetEnemyAtSlot(i, out EnemyView enemy) && enemy.IsValidTarget)
                 {
                     if (!suppressDmg)
-                        enemy.TakeDamage(4);
+                        enemy.TakeDamage(pathDamage);
 
-                    if (model.IsSpiritAttached && !model.SpiritSwordSlots.Contains(i))
+                    if (model.IsSpiritAttached.Value && !model.SpiritSwordSlots.Contains(i))
                         model.SpiritSwordSlots.Add(i);
                 }
             }
 
-            if (model.IsSpiritAttached)
+            if (model.IsSpiritAttached.Value)
                 model.OnSpiritSwordsChanged.Trigger();
         }
     }

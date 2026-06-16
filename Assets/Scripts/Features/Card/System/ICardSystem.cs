@@ -14,5 +14,7 @@ namespace Features.Card.System
         void AddToDiscard(CardData card);
         void AddToHand(CardData card);
         void ShuffleDrawPile();
+        void ReduceSpinCardCosts();
+        void RestoreCardCosts();
     }
 }

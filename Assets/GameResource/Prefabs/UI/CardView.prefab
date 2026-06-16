@@ -30,7 +30,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-   m_Children:
+  m_Children:
   - {fileID: 4340774008453094540}
   - {fileID: 8263341552620787422}
   - {fileID: 392033299155255383}
@@ -1021,6 +1021,9 @@ MonoBehaviour:
   ScriptsFolder: Assets/Scripts/Features/Card/View
   GeneratePrefab: 0
   PrefabFolder: Assets/Art/Prefab
+  handDragHandler: {fileID: 2491408114450583358}
+  cardHoverHandler: {fileID: 8888888888888888888}
+  canvasGroup: {fileID: 9092664234334872922}
   CardImage: {fileID: 509678958456368609}
   Cost: {fileID: 6028529697487554140}
   Title: {fileID: 1717149790347247601}

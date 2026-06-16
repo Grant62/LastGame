@@ -13,6 +13,7 @@ namespace Features.Card.View
         private CardView mCardView;
         private CanvasGroup mCanvasGroup;
         private ICardHoverDisplay mDisplay;
+        private IHoverContext mHoverContext;
 
         public IArchitecture GetArchitecture()
         {
@@ -24,6 +25,7 @@ namespace Features.Card.View
             mCardView = GetComponent<CardView>();
             mCanvasGroup = GetComponentInChildren<CanvasGroup>();
             mDisplay = GetArchitecture().GetUtility<ICardHoverDisplay>();
+            mHoverContext = GetComponentInParent<HandPanel>();
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -31,11 +33,12 @@ namespace Features.Card.View
             if (!this.GetSystem<IInteractionSystem>().CanHover())
                 return;
 
-            HandPanel panel = GetComponentInParent<HandPanel>();
+            if (mHoverContext == null)
+                return;
 
             mCanvasGroup.alpha = 0f;
             Vector3 hoverPos = transform.position;
-            hoverPos.y = panel.HoverCardY;
+            hoverPos.y = mHoverContext.HoverCardY;
             mDisplay.Show(mCardView.CardData, hoverPos);
         }
 

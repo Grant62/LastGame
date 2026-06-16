@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Core.Architecture;
 using DG.Tweening;
-using Features.Combat.Event;
+using Features.Combat.Command;
 using Features.Combat.Targeting;
 using Features.Combat.View;
 using Features.Enemy.Command;
@@ -74,7 +74,7 @@ namespace Features.Enemy.View
                 if (mHealth <= 0)
                 {
                     gameObject.SetActive(false);
-                    GameMain.Interface.SendEvent(new EnemyDiedEvent(SlotIndex));
+                    this.SendCommand(new SendEnemyDiedCommand(SlotIndex));
                 }
             }
         }

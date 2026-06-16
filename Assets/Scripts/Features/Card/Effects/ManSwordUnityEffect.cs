@@ -19,7 +19,10 @@ namespace Features.Card.Effects
             IHeroModel hero = Ctx.HeroModel;
 
             if (hero.CurSlotIndex.Value == sword.CurSlotIndex.Value)
+            {
+                mChildEffect.Ctx = Ctx;
                 mChildEffect.Execute(targets, caster);
+            }
         }
     }
 }

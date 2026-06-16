@@ -13,11 +13,8 @@ namespace Features.Card.Utility
         {
             mCardView = hoverCard;
 
-            CanvasGroup cg = mCardView.GetComponentInChildren<CanvasGroup>();
-            cg.blocksRaycasts = false;
-
-            mCardView.GetComponent<CardHoverHandler>().enabled = false;
-            mCardView.GetComponent<HandDragHandler>().enabled = false;
+            mCardView.CanvasGroup.blocksRaycasts = false;
+            mCardView.HandDragHandler.enabled = false;
 
             mCardView.gameObject.SetActive(false);
         }

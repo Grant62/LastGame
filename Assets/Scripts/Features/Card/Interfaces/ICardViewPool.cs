@@ -7,7 +7,7 @@ namespace Features.Card.Interfaces
 {
     public interface ICardViewPool : IUtility
     {
-        CardView Get(CardData data, Transform parent);
+        CardView Get(CardData data, Transform parent, bool enableEffects = true);
         void Return(CardView view);
     }
 }
