@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Core.Architecture;
 using DG.Tweening;
 using Features.Combat.Event;
+using Features.Enemy.Utility;
 using Features.Enemy.View;
 using QFramework;
 using Sirenix.OdinInspector;
@@ -20,6 +21,8 @@ namespace Features.Combat.View.Board
         [SerializeField] private SlotView slotPrefab;
         [BoxGroup("引用")]
         [SerializeField] private EnemyView enemyPrefab;
+
+        public EnemyView EnemyPrefab { get => enemyPrefab; }
 
         [BoxGroup("棋盘布局")]
         [SerializeField] private int slotCount = 9;
@@ -53,7 +56,7 @@ namespace Features.Combat.View.Board
             {
                 if (EnemyViews[i].SlotIndex == e.SlotIndex)
                 {
-                    EnemyViews.RemoveAt(i);
+                    RemoveEnemy(EnemyViews[i]);
                     break;
                 }
             }
@@ -110,7 +113,7 @@ namespace Features.Combat.View.Board
         public EnemyView SpawnEnemy(int slotIndex)
         {
             SlotView slot = mSlots[slotIndex];
-            EnemyView enemy = Instantiate(enemyPrefab, slot.transform);
+            EnemyView enemy = this.GetUtility<IEnemyViewPool>().Get(slot.transform);
             enemy.SlotIndex = slotIndex;
             EnemyViews.Add(enemy);
             return enemy;
@@ -119,7 +122,7 @@ namespace Features.Combat.View.Board
         public void RemoveEnemy(EnemyView enemy)
         {
             EnemyViews.Remove(enemy);
-            Destroy(enemy.gameObject);
+            this.GetUtility<IEnemyViewPool>().Return(enemy);
         }
 
         public void ShiftEnemies(int oldPlayerIndex, int newPlayerIndex)

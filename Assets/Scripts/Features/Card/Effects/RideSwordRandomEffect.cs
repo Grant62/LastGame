@@ -39,7 +39,12 @@ namespace Features.Card.Effects
                 if (board.TryGetEnemyAtSlot(i, out EnemyView enemy) && enemy.IsValidTarget)
                 {
                     if (!suppressDmg)
-                        enemy.TakeDamage(Ctx.Config.SwordPathDamage);
+                    {
+                        int pathDmg = model.CustomPathDamage > 0
+                            ? model.CustomPathDamage
+                            : Ctx.Config.SwordPathDamage;
+                        enemy.TakeDamage(pathDmg);
+                    }
 
                     if (model.IsSpiritAttached.Value && !model.SpiritSwordSlots.Contains(i))
                         model.SpiritSwordSlots.Add(i);

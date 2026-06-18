@@ -73,8 +73,11 @@ namespace Features.Enemy.View
 
                 if (mHealth <= 0)
                 {
-                    gameObject.SetActive(false);
-                    this.SendCommand(new SendEnemyDiedCommand(SlotIndex));
+                    transform.DOScale(0f, 0.3f).OnComplete(() =>
+                    {
+                        gameObject.SetActive(false);
+                        this.SendCommand(new SendEnemyDiedCommand(SlotIndex));
+                    });
                 }
             }
         }

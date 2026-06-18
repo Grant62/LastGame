@@ -1,5 +1,4 @@
 using Features.Card.Data;
-using Features.Card.Model;
 using Features.Combat.Targeting;
 
 namespace Features.Card.Effects
@@ -15,10 +14,7 @@ namespace Features.Card.Effects
 
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
-            ICardModel model = Ctx.CardModel;
-            model.HandPile.Remove(mCardData);
-            model.DrawPile.Remove(mCardData);
-            model.DiscardPile.Remove(mCardData);
+            Ctx.CardSystem.AddToConsume(mCardData);
         }
     }
 }

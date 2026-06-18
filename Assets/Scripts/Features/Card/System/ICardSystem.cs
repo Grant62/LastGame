@@ -13,6 +13,7 @@ namespace Features.Card.System
         void DiscardFromHand(CardData card);
         void AddToDiscard(CardData card);
         void AddToHand(CardData card);
+        void AddToConsume(CardData card);
         void ShuffleDrawPile();
         void ReduceSpinCardCosts();
         void RestoreCardCosts();

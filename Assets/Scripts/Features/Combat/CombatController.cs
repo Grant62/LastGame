@@ -4,13 +4,19 @@ using Configuration.ExcelData.Container;
 using Core.Architecture;
 using Core.Systems;
 using Features.Card.Command;
+using Features.Card.Event;
 using Features.Card.Interfaces;
+using Features.Card.Model;
+using Features.Card.System;
+using Features.Card.UI;
 using Features.Card.Utility;
 using Features.Card.View;
 using Features.Combat.Command;
 using Features.Combat.Event;
+using Features.Combat.UI;
 using Features.Combat.Utility;
 using Features.Combat.View.Board;
+using Features.Enemy.Utility;
 using Features.Enemy.View;
 using Features.Hero.Command;
 using Features.Hero.Define;
@@ -19,6 +25,7 @@ using Features.Hero.Model;
 using Features.Hero.View;
 using Features.Sword.Model;
 using Features.Sword.View;
+using Main.GM;
 using QFramework;
 using Services.ExcelTool;
 using Sirenix.OdinInspector;
@@ -52,6 +59,9 @@ namespace Features.Combat
         [BoxGroup("箭头偏移量")]
         [SerializeField] private float arrowOffset = 80f;
 
+        [BoxGroup("GM")]
+        [SerializeField] private GmPanel gmPanel;
+
         private HeroView mHeroUI;
         private readonly List<SwordView> mSpiritSwordViews = new();
 
@@ -72,6 +82,8 @@ namespace Features.Combat
         private void RegisterUtilities()
         {
             GameMain.Interface.RegisterUtility<IBoardAccess>(new BoardAccess(board));
+
+            GameMain.Interface.RegisterUtility<IEnemyViewPool>(new EnemyViewPool(board.EnemyPrefab));
 
             GameMain.Interface.RegisterUtility<ICardViewPool>(new CardViewPool(cardUIPrefab));
 
@@ -98,6 +110,8 @@ namespace Features.Combat
             EntryInfoContainer entryContainer = this.GetUtility<IBinaryDataMgr>().GetTable<EntryInfoContainer>();
             GameMain.Interface.RegisterUtility<IKeywordResolver>(new KeywordResolver(entryContainer));
 
+            GameMain.Interface.RegisterUtility<ICardSpriteCache>(new CardSpriteCache());
+
             GameMain.Interface.SendEvent<GameReadyEvent>();
         }
 
@@ -120,12 +134,31 @@ namespace Features.Combat
             this.RegisterEvent<EnemyDiedEvent>(OnEnemyDied)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
+            this.RegisterEvent<HandDiscardRequestEvent>(OnHandDiscardRequest)
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            UIKit.OpenPanel<BattleBottomPanel>();
+
             this.SendCommand<StartBattleCommand>();
         }
 
         private void OnPlayerMoved(PlayerMoveExecutedEvent e)
         {
             board.ShiftEnemies(e.OldSlotIndex, e.NewSlotIndex);
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.BackQuote))
+            {
+                if (gmPanel.gameObject.activeSelf)
+                    gmPanel.gameObject.SetActive(false);
+                else
+                {
+                    gmPanel.gameObject.SetActive(true);
+                    gmPanel.Open();
+                }
+            }
         }
 
         private void OnHeroDeath(HeroDeathEvent e)
@@ -137,6 +170,24 @@ namespace Features.Combat
         {
             if (!board.GetActiveEnemies().Any())
                 this.SendCommand<SendBattleVictoryCommand>();
+        }
+
+        private void OnHandDiscardRequest(HandDiscardRequestEvent e)
+        {
+            DiscardSelectPanelData data = new()
+            {
+                HandCards = this.GetModel<ICardModel>().HandPile,
+                OnSelected = cardData =>
+                {
+                    if (cardData != null)
+                    {
+                        this.GetSystem<ICardSystem>().RemoveFromHand(cardData);
+                        this.GetSystem<ICardSystem>().AddToDiscard(cardData);
+                    }
+                }
+            };
+
+            UIKit.OpenPanel<DiscardSelectPanel>(UILevel.PopUI, data);
         }
 
         private void InitHero()

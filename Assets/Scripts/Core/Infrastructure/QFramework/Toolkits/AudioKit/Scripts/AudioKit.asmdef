@@ -2,8 +2,7 @@
   "name": "AudioKit",
   "references": [
     "QFramework.CoreKit",
-    "QFramework",
-    "JKFrame"
+    "QFramework"
   ],
   "optionalUnityReferences": [],
   "includePlatforms": [],

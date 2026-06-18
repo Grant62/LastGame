@@ -15,9 +15,6 @@ namespace Features.Combat.UI
         [BoxGroup("牌堆配置")]
         [SerializeField] private PileType pileType;
 
-        [BoxGroup("引用")]
-        [SerializeField] private PileGridPanel pileGrid;
-
         private ICardModel mCardModel;
 
         public IArchitecture GetArchitecture()
@@ -40,6 +37,9 @@ namespace Features.Combat.UI
                 case PileType.Library:
                     mCardModel.OnLibraryChanged.Register(RefreshCount);
                     break;
+                case PileType.ConsumePile:
+                    mCardModel.OnConsumePileChanged.Register(RefreshCount);
+                    break;
             }
 
             RefreshCount();
@@ -55,10 +55,14 @@ namespace Features.Combat.UI
                 PileType.DrawPile => mCardModel.DrawPile.Count,
                 PileType.DiscardPile => mCardModel.DiscardPile.Count,
                 PileType.Library => mCardModel.Library.Count,
+                PileType.ConsumePile => mCardModel.ConsumePile.Count,
                 _ => 0
             };
 
             CountLabel.text = count.ToString();
+
+            if (pileType == PileType.ConsumePile)
+                gameObject.SetActive(count > 0);
         }
 
         private void OnClick()
@@ -68,11 +72,12 @@ namespace Features.Combat.UI
                 PileType.DrawPile => mCardModel.DrawPile,
                 PileType.DiscardPile => mCardModel.DiscardPile,
                 PileType.Library => mCardModel.Library,
+                PileType.ConsumePile => mCardModel.ConsumePile,
                 _ => null
             };
 
             if (pile != null)
-                pileGrid.Open(pile);
+                UIKit.OpenPanel<PileGridPanel>(UILevel.PopUI, new PileGridPanelData { Cards = pile });
         }
 
         private void OnDestroy()
@@ -87,6 +92,9 @@ namespace Features.Combat.UI
                     break;
                 case PileType.Library:
                     mCardModel.OnLibraryChanged.UnRegister(RefreshCount);
+                    break;
+                case PileType.ConsumePile:
+                    mCardModel.OnConsumePileChanged.UnRegister(RefreshCount);
                     break;
             }
         }

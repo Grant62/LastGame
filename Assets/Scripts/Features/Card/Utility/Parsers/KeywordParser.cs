@@ -20,13 +20,25 @@ namespace Features.Card.Utility.Parsers
             if (!CardDescriptionParser.ContainsKeyword(desc, "剑来"))
                 return;
 
+            if (desc.Contains("易位则剑来"))
+                return;
+
             if (desc.Contains("如果摧毁灵剑"))
             {
-                int draw = CardDescriptionParser.ParseDraw(desc);
+                int ifIndex = desc.IndexOf("如果摧毁灵剑");
+                string condPart = desc.Substring(ifIndex);
+
+                int draw = CardDescriptionParser.ParseDraw(condPart);
                 if (draw > 0)
                     auto.Add(new AutoTargetEffect(TargetType.Self,
                         new ConditionalEffect(new HasSpiritSwordCondition(),
                             new DrawCardsEffect(draw))));
+
+                int energy = CardDescriptionParser.ParseEnergy(condPart);
+                if (energy > 0)
+                    auto.Add(new AutoTargetEffect(TargetType.Self,
+                        new ConditionalEffect(new HasSpiritSwordCondition(),
+                            new GainEnergyEffect(energy))));
             }
 
             auto.Add(new AutoTargetEffect(TargetType.Self, new RecallSwordsEffect()));
@@ -41,6 +53,9 @@ namespace Features.Card.Utility.Parsers
         private static void ParseKeywordDestroySpirit(string desc, List<AutoTargetEffect> auto)
         {
             if (!desc.Contains("摧毁") || !desc.Contains("灵剑") || desc.Contains("生成灵剑"))
+                return;
+
+            if (desc.Contains("移动到"))
                 return;
 
             auto.Add(new AutoTargetEffect(TargetType.Self, new DestroySpiritEffect()));

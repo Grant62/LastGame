@@ -86,6 +86,14 @@ namespace Features.Card.Effects
         }
     }
 
+    public class SlotHasSpiritSwordCondition : ConditionCheckEffect
+    {
+        public override bool Check(ITargetable[] targets, ITargetable caster)
+        {
+            return Ctx.SwordModel.SpiritSwordSlots.Contains(Ctx.SlotTargetIndex);
+        }
+    }
+
     public class SlotHasEnemyCondition : ConditionCheckEffect
     {
         public override bool Check(ITargetable[] targets, ITargetable caster)

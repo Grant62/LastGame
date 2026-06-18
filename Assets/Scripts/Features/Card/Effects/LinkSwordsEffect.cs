@@ -40,7 +40,10 @@ namespace Features.Card.Effects
                 damageable.GainArmor(totalBlock);
 
             if (mPenetrationEffect != null && IsPenetrated(playerSlot, swordSlots))
+            {
+                mPenetrationEffect.Ctx = Ctx;
                 mPenetrationEffect.Execute(targets, caster);
+            }
         }
 
         public static HashSet<int> GetCoveredSlots(int playerSlot, List<int> swordSlots)

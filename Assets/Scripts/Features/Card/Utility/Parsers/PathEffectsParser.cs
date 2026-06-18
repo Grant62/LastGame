@@ -11,6 +11,7 @@ namespace Features.Card.Utility.Parsers
         {
             ParsePathSuppress(desc, auto);
             ParseSwordPathDamage(desc, auto);
+            ParseAdjacentPathDamage(desc, auto);
             ParsePurgeDesc(desc, auto);
         }
 
@@ -26,14 +27,28 @@ namespace Features.Card.Utility.Parsers
                 return;
 
             int dmg = CardDescriptionParser.ParseDamage(desc);
-            if (dmg <= 0) dmg = 7;
-            auto.Add(new AutoTargetEffect(TargetType.AllEnemies, new SwordPathDamageEffect(dmg)));
+            if (dmg <= 0)
+                return;
+
+            auto.Add(new AutoTargetEffect(TargetType.Self, new SetCustomPathDamageEffect(dmg)));
         }
 
         private static void ParsePurgeDesc(string desc, List<AutoTargetEffect> auto)
         {
             if (desc.Contains("去除") && desc.Contains("负面"))
                 auto.Add(new AutoTargetEffect(TargetType.Self, new PurgeRandomDebuffEffect()));
+        }
+
+        private static void ParseAdjacentPathDamage(string desc, List<AutoTargetEffect> auto)
+        {
+            if (!desc.Contains("邻格") || !desc.Contains("途经"))
+                return;
+
+            int dmg = CardDescriptionParser.ParseDamage(desc);
+            if (dmg <= 0)
+                return;
+
+            auto.Add(new AutoTargetEffect(TargetType.Self, new PathDamageIfAdjacentEffect(dmg)));
         }
     }
 }

@@ -12,6 +12,7 @@ using Features.Hero.Command;
 using Features.Hero.Model;
 using Features.Resource.System;
 using Features.Sword.Command;
+using Features.Sword.Model;
 using Features.Sword.System;
 using QFramework;
 using UnityEngine;
@@ -46,7 +47,7 @@ namespace Features.Card.View
         private void Start()
         {
             mCardView = GetComponent<CardView>();
-            mLayoutRoot = GetComponentInParent<HandPanel>().LayoutRoot;
+            mLayoutRoot = GetComponentInParent<HandPanel>()?.LayoutRoot;
             mRectTransform = GetComponent<RectTransform>();
             mCanvasGroup = GetComponentInChildren<CanvasGroup>();
             mSlotSystem = this.GetSystem<ISlotTargetSystem>();
@@ -62,6 +63,8 @@ namespace Features.Card.View
 
             mIsDragging = true;
             this.GetSystem<IInteractionSystem>().BeginDrag();
+
+            mLayoutRoot = GetComponentInParent<HandPanel>().LayoutRoot;
 
             mRectTransform.DOKill();
             mOriginalPos = mRectTransform.anchoredPosition;
@@ -231,7 +234,13 @@ namespace Features.Card.View
 
         private bool IsSlotTargetCard()
         {
-            return mCardView.CardData.NeedsSlotTarget;
+            if (!mCardView.CardData.NeedsSlotTarget)
+                return false;
+
+            if (mCardView.CardData.SlotAction == SlotAction.SpawnSpiritAtSlot)
+                return this.GetModel<ISwordModel>().SpiritSwordSlots.Count > 0;
+
+            return true;
         }
     }
 }

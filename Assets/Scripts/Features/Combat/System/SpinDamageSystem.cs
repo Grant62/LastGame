@@ -32,6 +32,12 @@ namespace Features.Combat.System
                 DamageEnemyAtSlot(board, slot - 1, damage);
                 DamageEnemyAtSlot(board, slot + 1, damage);
             }
+
+            if (sword.SpinAffectsSpirits)
+            {
+                foreach (int spiritSlot in sword.SpiritSwordSlots)
+                    DamageEnemyAtSlot(board, spiritSlot, damage);
+            }
         }
 
         private static void DamageEnemyAtSlot(BoardView board, int slot, int damage)

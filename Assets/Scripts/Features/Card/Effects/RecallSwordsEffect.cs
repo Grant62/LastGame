@@ -21,7 +21,6 @@ namespace Features.Card.Effects
                 swordSlots.Add(swordModel.CurSlotIndex.Value);
             swordSlots.AddRange(swordModel.SpiritSwordSlots);
 
-            HashSet<int> damaged = new();
             foreach (int fromSlot in swordSlots)
             {
                 bool isSpirit = swordModel.SpiritSwordSlots.Contains(fromSlot);
@@ -29,7 +28,7 @@ namespace Features.Card.Effects
                 int step = playerSlot > fromSlot ? 1 : -1;
                 for (int i = fromSlot; i != playerSlot + step; i += step)
                 {
-                    if (damaged.Add(i) && board.TryGetEnemyAtSlot(i, out EnemyView enemy) && enemy.IsValidTarget)
+                    if (board.TryGetEnemyAtSlot(i, out EnemyView enemy) && enemy.IsValidTarget)
                         enemy.TakeDamage(pathDmg);
                 }
             }

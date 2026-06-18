@@ -89,6 +89,7 @@ namespace Features.Card.UI
             foreach (CardData d in handPile) mCurrentSet.Add(d);
             mAddedSet.Clear();
 
+            int discardIndex = 0;
             for (int i = mCardOrder.Count - 1; i >= 0; i--)
             {
                 CardView card = mCardOrder[i];
@@ -96,8 +97,9 @@ namespace Features.Card.UI
                 {
                     mCardLookup.Remove(card.CardData);
                     mCardOrder.RemoveAt(i);
-                    float delay = i * drawStagger;
+                    float delay = discardIndex * drawStagger;
                     AnimateDiscard(card, delay);
+                    discardIndex++;
                 }
             }
 

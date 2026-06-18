@@ -10,57 +10,48 @@ using UnityEngine.UI;
 
 namespace Features.Card.UI
 {
-    public partial class PileGridPanel : ViewController, IController
+    public class PileGridPanelData : UIPanelData
+    {
+        public List<CardData> Cards;
+    }
+
+    public partial class PileGridPanel : UIPanel
     {
         private ICardViewPool mCardPool;
-        private List<CardView> mCardViews;
+        private readonly List<CardView> mCardViews = new();
 
         [BoxGroup("滚动")]
         [SerializeField] private float scrollSensitivity = 30f;
 
-        public IArchitecture GetArchitecture()
+        protected override void OnInit(IUIData uiData = null)
         {
-            return GameMain.Interface;
-        }
-
-        private void Awake()
-        {
-            mCardViews = new List<CardView>();
-            mCardPool = GetArchitecture().GetUtility<ICardViewPool>();
+            mCardPool = GameMain.Interface.GetUtility<ICardViewPool>();
             GetComponent<ScrollRect>().scrollSensitivity = scrollSensitivity;
-            Close.onClick.AddListener(OnCloseClicked);
+            Close.onClick.AddListener(CloseSelf);
         }
 
-        public void Open(List<CardData> cards)
+        protected override void OnOpen(IUIData uiData = null)
         {
-            if (gameObject.activeSelf)
+            PileGridPanelData data = uiData as PileGridPanelData;
+            if (data?.Cards == null)
                 return;
 
-            gameObject.SetActive(true);
-            LayoutCards(cards);
+            LayoutCards(data.Cards);
         }
 
-        public void ClosePanel()
+        protected override void OnClose()
         {
-            if (!gameObject.activeSelf)
-                return;
-
             ReleaseCards();
-            gameObject.SetActive(false);
-        }
-
-        private void OnCloseClicked()
-        {
-            ClosePanel();
+            Close.onClick.RemoveListener(CloseSelf);
         }
 
         private void LayoutCards(List<CardData> cards)
         {
             ReleaseCards();
 
-            foreach (CardData data in cards)
+            foreach (CardData cardData in cards)
             {
-                CardView card = mCardPool.Get(data, Content, false);
+                CardView card = mCardPool.Get(cardData, Content, false);
                 card.HandDragHandler.enabled = false;
                 card.CardHoverHandler.enabled = false;
                 card.RectTransform.localEulerAngles = Vector3.zero;
@@ -75,12 +66,6 @@ namespace Features.Card.UI
                 mCardPool.Return(view);
 
             mCardViews.Clear();
-        }
-
-        private void OnDestroy()
-        {
-            ReleaseCards();
-            Close.onClick.RemoveListener(OnCloseClicked);
         }
     }
 }

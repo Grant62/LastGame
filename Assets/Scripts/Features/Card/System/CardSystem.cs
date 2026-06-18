@@ -39,6 +39,8 @@ namespace Features.Card.System
         private void OnPlayerTurnEnd(PlayerTurnEndEvent e)
         {
             ICardModel model = this.GetModel<ICardModel>();
+            if (model.KeepHandOnTurnEnd)
+                return;
             if (model.HandPile.Count == 0)
                 return;
 
@@ -61,15 +63,31 @@ namespace Features.Card.System
             ICardModel model = this.GetModel<ICardModel>();
             model.DrawPile.Clear();
             model.DrawPile.AddRange(model.Library);
+            model.ConsumePile.Clear();
+            model.OnConsumePileChanged.Trigger();
             ShuffleDrawPile();
         }
 
         public void DrawCards(int count)
         {
             ICardModel model = this.GetModel<ICardModel>();
+            const int MaxHandSize = 10;
+            bool discardChanged = false;
 
             for (int i = 0; i < count; i++)
             {
+                if (model.HandPile.Count >= MaxHandSize)
+                {
+                    if (model.DrawPile.Count == 0)
+                        break;
+
+                    CardData overflow = model.DrawPile[0];
+                    model.DrawPile.RemoveAt(0);
+                    model.DiscardPile.Add(overflow);
+                    discardChanged = true;
+                    continue;
+                }
+
                 if (model.DrawPile.Count == 0)
                     ShuffleDiscardIntoDrawPile(model);
 
@@ -83,6 +101,8 @@ namespace Features.Card.System
 
             model.OnDrawPileChanged.Trigger();
             model.OnHandPileChanged.Trigger();
+            if (discardChanged)
+                model.OnDiscardPileChanged.Trigger();
         }
 
         public void RemoveFromHand(CardData card)
@@ -113,6 +133,16 @@ namespace Features.Card.System
             ICardModel model = this.GetModel<ICardModel>();
             model.HandPile.Add(card);
             model.OnHandPileChanged.Trigger();
+        }
+
+        public void AddToConsume(CardData card)
+        {
+            ICardModel model = this.GetModel<ICardModel>();
+            model.HandPile.Remove(card);
+            model.DrawPile.Remove(card);
+            model.DiscardPile.Remove(card);
+            model.ConsumePile.Add(card);
+            model.OnConsumePileChanged.Trigger();
         }
 
         public void ShuffleDrawPile()

@@ -1,6 +1,7 @@
 using Core.Architecture;
 using DG.Tweening;
 using Features.Card.Data;
+using Features.Card.Utility;
 using Features.Resource.Model;
 using QFramework;
 using UnityEngine;
@@ -13,8 +14,6 @@ namespace Features.Card.View
         [SerializeField] private CardHoverHandler cardHoverHandler;
         [SerializeField] private CanvasGroup canvasGroup;
 
-        private Sprite mDefaultSprite;
-        private bool mDefaultCached;
         private IUnRegister mEnergyUnregister;
 
         public CardData CardData { get; private set; }
@@ -39,22 +38,16 @@ namespace Features.Card.View
 
         public void Setup(CardData data, bool enableEffects = true)
         {
-            if (!mDefaultCached)
-            {
-                mDefaultSprite = CardImage.sprite;
-                mDefaultCached = true;
-            }
-
             CardData = data;
             Title.text = data.Name;
-            Desc.text = data.Desc;
+            Desc.text = data.Desc.Replace("【", "").Replace("】", "");
             Cost.text = data.Cost == -1 ? "X" : data.Cost.ToString();
             TypeText.text = data.Type;
             Price.text = data.Price.ToString();
 
-            Sprite loaded = LoadIcon(data.IconAddress);
-            CardImage.sprite = loaded != null ? loaded : mDefaultSprite;
-            OutlineImage.sprite = CardImage.sprite;
+            Sprite icon = GetArchitecture().GetUtility<ICardSpriteCache>().GetSprite(data.IconAddress);
+            CardImage.sprite = icon;
+            OutlineImage.sprite = icon;
             OutlineImage.gameObject.SetActive(false);
 
             RectTransform.DOKill();
@@ -75,7 +68,6 @@ namespace Features.Card.View
             mEnergyUnregister?.UnRegister();
             mEnergyUnregister = null;
             CardData = null;
-            CardImage.sprite = mDefaultSprite;
             handDragHandler.enabled = true;
             cardHoverHandler.enabled = true;
 
@@ -95,14 +87,6 @@ namespace Features.Card.View
             bool canAfford = CardData.Cost == -1
                              || this.GetModel<IResourceModel>().CurEnergy.Value >= CardData.Cost;
             OutlineImage.gameObject.SetActive(canAfford);
-        }
-
-        private Sprite LoadIcon(string iconAddress)
-        {
-            if (string.IsNullOrEmpty(iconAddress))
-                return null;
-
-            return null;
         }
     }
 }

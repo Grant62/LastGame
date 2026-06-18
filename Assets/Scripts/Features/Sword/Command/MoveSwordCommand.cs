@@ -20,7 +20,9 @@ namespace Features.Sword.Command
         protected override void OnExecute()
         {
             ISwordModel model = this.GetModel<ISwordModel>();
-            int pathDamage = this.GetModel<IGameConfigModel>().SwordPathDamage;
+            int pathDamage = model.CustomPathDamage > 0
+                ? model.CustomPathDamage
+                : this.GetModel<IGameConfigModel>().SwordPathDamage;
 
             int oldSlot = model.CurSlotIndex.Value;
 

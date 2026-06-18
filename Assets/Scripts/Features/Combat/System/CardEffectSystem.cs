@@ -65,6 +65,12 @@ namespace Features.Combat.System
                 if (targets.Length > 0)
                     atEf.Effect.Execute(targets, caster);
             }
+
+            if (mCtx.CardModel.PendingDiscardCount > 0)
+            {
+                mCtx.CardModel.PendingDiscardCount = 0;
+                this.SendEvent<HandDiscardRequestEvent>();
+            }
         }
     }
 }

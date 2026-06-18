@@ -25,6 +25,11 @@ namespace Features.Combat.UI
             RefreshText();
         }
 
+        private void OnDestroy()
+        {
+            button.onClick.RemoveListener(OnEndTurnClicked);
+        }
+
         private void RefreshText()
         {
             ITurnSystem turn = this.GetSystem<ITurnSystem>();

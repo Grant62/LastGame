@@ -15,6 +15,8 @@ namespace Features.Card.Utility.Parsers
             ParseRideSwordRandom(desc, auto);
             ParseMovePlayerRandom(desc, auto);
             ParseEnemyShiftBlock(desc, auto);
+            ParseEnemyShiftRecall(desc, auto);
+            ParseMoveToSpiritBlock(desc, auto);
         }
 
         private static void ParseConditional(string desc, List<AutoTargetEffect> auto)
@@ -81,6 +83,31 @@ namespace Features.Card.Utility.Parsers
                 auto.Add(new AutoTargetEffect(TargetType.Self,
                     new ConditionalEffect(new SlotHasEnemyCondition(),
                         new GainBlockEffect(block))));
+        }
+
+        private static void ParseEnemyShiftRecall(string desc, List<AutoTargetEffect> auto)
+        {
+            if (!desc.Contains("易位") || !desc.Contains("剑来"))
+                return;
+
+            auto.Add(new AutoTargetEffect(TargetType.Self,
+                new ConditionalEffect(new SlotHasEnemyCondition(), new RecallToSlotEffect())));
+        }
+
+        private static void ParseMoveToSpiritBlock(string desc, List<AutoTargetEffect> auto)
+        {
+            if (!desc.Contains("移动到") || !desc.Contains("灵剑"))
+                return;
+
+            int block = CardDescriptionParser.ParseBlock(desc);
+            if (block > 0)
+                auto.Add(new AutoTargetEffect(TargetType.Self,
+                    new ConditionalEffect(new SlotHasSpiritSwordCondition(),
+                        new GainBlockEffect(block))));
+
+            auto.Add(new AutoTargetEffect(TargetType.Self,
+                new ConditionalEffect(new SlotHasSpiritSwordCondition(),
+                    new DestroySpiritEffect())));
         }
     }
 }

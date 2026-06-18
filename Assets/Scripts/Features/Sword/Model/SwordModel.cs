@@ -15,6 +15,8 @@ namespace Features.Sword.Model
         public bool HasTurnStartSpiritSpawn { get; set; }
         public bool HasReactiveSpiritSpawn { get; set; }
         public bool SuppressPathDamage { get; set; }
+        public bool SpinAffectsSpirits { get; set; }
+        public int CustomPathDamage { get; set; }
 
         public List<int> SpiritSwordSlots { get; } = new();
         public EasyEvent OnSpiritSwordsChanged { get; } = new();

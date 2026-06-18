@@ -4,6 +4,7 @@ namespace Features.Card.Data
     {
         DrawPile,
         DiscardPile,
-        Library
+        Library,
+        ConsumePile
     }
 }

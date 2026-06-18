@@ -66,7 +66,7 @@ namespace Features.Card.Utility.Parsers
         {
             int v = CardDescriptionParser.ParseDiscard(desc);
             if (v > 0)
-                auto.Add(new AutoTargetEffect(TargetType.Self, new DiscardCardsEffect(v)));
+                auto.Add(new AutoTargetEffect(TargetType.Self, new InteractiveDiscardEffect(v)));
         }
 
         private static void ParseHeal(string desc, List<AutoTargetEffect> auto)

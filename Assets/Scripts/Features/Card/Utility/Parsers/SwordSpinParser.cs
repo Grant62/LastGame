@@ -41,8 +41,7 @@ namespace Features.Card.Utility.Parsers
 
             if (desc.Contains("【旋剑】。")
                 || desc.Contains("。【旋剑】")
-                || desc.Contains("【旋剑】后")
-                || desc.Contains("【旋剑】会"))
+                || desc.Contains("【旋剑】后"))
                 return true;
 
             if (desc.Contains("旋剑伤害") || desc.Contains("旋剑】伤害")
@@ -65,6 +64,9 @@ namespace Features.Card.Utility.Parsers
 
             if (desc.Contains("对邻格也") && CardDescriptionParser.ContainsKeyword(desc, "旋剑"))
                 auto.Add(new AutoTargetEffect(TargetType.Self, new SetSwordFlagEffect(SwordFlag.SpinHitsAdjacent)));
+
+            if (desc.Contains("灵剑") && desc.Contains("一起生效"))
+                auto.Add(new AutoTargetEffect(TargetType.Self, new SetSwordFlagEffect(SwordFlag.SpinAffectsSpirits)));
         }
 
         private static void ParseSpinImmediate(string desc, List<AutoTargetEffect> auto)
