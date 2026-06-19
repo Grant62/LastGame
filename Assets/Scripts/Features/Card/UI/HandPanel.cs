@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using Core.Architecture;
 using DG.Tweening;
-using DG.Tweening.Core;
-using DG.Tweening.Plugins.Options;
 using Features.Card.Data;
 using Features.Card.Event;
 using Features.Card.Interfaces;
 using Features.Card.Model;
 using Features.Card.View;
+using Features.Combat.Event;
 using Features.Combat.System;
 using QFramework;
 using Sirenix.OdinInspector;
@@ -27,11 +26,17 @@ namespace Features.Card.UI
         [SerializeField] private float centerPointY = -3380f;
         [BoxGroup("卡牌布局")]
         [SerializeField] private float hoverCardY = 190f;
+        [BoxGroup("卡牌布局")]
+        [SerializeField] private float hoverPushMax = 80f;
+        [BoxGroup("卡牌布局")]
+        [SerializeField] private float hoverPushFalloff = 4f;
 
         [BoxGroup("动画")]
         [SerializeField] private float layoutDuration = 0.15f;
         [BoxGroup("动画")]
         [SerializeField] private float drawStagger = 0.1f;
+        [BoxGroup("动画")]
+        [SerializeField] private float hoverDuration = 0.18f;
 
         [BoxGroup("坐标")]
         [SerializeField] private Vector2 drawOrigin = new(1110, -400);
@@ -48,6 +53,8 @@ namespace Features.Card.UI
         private readonly HashSet<CardData> mAddedSet = new();
         private readonly List<Vector2> mCardPositions = new();
         private readonly List<float> mCardAngles = new();
+        private int mHoveredIndex = -1;
+        private float mLayoutRootBaseY;
 
         public IArchitecture GetArchitecture()
         {
@@ -58,9 +65,51 @@ namespace Features.Card.UI
 
         public Canvas OverlayCanvas { get => overlayCanvas; }
 
+        public void ForceRefreshLayout()
+        {
+            int count = mCardOrder.Count;
+            CalculatePositions(count, -1);
+
+            for (int i = 0; i < count; i++)
+            {
+                RectTransform rect = mCardOrder[i].RectTransform;
+                rect.DOKill();
+                rect.DOAnchorPos(mCardPositions[i], layoutDuration).SetEase(Ease.OutCubic);
+                rect.DOLocalRotate(new Vector3(0f, 0f, mCardAngles[i]), layoutDuration).SetEase(Ease.OutCubic);
+                rect.SetSiblingIndex(i);
+            }
+        }
+
+        public void ForceClearHover()
+        {
+            if (mHoveredIndex < 0)
+                return;
+
+            GameMain.Interface.GetUtility<ICardHoverDisplay>()?.Hide();
+
+            foreach (CardView card in mCardOrder)
+            {
+                if (card.CanvasGroup != null)
+                    card.CanvasGroup.alpha = 1f;
+            }
+
+            mHoveredIndex = -1;
+            RefreshLayoutForHover();
+        }
+
+        public void ForceEndAllDrags()
+        {
+            foreach (CardView card in mCardOrder)
+            {
+                if (card.HandDragHandler.IsDragging)
+                    card.HandDragHandler.ForceEndDrag();
+            }
+        }
+
         private void Start()
         {
             mCardPool = GetArchitecture().GetUtility<ICardViewPool>();
+            mLayoutRootBaseY = LayoutRoot.anchoredPosition.y;
 
             ICardModel model = this.GetModel<ICardModel>();
             model.OnHandPileChanged.Register(OnHandPileChanged)
@@ -69,12 +118,48 @@ namespace Features.Card.UI
             this.RegisterEvent<HandCardCostChangedEvent>(OnHandCardCostChanged)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
+            this.RegisterEvent<EnemyTurnStartEvent>(_ => OnEnemyTurnStart())
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<PlayerTurnStartEvent>(_ => OnPlayerTurnStart())
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+
             OnHandPileChanged();
+        }
+
+        public void OnCardHovered(int index)
+        {
+            if (mHoveredIndex == index)
+                return;
+
+            SnapToBaseLayout();
+
+            mHoveredIndex = index;
+            RefreshLayoutForHover();
+        }
+
+        public void OnCardUnhovered(int index)
+        {
+            if (mHoveredIndex != index)
+                return;
+
+            mHoveredIndex = -1;
+            RefreshLayoutForHover();
         }
 
         private void OnHandPileChanged()
         {
             SyncViews(this.GetModel<ICardModel>().HandPile);
+        }
+
+        private void OnEnemyTurnStart()
+        {
+            LayoutRoot.DOAnchorPosY(-90f, 0.3f).SetEase(Ease.OutCubic);
+        }
+
+        private void OnPlayerTurnStart()
+        {
+            LayoutRoot.DOAnchorPosY(mLayoutRootBaseY, 0.3f).SetEase(Ease.OutCubic);
         }
 
         private void OnHandCardCostChanged(HandCardCostChangedEvent e)
@@ -103,16 +188,23 @@ namespace Features.Card.UI
                 }
             }
 
+            if (mHoveredIndex >= mCardOrder.Count)
+                mHoveredIndex = -1;
+
             foreach (CardData data in handPile)
             {
                 if (!mCardLookup.ContainsKey(data))
                 {
                     CardView card = mCardPool.Get(data, LayoutRoot);
+                    card.CardHoverHandler.RegisterHandPanel(this, mCardOrder.Count);
                     mCardLookup.Add(data, card);
                     mCardOrder.Add(card);
                     mAddedSet.Add(data);
                 }
             }
+
+            for (int i = 0; i < mCardOrder.Count; i++)
+                mCardOrder[i].CardHoverHandler.SetHandIndex(i);
 
             SetCardLayout(mAddedSet);
         }
@@ -131,10 +223,14 @@ namespace Features.Card.UI
         private void SetCardLayout(HashSet<CardData> newCards)
         {
             int count = mCardOrder.Count;
-            CalculatePositions(count);
+            CalculatePositions(count, mHoveredIndex);
 
             if (newCards.Count > 0)
+            {
                 this.GetSystem<IInteractionSystem>().BeginAnimation();
+                float maxDelay = (count - 1) * drawStagger + layoutDuration;
+                DOVirtual.DelayedCall(maxDelay, () => this.GetSystem<IInteractionSystem>().EndAnimation());
+            }
 
             for (int i = 0; i < count; i++)
             {
@@ -144,16 +240,13 @@ namespace Features.Card.UI
                 rect.DOKill();
                 bool isNew = newCards.Contains(card.CardData);
                 float delay = isNew ? i * drawStagger : 0f;
-                bool isLast = i == count - 1;
 
                 if (isNew)
                 {
                     rect.anchoredPosition = drawOrigin;
-                    TweenerCore<Vector2, Vector2, VectorOptions> tween = rect.DOAnchorPos(mCardPositions[i], layoutDuration)
+                    rect.DOAnchorPos(mCardPositions[i], layoutDuration)
                         .SetEase(Ease.OutCubic)
                         .SetDelay(delay);
-                    if (isLast)
-                        tween.OnComplete(() => this.GetSystem<IInteractionSystem>().EndAnimation());
                 }
                 else
                 {
@@ -165,7 +258,32 @@ namespace Features.Card.UI
             }
         }
 
-        private void CalculatePositions(int total)
+        private void SnapToBaseLayout()
+        {
+            int count = mCardOrder.Count;
+            CalculatePositions(count, -1);
+
+            for (int i = 0; i < count; i++)
+            {
+                RectTransform rect = mCardOrder[i].RectTransform;
+                rect.DOKill();
+                rect.anchoredPosition = mCardPositions[i];
+            }
+        }
+
+        private void RefreshLayoutForHover()
+        {
+            int count = mCardOrder.Count;
+            CalculatePositions(count, mHoveredIndex);
+
+            for (int i = 0; i < count; i++)
+            {
+                RectTransform rect = mCardOrder[i].RectTransform;
+                rect.DOAnchorPos(mCardPositions[i], hoverDuration).SetEase(Ease.OutCubic);
+            }
+        }
+
+        private void CalculatePositions(int total, int hoveredIndex)
         {
             mCardPositions.Clear();
             mCardAngles.Clear();
@@ -182,10 +300,19 @@ namespace Features.Card.UI
                 float cardAngle = totalAngle / 2f - i * currentSpacing;
                 float rad = cardAngle * Mathf.Deg2Rad;
 
-                mCardPositions.Add(new Vector2(
+                Vector2 pos = new(
                     -Mathf.Sin(rad) * radius,
                     centerPointY + Mathf.Cos(rad) * radius
-                ));
+                );
+
+                if (hoveredIndex >= 0 && i != hoveredIndex)
+                {
+                    float dist = Mathf.Abs(hoveredIndex - i);
+                    float pushAmount = Mathf.Lerp(hoverPushMax, 0f, Mathf.Min(1f, dist / hoverPushFalloff));
+                    pos.x += Mathf.Sign(i - hoveredIndex) * pushAmount;
+                }
+
+                mCardPositions.Add(pos);
                 mCardAngles.Add(cardAngle);
             }
         }

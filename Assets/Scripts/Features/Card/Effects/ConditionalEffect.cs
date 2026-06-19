@@ -106,4 +106,29 @@ namespace Features.Card.Effects
             return board.TryGetEnemyAtSlot(slot, out EnemyView enemy) && enemy.IsValidTarget;
         }
     }
+
+    public class SlotHasSwordCondition : ConditionCheckEffect
+    {
+        public override bool Check(ITargetable[] targets, ITargetable caster)
+        {
+            return Ctx.SwordModel.CurSlotIndex.Value >= 0
+                   && Ctx.SwordModel.CurSlotIndex.Value == Ctx.SlotTargetIndex;
+        }
+    }
+
+    public class NotSpinningCondition : ConditionCheckEffect
+    {
+        public override bool Check(ITargetable[] targets, ITargetable caster)
+        {
+            return !Ctx.SwordModel.IsSpinning.Value;
+        }
+    }
+
+    public class PenetratedCondition : ConditionCheckEffect
+    {
+        public override bool Check(ITargetable[] targets, ITargetable caster)
+        {
+            return Ctx.SwordModel.LastLinkPenetrated;
+        }
+    }
 }

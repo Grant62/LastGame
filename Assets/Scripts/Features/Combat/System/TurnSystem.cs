@@ -39,7 +39,7 @@ namespace Features.Combat.System
         {
             this.SendEvent<EnemyTurnStartEvent>();
 
-            await UniTask.Delay(1000);
+            await UniTask.Delay(3000);
 
             this.SendEvent<EnemyTurnEndEvent>();
             StartPlayerTurn();

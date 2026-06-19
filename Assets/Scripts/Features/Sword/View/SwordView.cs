@@ -26,7 +26,7 @@ namespace Features.Sword.View
         [FoldoutGroup("视觉")]
         [SerializeField] private Image swordImage;
         [FoldoutGroup("视觉")]
-        [SerializeField] private float spinSpeed = 360f;
+        [SerializeField] private float spinSpeed = 720f;
         [FoldoutGroup("视觉")]
         [SerializeField] private float spiritAlpha = 0.4f;
 

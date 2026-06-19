@@ -16,6 +16,10 @@ namespace Features.Sword.Model
         public bool HasReactiveSpiritSpawn { get; set; }
         public bool SuppressPathDamage { get; set; }
         public bool SpinAffectsSpirits { get; set; }
+        public bool LinkAlwaysPenetrate { get; set; }
+        public bool RecallSpiritsOnSwordMove { get; set; }
+        public bool LastLinkPenetrated { get; set; }
+        public bool IsRecalling { get; set; }
         public int CustomPathDamage { get; set; }
 
         public List<int> SpiritSwordSlots { get; } = new();

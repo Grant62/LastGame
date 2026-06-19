@@ -11,7 +11,9 @@ namespace Features.Card.Effects
         HasReactiveSpiritSpawn,
         SuppressPathDamage,
         SpinHitsAdjacent,
-        SpinAffectsSpirits
+        SpinAffectsSpirits,
+        LinkAlwaysPenetrate,
+        RecallSpiritsOnSwordMove
     }
 
     public class SetSwordFlagEffect : Effect
@@ -35,6 +37,8 @@ namespace Features.Card.Effects
                 case SwordFlag.SuppressPathDamage: model.SuppressPathDamage = true; break;
                 case SwordFlag.SpinHitsAdjacent: model.SpinHitsAdjacent = true; break;
                 case SwordFlag.SpinAffectsSpirits: model.SpinAffectsSpirits = true; break;
+                case SwordFlag.LinkAlwaysPenetrate: model.LinkAlwaysPenetrate = true; break;
+                case SwordFlag.RecallSpiritsOnSwordMove: model.RecallSpiritsOnSwordMove = true; break;
             }
         }
     }

@@ -9,8 +9,6 @@ namespace Features.Card.Effects
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
             int energySpent = Ctx.EnergySpent;
-            if (energySpent <= 0)
-                return;
 
             int formulaDamage = 5 * (energySpent + 1);
 

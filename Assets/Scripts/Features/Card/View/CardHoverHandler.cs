@@ -14,6 +14,8 @@ namespace Features.Card.View
         private CanvasGroup mCanvasGroup;
         private ICardHoverDisplay mDisplay;
         private IHoverContext mHoverContext;
+        private HandPanel mHandPanel;
+        private int mHandIndex = -1;
 
         public IArchitecture GetArchitecture()
         {
@@ -26,6 +28,18 @@ namespace Features.Card.View
             mCanvasGroup = GetComponentInChildren<CanvasGroup>();
             mDisplay = GetArchitecture().GetUtility<ICardHoverDisplay>();
             mHoverContext = GetComponentInParent<HandPanel>();
+            mHandPanel = mHoverContext as HandPanel;
+        }
+
+        public void RegisterHandPanel(HandPanel panel, int index)
+        {
+            mHandPanel = panel;
+            mHandIndex = index;
+        }
+
+        public void SetHandIndex(int index)
+        {
+            mHandIndex = index;
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -35,6 +49,9 @@ namespace Features.Card.View
 
             if (mHoverContext == null)
                 return;
+
+            if (mHandPanel != null && mHandIndex >= 0)
+                mHandPanel.OnCardHovered(mHandIndex);
 
             mCanvasGroup.alpha = 0f;
             Vector3 hoverPos = transform.position;
@@ -47,8 +64,17 @@ namespace Features.Card.View
             if (this.GetSystem<IInteractionSystem>().IsDragging)
                 return;
 
+            if (mHandPanel != null && mHandIndex >= 0)
+                mHandPanel.OnCardUnhovered(mHandIndex);
+
             mCanvasGroup.alpha = 1f;
             mDisplay.Hide();
+        }
+
+        private void OnDestroy()
+        {
+            if (mHandPanel != null && mHandIndex >= 0)
+                mHandPanel.OnCardUnhovered(mHandIndex);
         }
     }
 }

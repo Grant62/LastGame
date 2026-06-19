@@ -24,10 +24,10 @@ namespace Features.Card.View
     {
         private ISlotTargetSystem mSlotSystem;
         private CardView mCardView;
+        private HandPanel mHandPanel;
         private RectTransform mLayoutRoot;
         private RectTransform mRectTransform;
         private CanvasGroup mCanvasGroup;
-        private bool mIsDragging;
         private Vector2 mOriginalPos;
         private Vector3 mOriginalRotation;
         private int mOriginalSiblingIndex;
@@ -47,7 +47,8 @@ namespace Features.Card.View
         private void Start()
         {
             mCardView = GetComponent<CardView>();
-            mLayoutRoot = GetComponentInParent<HandPanel>()?.LayoutRoot;
+            mHandPanel = GetComponentInParent<HandPanel>();
+            mLayoutRoot = mHandPanel?.LayoutRoot;
             mRectTransform = GetComponent<RectTransform>();
             mCanvasGroup = GetComponentInChildren<CanvasGroup>();
             mSlotSystem = this.GetSystem<ISlotTargetSystem>();
@@ -61,7 +62,7 @@ namespace Features.Card.View
             if (!this.GetSystem<IResourceSystem>().CanSpend(mCardView.CardData.Cost))
                 return;
 
-            mIsDragging = true;
+            IsDragging = true;
             this.GetSystem<IInteractionSystem>().BeginDrag();
 
             mLayoutRoot = GetComponentInParent<HandPanel>().LayoutRoot;
@@ -89,10 +90,10 @@ namespace Features.Card.View
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            if (!mIsDragging)
+            if (!IsDragging)
                 return;
 
-            mIsDragging = false;
+            IsDragging = false;
             this.GetSystem<IInteractionSystem>().EndDrag();
             this.SendCommand<EndTargetingCommand>();
 
@@ -127,7 +128,7 @@ namespace Features.Card.View
 
         private void Update()
         {
-            if (!mIsDragging || IsTargetingCard())
+            if (!IsDragging || IsTargetingCard())
                 return;
 
             Vector2 target = (Vector2)Input.mousePosition + mDragOffset;
@@ -143,6 +144,22 @@ namespace Features.Card.View
             mRectTransform.SetSiblingIndex(mOriginalSiblingIndex);
         }
 
+        public bool IsDragging { get; private set; }
+
+        public void ForceEndDrag()
+        {
+            if (!IsDragging)
+                return;
+
+            IsDragging = false;
+            this.GetSystem<IInteractionSystem>().EndDrag();
+            this.SendCommand<EndTargetingCommand>();
+
+            GetArchitecture().GetUtility<ICardHoverDisplay>().Hide();
+            mCanvasGroup.alpha = 1f;
+            SnapBack();
+        }
+
         private bool PlayWithEnemyTarget(Vector2 screenPos)
         {
             IEnemyTarget enemyTarget = RaycastFor<IEnemyTarget>(screenPos);
@@ -152,6 +169,7 @@ namespace Features.Card.View
             SlotAction action = mCardView.CardData.SlotAction;
 
             this.SendCommand(new PlayCardCommand(mCardView.CardData, enemyTarget));
+            mHandPanel.ForceRefreshLayout();
 
             if (enemyTarget.SlotIndex >= 0)
             {
@@ -159,7 +177,7 @@ namespace Features.Card.View
 
                 if (action == SlotAction.MoveSword)
                     this.SendCommand(new MoveSwordCommand(enemyTarget.SlotIndex));
-                else if (action == SlotAction.MovePlayer)
+                else if (action == SlotAction.MovePlayer && !mCardView.CardData.HasMovePlayerSlotEffect)
                     this.SendCommand(new MovePlayerCommand(enemyTarget.SlotIndex));
             }
 
@@ -179,11 +197,13 @@ namespace Features.Card.View
             SlotAction action = mCardView.CardData.SlotAction;
 
             this.SendCommand(new PlayCardCommand(mCardView.CardData, null, slotIndex));
+            mHandPanel.ForceRefreshLayout();
+
             UpdateFacing(slotIndex);
 
             if (action == SlotAction.MoveSword)
                 this.SendCommand(new MoveSwordCommand(slotIndex));
-            else if (action == SlotAction.MovePlayer)
+            else if (action == SlotAction.MovePlayer && !mCardView.CardData.HasMovePlayerSlotEffect)
                 this.SendCommand(new MovePlayerCommand(slotIndex));
 
             return true;
@@ -195,6 +215,7 @@ namespace Features.Card.View
                 return false;
 
             this.SendCommand(new PlayCardCommand(mCardView.CardData));
+            mHandPanel.ForceRefreshLayout();
             return true;
         }
 
@@ -238,7 +259,7 @@ namespace Features.Card.View
                 return false;
 
             if (mCardView.CardData.SlotAction == SlotAction.SpawnSpiritAtSlot)
-                return this.GetModel<ISwordModel>().SpiritSwordSlots.Count > 0;
+                return this.GetModel<ISwordModel>().IsSpiritAttached.Value;
 
             return true;
         }

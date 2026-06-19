@@ -24,6 +24,7 @@ namespace Features.Card.UI
         [SerializeField] private ScrollRect scrollRect;
         [SerializeField] private Button confirmBtn;
         [SerializeField] private TMP_Text tipText;
+        [SerializeField] private Material outlineMat;
 
         private ICardViewPool mCardPool;
         private readonly List<CardView> mCardViews = new();
@@ -58,6 +59,8 @@ namespace Features.Card.UI
             foreach (CardData cardData in handCards)
             {
                 CardView card = mCardPool.Get(cardData, content, false);
+                card.RectTransform.localScale = new Vector3(1.2f, 1.2f, 1f);
+                card.RectTransform.localEulerAngles = Vector3.zero;
                 card.HandDragHandler.enabled = false;
                 card.CardHoverHandler.enabled = false;
 
@@ -74,18 +77,22 @@ namespace Features.Card.UI
         private void OnCardClicked(CardView card, CardData cardData)
         {
             if (mSelected != null && mSelected != card)
-                mSelected.RectTransform.localScale = Vector3.one;
+            {
+                mSelected.CardImage.material = null;
+                mSelected.RectTransform.localScale = new Vector3(1.2f, 1.2f, 1f);
+            }
 
             if (mSelected == card)
             {
                 mSelected = null;
-                card.RectTransform.localScale = Vector3.one;
+                card.CardImage.material = null;
+                card.RectTransform.localScale = new Vector3(1.2f, 1.2f, 1f);
                 confirmBtn.interactable = false;
                 return;
             }
 
             mSelected = card;
-            card.RectTransform.localScale = new Vector3(1.1f, 1.1f, 1f);
+            card.CardImage.material = outlineMat;
             confirmBtn.interactable = true;
         }
 
@@ -110,6 +117,7 @@ namespace Features.Card.UI
                 if (btn != null)
                     Destroy(btn);
 
+                card.CardImage.material = null;
                 mCardPool.Return(card);
             }
 

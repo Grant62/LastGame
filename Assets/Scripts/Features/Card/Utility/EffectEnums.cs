@@ -1,0 +1,75 @@
+namespace Features.Card.Utility
+{
+    public enum EffectType
+    {
+        None,
+        DealDamage,
+        GainBlock,
+        Heal,
+        DealHeal,
+        DrawCards,
+        InteractiveDiscard,
+        GainEnergy,
+        GainMaxEnergy,
+        RestoreEnergyToMax,
+        ApplyStatus,
+        SpinSword,
+        StopSpin,
+        SpinDamageImmediate,
+        SpinDamageRandomEnemy,
+        DoubleSpinDamage,
+        SpinFormulaDamage,
+        ReduceSpinCost,
+        SetSwordFlag,
+        SetCustomPathDamage,
+        RecallSwords,
+        RecallToSlot,
+        RecallSpiritsToTarget,
+        RecallSpinDamage,
+        LinkSwords,
+        LinkSacrificeBlock,
+        LinkDebuff,
+        LinkSpiritDamage,
+        PerLinkedEnemyEnergy,
+        PerSpiritEnergy,
+        PerSpiritDraw,
+        PerSpiritDamage,
+        SacrificeBlock,
+        DestroySpirit,
+        SpawnSpiritAtSlot,
+        SpawnSpiritsRandom,
+        RideSword,
+        MovePlayerRandom,
+        ReturnToHand,
+        Exhaust,
+        SwordPathDamage,
+        PathDamageIfAdjacent,
+        PurgeRandomDebuff,
+        GainSpinBlock,
+        MovePlayerToSlot,
+        LinkSwordsRepeat,
+        TianGang
+    }
+
+    public enum EffectTarget
+    {
+        Self,
+        ManualEnemy,
+        AllEnemies,
+        RandomEnemy
+    }
+
+    public enum EffectCondition
+    {
+        None,
+        Penetrated,
+        ManSwordUnity,
+        SlotHasSpiritSword,
+        SlotHasSword,
+        SlotHasEnemy,
+        IsSpinning,
+        NotSpinning,
+        HasSpiritSword,
+        SpiritAttached
+    }
+}

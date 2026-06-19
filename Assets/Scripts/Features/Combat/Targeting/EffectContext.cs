@@ -1,4 +1,5 @@
 using Core.Systems;
+using Features.Card.Data;
 using Features.Card.Model;
 using Features.Card.System;
 using Features.Combat.Model;
@@ -23,6 +24,7 @@ namespace Features.Combat.Targeting
         public IGameConfigModel Config { get; }
         public int EnergySpent { get; set; }
         public int SlotTargetIndex { get; set; }
+        public CardData PlayedCard { get; set; }
 
         public EffectContext(
             IHeroModel heroModel,

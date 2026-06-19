@@ -1,5 +1,9 @@
+using System.Collections;
 using System.Text;
 using Core.Architecture;
+using DG.Tweening;
+using Features.Card.UI;
+using Features.Combat.System;
 using QFramework;
 using UnityEngine;
 
@@ -31,12 +35,18 @@ namespace Main.GM
         private void OnDisable()
         {
             InputField.onSubmit.RemoveListener(OnSubmitCommand);
+            this.GetSystem<IInteractionSystem>().EndAnimation();
+            Time.timeScale = 1f;
+            DOTween.timeScale = 1f;
         }
 
         private void OnDestroy()
         {
             if (mIsOpen)
+            {
                 Time.timeScale = 1f;
+                DOTween.timeScale = 1f;
+            }
         }
 
         private void Update()
@@ -86,8 +96,12 @@ namespace Main.GM
         public void Open()
         {
             mIsOpen = true;
+            this.GetSystem<IInteractionSystem>().BeginAnimation();
+            FindObjectOfType<HandPanel>()?.ForceClearHover();
+            FindObjectOfType<HandPanel>()?.ForceEndAllDrags();
             transform.SetAsLastSibling();
             Time.timeScale = 0f;
+            DOTween.timeScale = 0f;
 
             mOutputBuffer.Clear();
             OutputText.text = "";
@@ -103,6 +117,7 @@ namespace Main.GM
         {
             mIsOpen = false;
             Time.timeScale = 1f;
+            DOTween.timeScale = 1f;
 
             mOutputBuffer.Clear();
             OutputText.text = "";
@@ -122,6 +137,12 @@ namespace Main.GM
             mExecutor.Execute(command, this, AppendOutput);
 
             InputField.text = "";
+            StartCoroutine(RefocusInput());
+        }
+
+        private IEnumerator RefocusInput()
+        {
+            yield return null;
             InputField.ActivateInputField();
         }
 

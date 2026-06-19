@@ -1,0 +1,12 @@
+using Features.Combat.Targeting;
+
+namespace Features.Card.Effects
+{
+    public class GainMaxEnergyEffect : Effect
+    {
+        public override void Execute(ITargetable[] targets, ITargetable caster)
+        {
+            Ctx.ResourceModel.CurEnergy.Value += Ctx.ResourceModel.MaxEnergy.Value;
+        }
+    }
+}

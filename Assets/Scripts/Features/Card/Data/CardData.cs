@@ -38,6 +38,8 @@ namespace Features.Card.Data
         public bool NeedsSlotTarget { get; }
         public SlotAction SlotAction { get; }
         public int SlotDistance { get; }
+        public bool HasSpinEffect { get; set; }
+        public bool HasMovePlayerSlotEffect { get; set; }
 
         public List<Effect> ManualTargetEffect { get; set; } = new();
         public List<AutoTargetEffect> OtherEffects { get; set; } = new();

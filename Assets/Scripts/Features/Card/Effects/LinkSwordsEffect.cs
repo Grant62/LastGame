@@ -39,7 +39,10 @@ namespace Features.Card.Effects
             if (totalBlock > 0 && caster is IDamageable damageable)
                 damageable.GainArmor(totalBlock);
 
-            if (mPenetrationEffect != null && IsPenetrated(playerSlot, swordSlots))
+            bool penetrated = IsPenetrated(playerSlot, swordSlots);
+            swordModel.LastLinkPenetrated = penetrated;
+
+            if (mPenetrationEffect != null && penetrated)
             {
                 mPenetrationEffect.Ctx = Ctx;
                 mPenetrationEffect.Execute(targets, caster);
@@ -62,6 +65,9 @@ namespace Features.Card.Effects
 
         private bool IsPenetrated(int playerSlot, List<int> swordSlots)
         {
+            if (Ctx.SwordModel.LinkAlwaysPenetrate)
+                return true;
+
             BoardView board = Ctx.BoardAccess.Board;
             if (swordSlots.Count == 0)
                 return false;

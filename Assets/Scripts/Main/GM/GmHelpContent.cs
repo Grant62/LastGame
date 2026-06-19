@@ -19,6 +19,7 @@ namespace Main.GM
             "addarmor [数值] - 增加英雄护甲",
             "killhero - 杀死英雄",
             "killall - 消灭所有敌人",
+            "kill [槽位 1~9] - 杀死指定格子的敌人",
             "energy [数值] - 设置当前能量",
             "gold [数值] - 设置金币",
             "hotkeys - 显示快捷键",

@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using Features.Card.Data;
 using Features.Card.Utility;
-using Services;
 
 namespace Features.Card.Define
 {
@@ -14,49 +14,48 @@ namespace Features.Card.Define
         public string Desc;
         public string IconAddress;
         public int Price;
+        public string SlotActionStr;
+        public int SlotDistance;
+        public EffectSlot[] EffectSlots;
 
-        public bool NeedsEnemyTarget { get => Type == "攻击" && CardDescriptionParser.ParseDamage(Desc) > 0; }
+        public bool NeedsEnemyTarget
+        {
+            get
+            {
+                if (EffectSlots == null)
+                    return false;
+                foreach (EffectSlot slot in EffectSlots)
+                    if (!slot.IsEmpty && slot.Target == EffectTarget.ManualEnemy)
+                        return true;
+                return false;
+            }
+        }
 
         public bool NeedsSlotTarget
         {
             get
             {
-                if (string.IsNullOrEmpty(Desc) || Desc.Contains("随机"))
-                    return false;
-
-                return CardDescriptionParser.ContainsAnyKeyword(Desc, "御剑", "遁形")
-                       || Desc.Contains("指定位置");
+                if (ResolveSlotAction() != SlotAction.None)
+                    return true;
+                return HasAnyEffectType(EffectType.MovePlayerToSlot);
             }
         }
 
-        public SlotAction SlotAction
+        public SlotAction SlotActionEnum
         {
-            get
+            get => ResolveSlotAction();
+        }
+
+        private SlotAction ResolveSlotAction()
+        {
+            return SlotActionStr switch
             {
-                if (!NeedsSlotTarget)
-                    return SlotAction.None;
-
-                if (CardDescriptionParser.ContainsKeyword(Desc, "御剑"))
-                    return SlotAction.MoveSword;
-
-                if (CardDescriptionParser.ContainsKeyword(Desc, "遁形"))
-                    return SlotAction.MovePlayer;
-
-                if (Desc.Contains("附着"))
-                    return SlotAction.SpawnSpiritAtSlot;
-
-                if (Desc.Contains("指定位置"))
-                    return SlotAction.DestroySpirit;
-
-                return SlotAction.None;
-            }
-        }
-
-        public int SlotDistance
-        {
-            get => SlotAction == SlotAction.MovePlayer
-                ? CardDescriptionParser.ParseDistance(Desc)
-                : -1;
+                "MoveSword" => SlotAction.MoveSword,
+                "MovePlayer" => SlotAction.MovePlayer,
+                "DestroySpirit" => SlotAction.DestroySpirit,
+                "SpawnSpiritAtSlot" => SlotAction.SpawnSpiritAtSlot,
+                _ => SlotAction.None
+            };
         }
 
         public CardData CreateCardData()
@@ -64,11 +63,53 @@ namespace Features.Card.Define
             CardData cardData = new(
                 Id, Name, Type, Rarity, Desc,
                 Cost, Price, IconAddress,
-                NeedsEnemyTarget, NeedsSlotTarget, SlotAction, SlotDistance);
+                NeedsEnemyTarget, NeedsSlotTarget, SlotActionEnum, SlotDistance);
 
-            CardEffectFactory.PopulateEffects(this, cardData);
+            EffectConfigReader.PopulateEffects(EffectSlots, cardData);
+
+            cardData.HasSpinEffect = HasAnySpinEffect();
+            cardData.HasMovePlayerSlotEffect = HasAnyEffectType(EffectType.MovePlayerToSlot);
 
             return cardData;
+        }
+
+        private bool HasAnySpinEffect()
+        {
+            if (EffectSlots == null)
+                return false;
+            foreach (EffectSlot slot in EffectSlots)
+            {
+                if (slot.IsEmpty)
+                    continue;
+                if (slot.Type is EffectType.SpinSword or EffectType.StopSpin or EffectType.SpinDamageImmediate
+                    or EffectType.SpinDamageRandomEnemy or EffectType.DoubleSpinDamage
+                    or EffectType.SpinFormulaDamage or EffectType.ReduceSpinCost
+                    or EffectType.GainSpinBlock or EffectType.RecallSpinDamage)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public List<EffectSlot> GetActiveSlots()
+        {
+            List<EffectSlot> active = new();
+            if (EffectSlots == null)
+                return active;
+            foreach (EffectSlot slot in EffectSlots)
+                if (!slot.IsEmpty)
+                    active.Add(slot);
+            return active;
+        }
+
+        private bool HasAnyEffectType(EffectType type)
+        {
+            if (EffectSlots == null)
+                return false;
+            foreach (EffectSlot slot in EffectSlots)
+                if (slot.Type == type)
+                    return true;
+            return false;
         }
     }
 }

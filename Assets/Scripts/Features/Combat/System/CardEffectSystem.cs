@@ -49,6 +49,7 @@ namespace Features.Combat.System
 
             mCtx.EnergySpent = @event.EnergySpent;
             mCtx.SlotTargetIndex = @event.SlotTargetIndex;
+            mCtx.PlayedCard = @event.CardData;
 
             foreach (Effect effect in @event.CardData.ManualTargetEffect)
             {

@@ -25,6 +25,8 @@ namespace Features.Card.Effects
             {
                 bool isSpirit = swordModel.SpiritSwordSlots.Contains(fromSlot);
                 int pathDmg = isSpirit ? Ctx.Config.SpiritPathDamage : Ctx.Config.SwordPathDamage;
+                if (swordModel.CustomPathDamage > 0)
+                    pathDmg = swordModel.CustomPathDamage;
                 int step = playerSlot > fromSlot ? 1 : -1;
                 for (int i = fromSlot; i != playerSlot + step; i += step)
                 {
@@ -37,6 +39,7 @@ namespace Features.Card.Effects
 
             if (swordModel.SpiritSwordSlots.Count > 0)
             {
+                swordModel.IsRecalling = true;
                 swordModel.SpiritSwordSlots.Clear();
                 swordModel.OnSpiritSwordsChanged.Trigger();
             }

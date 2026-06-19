@@ -5,7 +5,6 @@ using Features.Card.Event;
 using Features.Card.Model;
 using Features.Combat.Event;
 using QFramework;
-using Services;
 
 namespace Features.Card.System
 {
@@ -169,7 +168,7 @@ namespace Features.Card.System
             ICardModel model = this.GetModel<ICardModel>();
             foreach (CardData card in model.HandPile)
             {
-                if (CardDescriptionParser.ContainsKeyword(card.Desc, "旋剑") && card.Cost > 0)
+                if (card.HasSpinEffect && card.Cost > 0)
                 {
                     if (!mOriginalCosts.ContainsKey(card))
                         mOriginalCosts[card] = card.Cost;

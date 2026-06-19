@@ -74,6 +74,9 @@ namespace Features.Card.View
             RectTransform.anchorMin = new Vector2(0.5f, 0.5f);
             RectTransform.anchorMax = new Vector2(0.5f, 0.5f);
             RectTransform.pivot = new Vector2(0.5f, 0.5f);
+            RectTransform.localScale = Vector3.one;
+            RectTransform.localEulerAngles = Vector3.zero;
+            CanvasGroup.alpha = 1f;
         }
 
         public void RefreshCost()

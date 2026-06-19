@@ -288,15 +288,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bf0fc2bd96c88d45a9841de787ac08a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Features.Card.UI.HandPanel
-  maxTotalAngle: 35
-  angleBetweenCards: 3.5
+  maxTotalAngle: 25
+  angleBetweenCards: 3.2
   radius: 3000
-  centerPointY: -3380
-  hoverCardY: 190
+  centerPointY: -3430
+  hoverCardY: 210
+  hoverPushMax: 100
+  hoverPushFalloff: 4
   layoutDuration: 0.2
   drawStagger: 0.08
-  drawOrigin: {x: -1050, y: -400}
-  discardOrigin: {x: 900, y: -400}
+  hoverDuration: 0.18
+  drawOrigin: {x: -1050, y: -500}
+  discardOrigin: {x: 900, y: -500}
   overlayCanvas: {fileID: 1275347895}
   LayoutRoot: {fileID: 1439904338}
   CanvasGroup: {fileID: 40121740}
@@ -958,7 +961,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 10

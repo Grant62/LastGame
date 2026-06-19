@@ -82,6 +82,10 @@ namespace Main.GM
                     onOutput("已消灭所有敌人");
                     break;
 
+                case "kill":
+                    HandleKillSlot(parts, onOutput, controller);
+                    break;
+
                 case "hotkeys":
                     onOutput("=== 快捷键 ===");
                     onOutput("~ - 打开/关闭 GM 控制台");
@@ -281,6 +285,19 @@ namespace Main.GM
         private static bool IsValidPile(string pile)
         {
             return pile is "hand" or "deck" or "discard" or "draw";
+        }
+
+        private static void HandleKillSlot(string[] parts, Action<string> onOutput, IController controller)
+        {
+            if (parts.Length < 2 || !int.TryParse(parts[1], out int slot) || slot < 1 || slot > 9)
+            {
+                onOutput("参数错误！用法: kill [槽位 1~9]");
+                return;
+            }
+
+            int slotIndex = slot - 1;
+            controller.SendCommand(new KillEnemyAtSlotCommand(slotIndex));
+            onOutput($"已消灭槽位 {slot} 的敌人");
         }
 
         private static bool CardExists(int cardId, IController controller)

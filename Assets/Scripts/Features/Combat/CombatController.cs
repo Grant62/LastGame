@@ -3,6 +3,7 @@ using System.Linq;
 using Configuration.ExcelData.Container;
 using Core.Architecture;
 using Core.Systems;
+using DG.Tweening;
 using Features.Card.Command;
 using Features.Card.Event;
 using Features.Card.Interfaces;
@@ -228,11 +229,30 @@ namespace Features.Combat
 
         private void SyncSpiritSwordViews()
         {
-            foreach (SwordView view in mSpiritSwordViews)
-                Destroy(view.gameObject);
+            ISwordModel sword = this.GetModel<ISwordModel>();
+
+            if (sword.IsRecalling)
+            {
+                sword.IsRecalling = false;
+                IHeroModel hero = this.GetModel<IHeroModel>();
+                int playerSlot = hero.CurSlotIndex.Value;
+                Vector3 targetPos = board.GetSlotTransform(playerSlot).position;
+
+                foreach (SwordView view in mSpiritSwordViews)
+                {
+                    view.transform.DOMoveX(targetPos.x, 0.4f)
+                        .SetEase(Ease.OutQuad)
+                        .OnComplete(() => Destroy(view.gameObject));
+                }
+            }
+            else
+            {
+                foreach (SwordView view in mSpiritSwordViews)
+                    Destroy(view.gameObject);
+            }
+
             mSpiritSwordViews.Clear();
 
-            ISwordModel sword = this.GetModel<ISwordModel>();
             Transform boardPanelParent = board.BoardPanel.parent;
             int targetSiblingIndex = board.BoardPanel.GetSiblingIndex() + 1;
             foreach (int slotIndex in sword.SpiritSwordSlots)
