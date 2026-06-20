@@ -97,8 +97,8 @@ namespace Main.GM
         {
             mIsOpen = true;
             this.GetSystem<IInteractionSystem>().BeginAnimation();
-            FindObjectOfType<HandPanel>()?.ForceClearHover();
-            FindObjectOfType<HandPanel>()?.ForceEndAllDrags();
+            GetArchitecture().SendEvent<Features.Card.Event.ForceClearHoverEvent>();
+            GetArchitecture().SendEvent<Features.Card.Event.ForceEndAllDragsEvent>();
             transform.SetAsLastSibling();
             Time.timeScale = 0f;
             DOTween.timeScale = 0f;

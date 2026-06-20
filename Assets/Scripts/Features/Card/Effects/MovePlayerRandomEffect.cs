@@ -13,10 +13,9 @@ namespace Features.Card.Effects
             BoardView board = Ctx.BoardAccess.Board;
             int oldSlot = hero.CurSlotIndex.Value;
             int slotCount = board.SlotCount;
-            int targetSlot = Ctx.RandomSystem.Range(0, slotCount, RandomModuleIds.Combat);
-
-            if (targetSlot == oldSlot)
-                return;
+            int targetSlot = oldSlot;
+            while (targetSlot == oldSlot)
+                targetSlot = Ctx.RandomSystem.Range(0, slotCount, RandomModuleIds.Combat);
 
             board.ShiftEnemies(oldSlot, targetSlot);
             hero.CurSlotIndex.Value = targetSlot;

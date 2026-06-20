@@ -12,7 +12,10 @@ namespace Features.Card.Effects
         {
             ISwordModel model = Ctx.SwordModel;
             int oldSlot = model.CurSlotIndex.Value;
-            int targetSlot = Ctx.RandomSystem.Range(0, Ctx.BoardAccess.Board.SlotCount, RandomModuleIds.Combat);
+            int slotCount = Ctx.BoardAccess.Board.SlotCount;
+            int targetSlot = oldSlot;
+            while (targetSlot == oldSlot)
+                targetSlot = Ctx.RandomSystem.Range(0, slotCount, RandomModuleIds.Combat);
 
             if (model.IsSpinning.Value && !model.KeepSpinningOnMove)
             {
@@ -40,9 +43,7 @@ namespace Features.Card.Effects
                 {
                     if (!suppressDmg)
                     {
-                        int pathDmg = model.CustomPathDamage > 0
-                            ? model.CustomPathDamage
-                            : Ctx.Config.SwordPathDamage;
+                        int pathDmg = Ctx.Config.SwordPathDamage + model.CustomPathDamage;
                         enemy.TakeDamage(pathDmg);
                     }
 

@@ -26,7 +26,7 @@ namespace Features.Card.View
         {
             mCardView = GetComponent<CardView>();
             mCanvasGroup = GetComponentInChildren<CanvasGroup>();
-            mDisplay = GetArchitecture().GetUtility<ICardHoverDisplay>();
+            mDisplay = this.GetUtility<ICardHoverDisplay>();
             mHoverContext = GetComponentInParent<HandPanel>();
             mHandPanel = mHoverContext as HandPanel;
         }

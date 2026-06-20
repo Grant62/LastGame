@@ -18,7 +18,6 @@ using Features.Combat.UI;
 using Features.Combat.Utility;
 using Features.Combat.View.Board;
 using Features.Enemy.Utility;
-using Features.Enemy.View;
 using Features.Hero.Command;
 using Features.Hero.Define;
 using Features.Hero.Event;
@@ -234,15 +233,15 @@ namespace Features.Combat
             if (sword.IsRecalling)
             {
                 sword.IsRecalling = false;
-                IHeroModel hero = this.GetModel<IHeroModel>();
-                int playerSlot = hero.CurSlotIndex.Value;
-                Vector3 targetPos = board.GetSlotTransform(playerSlot).position;
+                int targetSlot = sword.RecallTargetSlot;
+                Vector3 targetPos = board.GetSlotTransform(targetSlot).position;
 
                 foreach (SwordView view in mSpiritSwordViews)
                 {
-                    view.transform.DOMoveX(targetPos.x, 0.4f)
+                    SwordView captured = view;
+                    captured.transform.DOMoveX(targetPos.x, 0.4f)
                         .SetEase(Ease.OutQuad)
-                        .OnComplete(() => Destroy(view.gameObject));
+                        .OnComplete(() => Destroy(captured.gameObject));
                 }
             }
             else
@@ -265,29 +264,6 @@ namespace Features.Combat
 
                 spiritView.transform.position = board.GetSlotTransform(slotIndex).position
                                                 + Vector3.up * swordPrefab.YOffset;
-            }
-        }
-
-        private void InitEnemies()
-        {
-            const int centerSlot = 4;
-            int[] hpValues = { 40, 50, 60, 70, 80 };
-            int[] dmgValues = { 5, 5, 6, 6, 7 };
-            int totalSlots = 9;
-            int sideCount = totalSlots / 2;
-
-            int[] spawnOrder = new int[sideCount * 2];
-            for (int i = 0; i < sideCount; i++)
-            {
-                spawnOrder[i * 2] = centerSlot - (i + 1);
-                spawnOrder[i * 2 + 1] = centerSlot + i + 1;
-            }
-
-            for (int i = 0; i < hpValues.Length; i++)
-            {
-                int slotIndex = spawnOrder[i];
-                EnemyView enemy = board.SpawnEnemy(slotIndex);
-                enemy.Init(1000 + i, hpValues[i], dmgValues[i]);
             }
         }
 

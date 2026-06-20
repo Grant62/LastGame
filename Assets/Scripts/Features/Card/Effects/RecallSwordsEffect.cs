@@ -21,17 +21,21 @@ namespace Features.Card.Effects
                 swordSlots.Add(swordModel.CurSlotIndex.Value);
             swordSlots.AddRange(swordModel.SpiritSwordSlots);
 
+            HashSet<int> attachSlots = new();
+
             foreach (int fromSlot in swordSlots)
             {
                 bool isSpirit = swordModel.SpiritSwordSlots.Contains(fromSlot);
-                int pathDmg = isSpirit ? Ctx.Config.SpiritPathDamage : Ctx.Config.SwordPathDamage;
-                if (swordModel.CustomPathDamage > 0)
-                    pathDmg = swordModel.CustomPathDamage;
+                int pathDmg = (isSpirit ? Ctx.Config.SpiritPathDamage : Ctx.Config.SwordPathDamage) + swordModel.CustomPathDamage;
                 int step = playerSlot > fromSlot ? 1 : -1;
                 for (int i = fromSlot; i != playerSlot + step; i += step)
                 {
                     if (board.TryGetEnemyAtSlot(i, out EnemyView enemy) && enemy.IsValidTarget)
+                    {
                         enemy.TakeDamage(pathDmg);
+                        if (swordModel.IsSpiritAttached.Value)
+                            attachSlots.Add(i);
+                    }
                 }
             }
 
@@ -40,9 +44,19 @@ namespace Features.Card.Effects
             if (swordModel.SpiritSwordSlots.Count > 0)
             {
                 swordModel.IsRecalling = true;
+                swordModel.RecallTargetSlot = playerSlot;
                 swordModel.SpiritSwordSlots.Clear();
                 swordModel.OnSpiritSwordsChanged.Trigger();
             }
+
+            foreach (int slot in attachSlots)
+            {
+                if (!swordModel.SpiritSwordSlots.Contains(slot))
+                    swordModel.SpiritSwordSlots.Add(slot);
+            }
+
+            if (attachSlots.Count > 0)
+                swordModel.OnSpiritSwordsChanged.Trigger();
         }
     }
 }

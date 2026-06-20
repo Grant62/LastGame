@@ -36,7 +36,7 @@ namespace Features.Card.Effects
 
             foreach (int fromSlot in spiritSlots)
             {
-                int pathDmg = sword.CustomPathDamage > 0 ? sword.CustomPathDamage : Ctx.Config.SpiritPathDamage;
+                int pathDmg = Ctx.Config.SpiritPathDamage + sword.CustomPathDamage;
                 int step = targetSlot > fromSlot ? 1 : -1;
                 for (int i = fromSlot; i != targetSlot + step; i += step)
                 {
@@ -46,6 +46,7 @@ namespace Features.Card.Effects
             }
 
             sword.IsRecalling = true;
+            sword.RecallTargetSlot = targetSlot;
             sword.SpiritSwordSlots.Clear();
             sword.OnSpiritSwordsChanged.Trigger();
 

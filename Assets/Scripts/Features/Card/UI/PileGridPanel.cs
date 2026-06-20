@@ -15,7 +15,7 @@ namespace Features.Card.UI
         public List<CardData> Cards;
     }
 
-    public partial class PileGridPanel : UIPanel
+    public partial class PileGridPanel : UIPanel, IController
     {
         private ICardViewPool mCardPool;
         private readonly List<CardView> mCardViews = new();
@@ -23,9 +23,14 @@ namespace Features.Card.UI
         [BoxGroup("滚动")]
         [SerializeField] private float scrollSensitivity = 30f;
 
+        public IArchitecture GetArchitecture()
+        {
+            return GameMain.Interface;
+        }
+
         protected override void OnInit(IUIData uiData = null)
         {
-            mCardPool = GameMain.Interface.GetUtility<ICardViewPool>();
+            mCardPool = this.GetUtility<ICardViewPool>();
             GetComponent<ScrollRect>().scrollSensitivity = scrollSensitivity;
             Close.onClick.AddListener(CloseSelf);
         }

@@ -40,12 +40,12 @@ namespace Features.Card.View
         {
             CardData = data;
             Title.text = data.Name;
-            Desc.text = data.Desc.Replace("【", "").Replace("】", "");
+            Desc.text = data.Desc.Replace("\\n", "\n").Replace("【", "").Replace("】", "");
             Cost.text = data.Cost == -1 ? "X" : data.Cost.ToString();
             TypeText.text = data.Type;
             Price.text = data.Price.ToString();
 
-            Sprite icon = GetArchitecture().GetUtility<ICardSpriteCache>().GetSprite(data.IconAddress);
+            Sprite icon = this.GetUtility<ICardSpriteCache>().GetSprite(data.IconAddress);
             CardImage.sprite = icon;
             OutlineImage.sprite = icon;
             OutlineImage.gameObject.SetActive(false);

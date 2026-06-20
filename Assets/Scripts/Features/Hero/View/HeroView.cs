@@ -67,7 +67,7 @@ namespace Features.Hero.View
 
         private void OnSlotChanged(int slotIndex)
         {
-            BoardView board = GetArchitecture().GetUtility<IBoardAccess>().Board;
+            BoardView board = this.GetUtility<IBoardAccess>().Board;
             RectTransform target = board.GetSlotTransform(slotIndex);
             transform.SetParent(target);
             transform.DOLocalMove(Vector3.zero, 0.15f).SetEase(Ease.OutCubic);

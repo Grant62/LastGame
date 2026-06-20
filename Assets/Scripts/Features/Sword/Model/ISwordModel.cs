@@ -18,6 +18,8 @@ namespace Features.Sword.Model
         bool SpinAffectsSpirits { get; set; }
         bool LinkAlwaysPenetrate { get; set; }
         bool RecallSpiritsOnSwordMove { get; set; }
+        int RecallSpiritsDamagePerSpirit { get; set; }
+        int RecallTargetSlot { get; set; }
         bool LastLinkPenetrated { get; set; }
         bool IsRecalling { get; set; }
         int CustomPathDamage { get; set; }

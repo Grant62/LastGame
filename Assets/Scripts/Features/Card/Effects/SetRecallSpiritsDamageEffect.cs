@@ -1,19 +1,20 @@
 using Features.Combat.Targeting;
+using Features.Sword.Model;
 
 namespace Features.Card.Effects
 {
-    public class SetCustomPathDamageEffect : Effect
+    public class SetRecallSpiritsDamageEffect : Effect
     {
         private readonly int mDamage;
 
-        public SetCustomPathDamageEffect(int damage)
+        public SetRecallSpiritsDamageEffect(int damage)
         {
             mDamage = damage;
         }
 
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
-            Ctx.SwordModel.CustomPathDamage += mDamage;
+            Ctx.SwordModel.RecallSpiritsDamagePerSpirit = mDamage;
         }
     }
 }

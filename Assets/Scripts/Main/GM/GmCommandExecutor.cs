@@ -267,7 +267,7 @@ namespace Main.GM
             }
 
             controller.SendCommand(new SetEnergyCommand(energy));
-            onOutput($"当前能量已设置为: {energy}");
+            onOutput($"能量上限已设置为 {energy}，当前能量已回满");
         }
 
         private static void HandleGold(string[] parts, Action<string> onOutput, IController controller)

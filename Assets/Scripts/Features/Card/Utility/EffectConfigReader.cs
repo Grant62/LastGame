@@ -152,6 +152,15 @@ namespace Features.Card.Utility
                 case EffectType.SpawnSpiritsRandom:
                     return new SpawnSpiritsAtRandomEffect(ParseInt(slot.Param1, 1));
 
+                case EffectType.SpawnSpiritsByArmor:
+                    return new SpawnSpiritsByArmorEffect(ParseInt(slot.Param1, 6));
+
+                case EffectType.SpiritPositionsDamage:
+                    return new SpiritPositionsDamageEffect(ParseInt(slot.Param1));
+
+                case EffectType.SetRecallSpiritsDamage:
+                    return new SetRecallSpiritsDamageEffect(ParseInt(slot.Param1));
+
                 case EffectType.RideSword:
                     return new RideSwordRandomEffect();
 
@@ -259,6 +268,7 @@ namespace Features.Card.Utility
                 "SpinHitsAdjacent" => SwordFlag.SpinHitsAdjacent,
                 "SpinAffectsSpirits" => SwordFlag.SpinAffectsSpirits,
                 "LinkAlwaysPenetrate" => SwordFlag.LinkAlwaysPenetrate,
+                "RecallSpiritsOnSwordMove" => SwordFlag.RecallSpiritsOnSwordMove,
                 _ => SwordFlag.IsSpiritAttached
             };
         }

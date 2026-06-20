@@ -14,7 +14,9 @@ namespace Main.GM.Command
 
         protected override void OnExecute()
         {
-            this.GetModel<IResourceModel>().CurEnergy.Value = mEnergy;
+            IResourceModel model = this.GetModel<IResourceModel>();
+            model.MaxEnergy.Value = mEnergy;
+            model.CurEnergy.Value = mEnergy;
         }
     }
 }

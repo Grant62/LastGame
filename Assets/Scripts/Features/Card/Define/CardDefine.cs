@@ -69,8 +69,19 @@ namespace Features.Card.Define
 
             cardData.HasSpinEffect = HasAnySpinEffect();
             cardData.HasMovePlayerSlotEffect = HasAnyEffectType(EffectType.MovePlayerToSlot);
+            cardData.NeedsSpiritAttachedForSlot = HasAnyCondition(EffectCondition.SpiritAttached);
 
             return cardData;
+        }
+
+        private bool HasAnyCondition(EffectCondition condition)
+        {
+            if (EffectSlots == null)
+                return false;
+            foreach (EffectSlot slot in EffectSlots)
+                if (slot.Condition == condition)
+                    return true;
+            return false;
         }
 
         private bool HasAnySpinEffect()

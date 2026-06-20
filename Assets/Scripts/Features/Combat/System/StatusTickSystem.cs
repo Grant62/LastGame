@@ -15,6 +15,7 @@ namespace Features.Combat.System
         private int mReactiveDestroyedCount;
         private int mReactivePrevCount;
         private bool mReactiveRegistered;
+        private IUnRegister mReactiveUnregister;
 
         protected override void OnInit()
         {
@@ -39,7 +40,7 @@ namespace Features.Combat.System
                 mReactivePrevCount = sword.SpiritSwordSlots.Count;
                 mReactiveDestroyedCount = 0;
 
-                sword.OnSpiritSwordsChanged.Register(() =>
+                mReactiveUnregister = sword.OnSpiritSwordsChanged.Register(() =>
                 {
                     int newCount = sword.SpiritSwordSlots.Count;
                     int destroyed = mReactivePrevCount - newCount;
@@ -54,6 +55,12 @@ namespace Features.Combat.System
 
                     mReactivePrevCount = newCount;
                 });
+            }
+            else if (!sword.HasReactiveSpiritSpawn && mReactiveRegistered)
+            {
+                mReactiveUnregister?.UnRegister();
+                mReactiveUnregister = null;
+                mReactiveRegistered = false;
             }
         }
 

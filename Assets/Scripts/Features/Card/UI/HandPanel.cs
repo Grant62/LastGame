@@ -85,7 +85,7 @@ namespace Features.Card.UI
             if (mHoveredIndex < 0)
                 return;
 
-            GameMain.Interface.GetUtility<ICardHoverDisplay>()?.Hide();
+            this.GetUtility<ICardHoverDisplay>()?.Hide();
 
             foreach (CardView card in mCardOrder)
             {
@@ -124,6 +124,12 @@ namespace Features.Card.UI
             this.RegisterEvent<PlayerTurnStartEvent>(_ => OnPlayerTurnStart())
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
+            this.RegisterEvent<ForceClearHoverEvent>(_ => ForceClearHover())
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<ForceEndAllDragsEvent>(_ => ForceEndAllDrags())
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+
             OnHandPileChanged();
         }
 
@@ -155,17 +161,34 @@ namespace Features.Card.UI
         private void OnEnemyTurnStart()
         {
             LayoutRoot.DOAnchorPosY(-90f, 0.3f).SetEase(Ease.OutCubic);
+            SetCardOutlines(false);
         }
 
         private void OnPlayerTurnStart()
         {
             LayoutRoot.DOAnchorPosY(mLayoutRootBaseY, 0.3f).SetEase(Ease.OutCubic);
+            SetCardOutlines(true);
+        }
+
+        private void SetCardOutlines(bool visible)
+        {
+            int curEnergy = visible ? this.GetModel<Features.Resource.Model.IResourceModel>().CurEnergy.Value : int.MaxValue;
+            foreach (CardView card in mCardOrder)
+            {
+                if (card.OutlineImage != null)
+                {
+                    bool show = visible && card.CardData != null && card.CardData.Cost <= curEnergy;
+                    card.OutlineImage.gameObject.SetActive(show);
+                }
+            }
         }
 
         private void OnHandCardCostChanged(HandCardCostChangedEvent e)
         {
             foreach (CardView card in mCardOrder)
                 card.RefreshCost();
+            if (this.GetSystem<ITurnSystem>().IsPlayerTurn)
+                SetCardOutlines(true);
         }
 
         private void SyncViews(List<CardData> handPile)
@@ -207,6 +230,8 @@ namespace Features.Card.UI
                 mCardOrder[i].CardHoverHandler.SetHandIndex(i);
 
             SetCardLayout(mAddedSet);
+            if (this.GetSystem<ITurnSystem>().IsPlayerTurn)
+                SetCardOutlines(true);
         }
 
         private void AnimateDiscard(CardView card, float delay)

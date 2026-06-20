@@ -29,16 +29,20 @@ namespace Features.Combat.UI
             switch (pileType)
             {
                 case PileType.DrawPile:
-                    mCardModel.OnDrawPileChanged.Register(RefreshCount);
+                    mCardModel.OnDrawPileChanged.Register(RefreshCount)
+                        .UnRegisterWhenGameObjectDestroyed(gameObject);
                     break;
                 case PileType.DiscardPile:
-                    mCardModel.OnDiscardPileChanged.Register(RefreshCount);
+                    mCardModel.OnDiscardPileChanged.Register(RefreshCount)
+                        .UnRegisterWhenGameObjectDestroyed(gameObject);
                     break;
                 case PileType.Library:
-                    mCardModel.OnLibraryChanged.Register(RefreshCount);
+                    mCardModel.OnLibraryChanged.Register(RefreshCount)
+                        .UnRegisterWhenGameObjectDestroyed(gameObject);
                     break;
                 case PileType.ConsumePile:
-                    mCardModel.OnConsumePileChanged.Register(RefreshCount);
+                    mCardModel.OnConsumePileChanged.Register(RefreshCount)
+                        .UnRegisterWhenGameObjectDestroyed(gameObject);
                     break;
             }
 
@@ -78,25 +82,6 @@ namespace Features.Combat.UI
 
             if (pile != null)
                 UIKit.OpenPanel<PileGridPanel>(UILevel.PopUI, new PileGridPanelData { Cards = pile });
-        }
-
-        private void OnDestroy()
-        {
-            switch (pileType)
-            {
-                case PileType.DrawPile:
-                    mCardModel.OnDrawPileChanged.UnRegister(RefreshCount);
-                    break;
-                case PileType.DiscardPile:
-                    mCardModel.OnDiscardPileChanged.UnRegister(RefreshCount);
-                    break;
-                case PileType.Library:
-                    mCardModel.OnLibraryChanged.UnRegister(RefreshCount);
-                    break;
-                case PileType.ConsumePile:
-                    mCardModel.OnConsumePileChanged.UnRegister(RefreshCount);
-                    break;
-            }
         }
     }
 }

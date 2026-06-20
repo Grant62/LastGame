@@ -40,6 +40,7 @@ namespace Features.Card.Data
         public int SlotDistance { get; }
         public bool HasSpinEffect { get; set; }
         public bool HasMovePlayerSlotEffect { get; set; }
+        public bool NeedsSpiritAttachedForSlot { get; set; }
 
         public List<Effect> ManualTargetEffect { get; set; } = new();
         public List<AutoTargetEffect> OtherEffects { get; set; } = new();

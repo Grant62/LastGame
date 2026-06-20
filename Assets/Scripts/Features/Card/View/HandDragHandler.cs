@@ -79,7 +79,7 @@ namespace Features.Card.View
             }
             else
             {
-                GetArchitecture().GetUtility<ICardHoverDisplay>().Hide();
+                this.GetUtility<ICardHoverDisplay>().Hide();
                 mCanvasGroup.alpha = 1f;
                 mRectTransform.localEulerAngles = Vector3.zero;
 
@@ -99,7 +99,7 @@ namespace Features.Card.View
 
             if (IsTargetingCard())
             {
-                GetArchitecture().GetUtility<ICardHoverDisplay>().Hide();
+                this.GetUtility<ICardHoverDisplay>().Hide();
                 mCanvasGroup.alpha = 1f;
             }
 
@@ -115,14 +115,9 @@ namespace Features.Card.View
             if (!played)
             {
                 if (IsTargetingCard())
-                {
-                    mRectTransform.SetSiblingIndex(mOriginalSiblingIndex);
-                    mRectTransform.localEulerAngles = mOriginalRotation;
-                }
+                    mHandPanel.ForceRefreshLayout();
                 else
-                {
                     SnapBack();
-                }
             }
         }
 
@@ -155,7 +150,7 @@ namespace Features.Card.View
             this.GetSystem<IInteractionSystem>().EndDrag();
             this.SendCommand<EndTargetingCommand>();
 
-            GetArchitecture().GetUtility<ICardHoverDisplay>().Hide();
+            this.GetUtility<ICardHoverDisplay>().Hide();
             mCanvasGroup.alpha = 1f;
             SnapBack();
         }
@@ -168,7 +163,7 @@ namespace Features.Card.View
 
             SlotAction action = mCardView.CardData.SlotAction;
 
-            this.SendCommand(new PlayCardCommand(mCardView.CardData, enemyTarget));
+            this.SendCommand(new PlayCardCommand(mCardView.CardData, enemyTarget, enemyTarget.SlotIndex));
             mHandPanel.ForceRefreshLayout();
 
             if (enemyTarget.SlotIndex >= 0)
@@ -258,7 +253,8 @@ namespace Features.Card.View
             if (!mCardView.CardData.NeedsSlotTarget)
                 return false;
 
-            if (mCardView.CardData.SlotAction == SlotAction.SpawnSpiritAtSlot)
+            if (mCardView.CardData.SlotAction == SlotAction.SpawnSpiritAtSlot
+                && mCardView.CardData.NeedsSpiritAttachedForSlot)
                 return this.GetModel<ISwordModel>().IsSpiritAttached.Value;
 
             return true;

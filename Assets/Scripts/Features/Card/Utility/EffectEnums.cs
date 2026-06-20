@@ -6,7 +6,6 @@ namespace Features.Card.Utility
         DealDamage,
         GainBlock,
         Heal,
-        DealHeal,
         DrawCards,
         InteractiveDiscard,
         GainEnergy,
@@ -48,7 +47,10 @@ namespace Features.Card.Utility
         GainSpinBlock,
         MovePlayerToSlot,
         LinkSwordsRepeat,
-        TianGang
+        TianGang,
+        SpawnSpiritsByArmor,
+        SpiritPositionsDamage,
+        SetRecallSpiritsDamage
     }
 
     public enum EffectTarget

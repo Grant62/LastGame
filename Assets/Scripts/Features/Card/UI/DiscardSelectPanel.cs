@@ -18,7 +18,7 @@ namespace Features.Card.UI
         public Action<CardData> OnSelected;
     }
 
-    public class DiscardSelectPanel : UIPanel
+    public class DiscardSelectPanel : UIPanel, IController
     {
         [SerializeField] private Transform content;
         [SerializeField] private ScrollRect scrollRect;
@@ -31,9 +31,14 @@ namespace Features.Card.UI
         private CardView mSelected;
         private Action<CardData> mCallback;
 
+        public IArchitecture GetArchitecture()
+        {
+            return GameMain.Interface;
+        }
+
         protected override void OnInit(IUIData uiData = null)
         {
-            mCardPool = GameMain.Interface.GetUtility<ICardViewPool>();
+            mCardPool = this.GetUtility<ICardViewPool>();
             confirmBtn.onClick.AddListener(OnConfirm);
         }
 
@@ -102,7 +107,7 @@ namespace Features.Card.UI
                 return;
 
             int index = mCardViews.IndexOf(mSelected);
-            List<CardData> handPile = GameMain.Interface.GetModel<ICardModel>().HandPile;
+            List<CardData> handPile = this.GetModel<ICardModel>().HandPile;
             CardData selectedData = index >= 0 && index < handPile.Count ? handPile[index] : null;
 
             mCallback?.Invoke(selectedData);
