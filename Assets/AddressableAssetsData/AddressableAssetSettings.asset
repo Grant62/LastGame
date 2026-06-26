@@ -61,6 +61,7 @@ MonoBehaviour:
   m_overridePlayerVersion: '[UnityEditor.PlayerSettings.bundleVersion]'
   m_GroupAssets:
   - {fileID: 11400000, guid: fe58ddd586f1e0040a24fd3a0de74040, type: 2}
+  - {fileID: 11400000, guid: fc8ca8f9d9210164aa90d5ae0e4a7b30, type: 2}
   - {fileID: 11400000, guid: 2f9d34e9ec194f84885b7937e5900f86, type: 2}
   m_BuildSettings:
     m_LogResourceManagerExceptions: 1

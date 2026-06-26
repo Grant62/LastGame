@@ -60,6 +60,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -81,6 +86,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -153,32 +159,32 @@ MonoBehaviour:
       m_UnityObjects: []
       m_Version: 3.4
     m_SharedVariableData:
-    - m_ObjectType: Opsive.GraphDesigner.Runtime.Variables.SharedVariable`1[[System.Boolean,
-        mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
+    - m_ObjectType: 'Opsive.GraphDesigner.Runtime.Variables.SharedVariable`1[[System.Boolean,
+        mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]'
       m_ValueHashes: 
       m_LongValueHashes: 0d00eb254f8d1b29baa620a07799d549a996976a4a6427894886ea0b921c56fa
       m_ValuePositions: 000000000c0000000c0000000d000000
       m_Values: 456e656d795475726e5072650200
       m_UnityObjects: []
       m_Version: 3.4
-    - m_ObjectType: Opsive.GraphDesigner.Runtime.Variables.SharedVariable`1[[System.String,
-        mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
+    - m_ObjectType: 'Opsive.GraphDesigner.Runtime.Variables.SharedVariable`1[[System.String,
+        mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]'
       m_ValueHashes: 
       m_LongValueHashes: 0d00eb254f8d1b29baa620a07799d549a996976a4a64278901112428f48d1b29
       m_ValuePositions: 000000000a0000000a0000000b000000
       m_Values: 496e74656e745479706502
       m_UnityObjects: []
       m_Version: 3.4
-    - m_ObjectType: Opsive.GraphDesigner.Runtime.Variables.SharedVariable`1[[System.Boolean,
-        mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
+    - m_ObjectType: 'Opsive.GraphDesigner.Runtime.Variables.SharedVariable`1[[System.Boolean,
+        mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]'
       m_ValueHashes: 
       m_LongValueHashes: 0d00eb254f8d1b29baa620a07799d549a996976a4a6427894886ea0b921c56fa
       m_ValuePositions: 00000000080000000800000009000000
       m_Values: 49735475726e546f0200
       m_UnityObjects: []
       m_Version: 3.4
-    - m_ObjectType: Opsive.GraphDesigner.Runtime.Variables.SharedVariable`1[[System.Boolean,
-        mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
+    - m_ObjectType: 'Opsive.GraphDesigner.Runtime.Variables.SharedVariable`1[[System.Boolean,
+        mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]'
       m_ValueHashes: 
       m_LongValueHashes: 0d00eb254f8d1b29baa620a07799d549a996976a4a6427894886ea0b921c56fa
       m_ValuePositions: 000000000d0000000d0000000e000000

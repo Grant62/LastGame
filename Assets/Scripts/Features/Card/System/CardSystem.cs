@@ -20,22 +20,22 @@ namespace Features.Card.System
             this.RegisterEvent<BattleDefeatEvent>(OnBattleDefeat);
         }
 
-        private void OnBattleVictory(BattleVictoryEvent e)
+        private void OnBattleVictory(BattleVictoryEvent @event)
         {
             RestoreCardCosts();
         }
 
-        private void OnBattleDefeat(BattleDefeatEvent e)
+        private void OnBattleDefeat(BattleDefeatEvent @event)
         {
             RestoreCardCosts();
         }
 
-        private void OnPlayerTurnStart(PlayerTurnStartEvent e)
+        private void OnPlayerTurnStart(PlayerTurnStartEvent @event)
         {
             DrawCards(5);
         }
 
-        private void OnPlayerTurnEnd(PlayerTurnEndEvent e)
+        private void OnPlayerTurnEnd(PlayerTurnEndEvent @event)
         {
             ICardModel model = this.GetModel<ICardModel>();
             if (model.KeepHandOnTurnEnd)

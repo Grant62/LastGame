@@ -25,7 +25,7 @@ namespace Features.Card.Define
                 if (EffectSlots == null)
                     return false;
                 foreach (EffectSlot slot in EffectSlots)
-                    if (!slot.IsEmpty && slot.Target == EffectTarget.ManualEnemy)
+                    if (slot is { IsEmpty: false, Target: EffectTarget.ManualEnemy })
                         return true;
                 return false;
             }

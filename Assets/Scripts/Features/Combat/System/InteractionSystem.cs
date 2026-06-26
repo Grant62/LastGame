@@ -1,3 +1,4 @@
+using Features.Combat.Event;
 using Features.Hero.Model;
 using QFramework;
 
@@ -6,12 +7,18 @@ namespace Features.Combat.System
     public class InteractionSystem : AbstractSystem, IInteractionSystem
     {
         private int mAnimCounter;
+        private bool mBattleEnded;
 
         public bool IsDragging { get; private set; }
 
-        public bool IsAnimating { get => mAnimCounter > 0; }
+        private bool IsAnimating { get => mAnimCounter > 0; }
 
-        protected override void OnInit() { }
+        protected override void OnInit()
+        {
+            this.RegisterEvent<BattleVictoryEvent>(_ => mBattleEnded = true);
+            this.RegisterEvent<BattleDefeatEvent>(_ => mBattleEnded = true);
+            this.RegisterEvent<BattleStartEvent>(_ => mBattleEnded = false);
+        }
 
         public void BeginDrag()
         {
@@ -36,6 +43,9 @@ namespace Features.Combat.System
 
         public bool CanInteract()
         {
+            if (mBattleEnded)
+                return false;
+
             IHeroModel hero = this.GetModel<IHeroModel>();
             if (hero.Health.Value <= 0)
                 return false;

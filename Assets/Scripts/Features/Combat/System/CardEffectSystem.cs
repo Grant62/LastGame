@@ -1,8 +1,8 @@
+using Core.SceneManagement;
 using Core.Systems;
 using Features.Card.Event;
 using Features.Card.Model;
 using Features.Card.System;
-using Features.Combat.Event;
 using Features.Combat.Model;
 using Features.Combat.Targeting;
 using Features.Combat.Targeting.System;
@@ -23,10 +23,10 @@ namespace Features.Combat.System
         protected override void OnInit()
         {
             this.RegisterEvent<CardPlayedEvent>(OnCardPlayed);
-            this.RegisterEvent<GameReadyEvent>(_ => OnGameReady());
+            this.RegisterEvent<RoomReadyEvent>(_ => OnRoomReady());
         }
 
-        private void OnGameReady()
+        private void OnRoomReady()
         {
             mTargetSelector = this.GetUtility<ITargetSelector>();
 

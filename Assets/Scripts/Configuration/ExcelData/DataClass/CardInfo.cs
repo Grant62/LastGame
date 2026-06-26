@@ -28,20 +28,5 @@ namespace Configuration.ExcelData.DataClass
         public string Effect3_Param1;
         public string Effect3_Param2;
         public string Effect3_Condition;
-        public string Effect4_Type;
-        public string Effect4_Target;
-        public string Effect4_Param1;
-        public string Effect4_Param2;
-        public string Effect4_Condition;
-        public string Effect5_Type;
-        public string Effect5_Target;
-        public string Effect5_Param1;
-        public string Effect5_Param2;
-        public string Effect5_Condition;
-        public string Effect6_Type;
-        public string Effect6_Target;
-        public string Effect6_Param1;
-        public string Effect6_Param2;
-        public string Effect6_Condition;
     }
 }

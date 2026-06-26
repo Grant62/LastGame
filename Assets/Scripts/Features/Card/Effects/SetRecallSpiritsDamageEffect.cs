@@ -1,5 +1,4 @@
 using Features.Combat.Targeting;
-using Features.Sword.Model;
 
 namespace Features.Card.Effects
 {

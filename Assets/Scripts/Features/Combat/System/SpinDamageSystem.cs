@@ -14,7 +14,7 @@ namespace Features.Combat.System
             this.RegisterEvent<PlayerTurnEndEvent>(OnPlayerTurnEnd);
         }
 
-        private void OnPlayerTurnEnd(PlayerTurnEndEvent e)
+        private void OnPlayerTurnEnd(PlayerTurnEndEvent @event)
         {
             ISwordModel sword = this.GetModel<ISwordModel>();
             if (!sword.IsSpinning.Value || sword.SpinDamage.Value <= 0)

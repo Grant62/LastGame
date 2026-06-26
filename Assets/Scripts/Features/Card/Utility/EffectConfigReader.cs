@@ -256,20 +256,20 @@ namespace Features.Card.Utility
             return StatusType.Weak;
         }
 
-        private static SwordFlag ParseSwordFlag(string value)
+        private static SwordAbilityFlag ParseSwordFlag(string value)
         {
             return value switch
             {
-                "IsSpiritAttached" => SwordFlag.IsSpiritAttached,
-                "KeepSpinningOnMove" => SwordFlag.KeepSpinningOnMove,
-                "HasTurnStartSpiritSpawn" => SwordFlag.HasTurnStartSpiritSpawn,
-                "HasReactiveSpiritSpawn" => SwordFlag.HasReactiveSpiritSpawn,
-                "SuppressPathDamage" => SwordFlag.SuppressPathDamage,
-                "SpinHitsAdjacent" => SwordFlag.SpinHitsAdjacent,
-                "SpinAffectsSpirits" => SwordFlag.SpinAffectsSpirits,
-                "LinkAlwaysPenetrate" => SwordFlag.LinkAlwaysPenetrate,
-                "RecallSpiritsOnSwordMove" => SwordFlag.RecallSpiritsOnSwordMove,
-                _ => SwordFlag.IsSpiritAttached
+                "IsSpiritAttached" => SwordAbilityFlag.IsSpiritAttached,
+                "KeepSpinningOnMove" => SwordAbilityFlag.KeepSpinningOnMove,
+                "HasTurnStartSpiritSpawn" => SwordAbilityFlag.HasTurnStartSpiritSpawn,
+                "HasReactiveSpiritSpawn" => SwordAbilityFlag.HasReactiveSpiritSpawn,
+                "SuppressPathDamage" => SwordAbilityFlag.SuppressPathDamage,
+                "SpinHitsAdjacent" => SwordAbilityFlag.SpinHitsAdjacent,
+                "SpinAffectsSpirits" => SwordAbilityFlag.SpinAffectsSpirits,
+                "LinkAlwaysPenetrate" => SwordAbilityFlag.LinkAlwaysPenetrate,
+                "RecallSpiritsOnSwordMove" => SwordAbilityFlag.RecallSpiritsOnSwordMove,
+                _ => SwordAbilityFlag.IsSpiritAttached
             };
         }
     }

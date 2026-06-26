@@ -12,7 +12,7 @@ namespace Features.Resource.System
             this.RegisterEvent<PlayerTurnStartEvent>(OnPlayerTurnStart);
         }
 
-        private void OnPlayerTurnStart(PlayerTurnStartEvent e)
+        private void OnPlayerTurnStart(PlayerTurnStartEvent @event)
         {
             IResourceModel model = this.GetModel<IResourceModel>();
             model.CurEnergy.Value = model.MaxEnergy.Value;

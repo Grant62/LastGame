@@ -24,7 +24,7 @@ namespace Features.Combat.System
             this.RegisterEvent<EnemyTurnEndEvent>(OnEnemyTurnEnd);
         }
 
-        private void OnPlayerTurnStart(PlayerTurnStartEvent e)
+        private void OnPlayerTurnStart(PlayerTurnStartEvent @event)
         {
             ISwordModel sword = this.GetModel<ISwordModel>();
             IRandomSystem random = this.GetSystem<IRandomSystem>();
@@ -64,7 +64,7 @@ namespace Features.Combat.System
             }
         }
 
-        private void OnPlayerTurnEnd(PlayerTurnEndEvent e)
+        private void OnPlayerTurnEnd(PlayerTurnEndEvent @event)
         {
             IHeroModel hero = this.GetModel<IHeroModel>();
             StatusHelper.TickStatuses(hero.Statuses);
@@ -74,7 +74,7 @@ namespace Features.Combat.System
             sword.IsSpiritAttached.Value = false;
         }
 
-        private void OnEnemyTurnEnd(EnemyTurnEndEvent e)
+        private void OnEnemyTurnEnd(EnemyTurnEndEvent @event)
         {
             BoardView board = this.GetUtility<IBoardAccess>().Board;
 

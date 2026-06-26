@@ -47,11 +47,16 @@ namespace Features.Card.View
         private void Start()
         {
             mCardView = GetComponent<CardView>();
-            mHandPanel = GetComponentInParent<HandPanel>();
-            mLayoutRoot = mHandPanel?.LayoutRoot;
+            InitParentRefs();
             mRectTransform = GetComponent<RectTransform>();
             mCanvasGroup = GetComponentInChildren<CanvasGroup>();
             mSlotSystem = this.GetSystem<ISlotTargetSystem>();
+        }
+
+        public void InitParentRefs()
+        {
+            mHandPanel = GetComponentInParent<HandPanel>();
+            mLayoutRoot = mHandPanel != null ? mHandPanel.LayoutRoot : null;
         }
 
         public void OnPointerDown(PointerEventData eventData)

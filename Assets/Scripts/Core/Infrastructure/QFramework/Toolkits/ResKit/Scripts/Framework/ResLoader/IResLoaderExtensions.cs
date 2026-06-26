@@ -6,9 +6,11 @@
  * https://gitee.com/liangxiegame/QFramework
  ****************************************************************************/
 
-using System;
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
+#endif
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;

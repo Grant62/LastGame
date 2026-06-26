@@ -1,4 +1,4 @@
-using Features.Combat.Event;
+using Core.SceneManagement;
 using Features.Combat.Targeting.Event;
 using Features.Combat.Utility;
 using QFramework;
@@ -19,10 +19,10 @@ namespace Features.Combat.Targeting.System
         {
             this.RegisterEvent<TargetingStartedEvent>(OnTargetingStarted);
             this.RegisterEvent<TargetingEndedEvent>(OnTargetingEnded);
-            this.RegisterEvent<GameReadyEvent>(OnGameReady);
+            this.RegisterEvent<RoomReadyEvent>(OnRoomReady);
         }
 
-        private void OnGameReady(GameReadyEvent e)
+        private void OnRoomReady(RoomReadyEvent @event)
         {
             mArrow = this.GetUtility<IArrowDisplay>();
             mCursor = this.GetUtility<ICursorDisplay>();
@@ -56,14 +56,14 @@ namespace Features.Combat.Targeting.System
             return mTargetResolver.Resolve(type, caster);
         }
 
-        private void OnTargetingStarted(TargetingStartedEvent e)
+        private void OnTargetingStarted(TargetingStartedEvent @event)
         {
             mIsTargeting = true;
-            mArrow.Show(e.StartPosition);
+            mArrow.Show(@event.StartPosition);
             StartUpdate();
         }
 
-        private void OnTargetingEnded(TargetingEndedEvent e)
+        private void OnTargetingEnded(TargetingEndedEvent @event)
         {
             mIsTargeting = false;
             mArrow.Hide();

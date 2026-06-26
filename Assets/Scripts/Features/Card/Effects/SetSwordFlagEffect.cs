@@ -3,7 +3,7 @@ using Features.Sword.Model;
 
 namespace Features.Card.Effects
 {
-    public enum SwordFlag
+    public enum SwordAbilityFlag
     {
         IsSpiritAttached,
         KeepSpinningOnMove,
@@ -18,27 +18,27 @@ namespace Features.Card.Effects
 
     public class SetSwordFlagEffect : Effect
     {
-        private readonly SwordFlag mFlag;
+        private readonly SwordAbilityFlag _mAbilityFlag;
 
-        public SetSwordFlagEffect(SwordFlag flag)
+        public SetSwordFlagEffect(SwordAbilityFlag abilityFlag)
         {
-            mFlag = flag;
+            _mAbilityFlag = abilityFlag;
         }
 
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
             ISwordModel model = Ctx.SwordModel;
-            switch (mFlag)
+            switch (_mAbilityFlag)
             {
-                case SwordFlag.IsSpiritAttached: model.IsSpiritAttached.Value = true; break;
-                case SwordFlag.KeepSpinningOnMove: model.KeepSpinningOnMove = true; break;
-                case SwordFlag.HasTurnStartSpiritSpawn: model.HasTurnStartSpiritSpawn = true; break;
-                case SwordFlag.HasReactiveSpiritSpawn: model.HasReactiveSpiritSpawn = true; break;
-                case SwordFlag.SuppressPathDamage: model.SuppressPathDamage = true; break;
-                case SwordFlag.SpinHitsAdjacent: model.SpinHitsAdjacent = true; break;
-                case SwordFlag.SpinAffectsSpirits: model.SpinAffectsSpirits = true; break;
-                case SwordFlag.LinkAlwaysPenetrate: model.LinkAlwaysPenetrate = true; break;
-                case SwordFlag.RecallSpiritsOnSwordMove: model.RecallSpiritsOnSwordMove = true; break;
+                case SwordAbilityFlag.IsSpiritAttached: model.IsSpiritAttached.Value = true; break;
+                case SwordAbilityFlag.KeepSpinningOnMove: model.KeepSpinningOnMove = true; break;
+                case SwordAbilityFlag.HasTurnStartSpiritSpawn: model.HasTurnStartSpiritSpawn = true; break;
+                case SwordAbilityFlag.HasReactiveSpiritSpawn: model.HasReactiveSpiritSpawn = true; break;
+                case SwordAbilityFlag.SuppressPathDamage: model.SuppressPathDamage = true; break;
+                case SwordAbilityFlag.SpinHitsAdjacent: model.SpinHitsAdjacent = true; break;
+                case SwordAbilityFlag.SpinAffectsSpirits: model.SpinAffectsSpirits = true; break;
+                case SwordAbilityFlag.LinkAlwaysPenetrate: model.LinkAlwaysPenetrate = true; break;
+                case SwordAbilityFlag.RecallSpiritsOnSwordMove: model.RecallSpiritsOnSwordMove = true; break;
             }
         }
     }

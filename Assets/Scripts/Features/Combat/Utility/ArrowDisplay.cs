@@ -7,17 +7,13 @@ namespace Features.Combat.Utility
         private readonly RectTransform mCanvasRect;
         private readonly GameObject mArrowHead;
         private readonly RectTransform mLineRect;
-        private readonly float mArrowOffset;
-        private readonly float mLineWidth;
         private Vector2 mStartPos;
         private bool mIsActive;
 
-        public ArrowDisplay(GameObject arrowHead, GameObject lineObj, float arrowOffset, float lineWidth = 3f)
+        public ArrowDisplay(GameObject arrowHead, GameObject lineObj)
         {
             mArrowHead = arrowHead;
             mLineRect = lineObj.GetComponent<RectTransform>();
-            mArrowOffset = arrowOffset;
-            mLineWidth = lineWidth;
 
             Canvas canvas = arrowHead.GetComponentInParent<Canvas>();
             mCanvasRect = canvas.GetComponent<RectTransform>();

@@ -11,7 +11,6 @@ namespace Features.Card.Utility
     {
         private static readonly Regex KeywordRegex = new(@"【(.+?)】");
         private readonly Dictionary<string, string> mEntries = new();
-        private readonly HashSet<string> mVisited = new();
 
         public KeywordResolver(EntryInfoContainer container)
         {
@@ -25,30 +24,29 @@ namespace Features.Card.Utility
             }
         }
 
-        public string ResolveKeywords(string desc)
+        public string FormatDescription(string desc)
         {
             if (string.IsNullOrEmpty(desc))
                 return "";
 
-            mVisited.Clear();
-            StringBuilder sb = new();
-            ResolveRecursive(desc, sb, 0);
-            return sb.ToString();
+            return KeywordRegex.Replace(desc, "<color=#EFC851>$1</color>");
         }
 
-        private void ResolveRecursive(string text, StringBuilder sb, int depth)
+        public string GetKeywordExplanations(string desc)
         {
-            foreach (Match match in KeywordRegex.Matches(text))
+            if (string.IsNullOrEmpty(desc))
+                return "";
+
+            HashSet<string> visited = new();
+            StringBuilder sb = new();
+            foreach (Match match in KeywordRegex.Matches(desc))
             {
                 string keyword = match.Groups[1].Value;
-                if (!mEntries.TryGetValue(keyword, out string keywordDesc) || !mVisited.Add(keyword))
-                    continue;
-
-                sb.Append(' ', depth * 2);
-                sb.AppendLine($"【{keyword}】: {keywordDesc}");
-
-                ResolveRecursive(keywordDesc, sb, depth + 1);
+                if (mEntries.TryGetValue(keyword, out string explanation) && visited.Add(keyword))
+                    sb.AppendLine($"<color=#EFC851>【{keyword}】</color> {explanation}");
             }
+
+            return sb.Length > 0 ? sb.ToString().TrimEnd() : "";
         }
     }
 }

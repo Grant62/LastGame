@@ -8,6 +8,7 @@ using Features.Card.Model;
 using Features.Card.View;
 using Features.Combat.Event;
 using Features.Combat.System;
+using Features.Resource.Model;
 using QFramework;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -43,9 +44,6 @@ namespace Features.Card.UI
         [BoxGroup("坐标")]
         [SerializeField] private Vector2 discardOrigin = new(-900, -400);
 
-        [BoxGroup("引用")]
-        [SerializeField] private Canvas overlayCanvas;
-
         private ICardViewPool mCardPool;
         private readonly List<CardView> mCardOrder = new();
         private readonly Dictionary<CardData, CardView> mCardLookup = new();
@@ -62,8 +60,6 @@ namespace Features.Card.UI
         }
 
         public float HoverCardY { get => hoverCardY; }
-
-        public Canvas OverlayCanvas { get => overlayCanvas; }
 
         public void ForceRefreshLayout()
         {
@@ -130,6 +126,9 @@ namespace Features.Card.UI
             this.RegisterEvent<ForceEndAllDragsEvent>(_ => ForceEndAllDrags())
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
+            this.RegisterEvent<BattleEndCleanupEvent>(_ => OnBattleEnd())
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+
             OnHandPileChanged();
         }
 
@@ -170,9 +169,18 @@ namespace Features.Card.UI
             SetCardOutlines(true);
         }
 
+        private void OnBattleEnd()
+        {
+            LayoutRoot.DOKill();
+            LayoutRoot.DOAnchorPosY(-300f, 0.2f).SetEase(Ease.InCubic);
+
+            foreach (CardView card in mCardOrder)
+                card.RectTransform.DOKill();
+        }
+
         private void SetCardOutlines(bool visible)
         {
-            int curEnergy = visible ? this.GetModel<Features.Resource.Model.IResourceModel>().CurEnergy.Value : int.MaxValue;
+            int curEnergy = visible ? this.GetModel<IResourceModel>().CurEnergy.Value : int.MaxValue;
             foreach (CardView card in mCardOrder)
             {
                 if (card.OutlineImage != null)
@@ -183,7 +191,7 @@ namespace Features.Card.UI
             }
         }
 
-        private void OnHandCardCostChanged(HandCardCostChangedEvent e)
+        private void OnHandCardCostChanged(HandCardCostChangedEvent @event)
         {
             foreach (CardView card in mCardOrder)
                 card.RefreshCost();

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Text;
 using Core.Architecture;
 using DG.Tweening;
-using Features.Card.UI;
+using Features.Card.Event;
 using Features.Combat.System;
 using QFramework;
 using UnityEngine;
@@ -97,8 +97,8 @@ namespace Main.GM
         {
             mIsOpen = true;
             this.GetSystem<IInteractionSystem>().BeginAnimation();
-            GetArchitecture().SendEvent<Features.Card.Event.ForceClearHoverEvent>();
-            GetArchitecture().SendEvent<Features.Card.Event.ForceEndAllDragsEvent>();
+            GetArchitecture().SendEvent<ForceClearHoverEvent>();
+            GetArchitecture().SendEvent<ForceEndAllDragsEvent>();
             transform.SetAsLastSibling();
             Time.timeScale = 0f;
             DOTween.timeScale = 0f;

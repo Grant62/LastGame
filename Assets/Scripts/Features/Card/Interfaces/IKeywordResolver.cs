@@ -4,6 +4,7 @@ namespace Features.Card.Interfaces
 {
     public interface IKeywordResolver : IUtility
     {
-        string ResolveKeywords(string desc);
+        string FormatDescription(string desc);
+        string GetKeywordExplanations(string desc);
     }
 }

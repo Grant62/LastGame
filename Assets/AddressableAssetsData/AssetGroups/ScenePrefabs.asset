@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: ScenePrefabs
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: ScenePrefabs
+  m_GUID: 805bef5c5c51f6c4eb2fbb8ed8170c9d
+  m_SerializeEntries:
+  - m_GUID: 2347a0379c4614c4caea1237023a4d7f
+    m_Address: CombatRoomRoot
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9548b4318eb92c044a4c0a6fe1c16fd7
+    m_Address: LogoSceneRoot
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 95a154f5897342b4c847f36c0ac098cb
+    m_Address: MainMenuSceneRoot
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: bd0efc7142aef524d9304afec64a0ce5, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: dc93209960fe5b148a1b9646f72594f2, type: 2}
+    - {fileID: 11400000, guid: 7cf352f9bf2b6fe4bb849f0513436ca9, type: 2}

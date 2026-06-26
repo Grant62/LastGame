@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Configuration.ExcelData.Container;
 using Core.Architecture;
+using Core.SceneManagement;
 using Core.Systems;
 using DG.Tweening;
 using Features.Card.Command;
@@ -26,6 +27,7 @@ using Features.Hero.View;
 using Features.Sword.Model;
 using Features.Sword.View;
 using Main.GM;
+using Presentation.Effects;
 using QFramework;
 using Services.ExcelTool;
 using Sirenix.OdinInspector;
@@ -47,6 +49,8 @@ namespace Features.Combat
         [SerializeField] private GameObject cursorViewPrefab;
         [BoxGroup("预制体")]
         [SerializeField] private SwordView swordPrefab;
+        [BoxGroup("预制体")]
+        [SerializeField] private DamageTextUI damageTextPrefab;
 
         [BoxGroup("卡牌测试")]
         [SerializeField] private bool testMode;
@@ -56,11 +60,10 @@ namespace Features.Combat
         [BoxGroup("Overlay")]
         [SerializeField] private Canvas overlayCanvas;
 
-        [BoxGroup("箭头偏移量")]
-        [SerializeField] private float arrowOffset = 80f;
-
         [BoxGroup("GM")]
         [SerializeField] private GmPanel gmPanel;
+        [BoxGroup("GM")]
+        [SerializeField] private bool invincibleMode;
 
         private HeroView mHeroUI;
         private readonly List<SwordView> mSpiritSwordViews = new();
@@ -94,25 +97,29 @@ namespace Features.Combat
 
             Transform overlayTrans = overlayCanvas.transform;
 
+            EntryInfoContainer entryContainer = this.GetUtility<IBinaryDataMgr>().GetTable<EntryInfoContainer>();
+            IKeywordResolver keywordResolver = new KeywordResolver(entryContainer);
+            GameMain.Interface.RegisterUtility(keywordResolver);
+
             CardView hoverCard = Instantiate(cardUIPrefab, overlayTrans);
             GameMain.Interface.RegisterUtility<ICardHoverDisplay>(
-                new CardHoverDisplay(hoverCard));
+                new CardHoverDisplay(hoverCard, keywordResolver));
 
             GameObject arrowView = Instantiate(arrowViewPrefab, overlayTrans);
             GameObject arrowHead = arrowView.transform.Find("Head").gameObject;
             GameObject arrowLine = arrowView.transform.Find("Line").gameObject;
             GameMain.Interface.RegisterUtility<IArrowDisplay>(
-                new ArrowDisplay(arrowHead, arrowLine, arrowOffset));
+                new ArrowDisplay(arrowHead, arrowLine));
 
             GameObject cursorView = Instantiate(cursorViewPrefab, overlayTrans);
             GameMain.Interface.RegisterUtility<ICursorDisplay>(new CursorDisplay(cursorView));
 
-            EntryInfoContainer entryContainer = this.GetUtility<IBinaryDataMgr>().GetTable<EntryInfoContainer>();
-            GameMain.Interface.RegisterUtility<IKeywordResolver>(new KeywordResolver(entryContainer));
+            GameMain.Interface.RegisterUtility<IDamageTextSpawner>(
+                new DamageTextSpawner(damageTextPrefab, overlayCanvas.transform));
 
             GameMain.Interface.RegisterUtility<ICardSpriteCache>(new CardSpriteCache());
 
-            GameMain.Interface.SendEvent<GameReadyEvent>();
+            GameMain.Interface.SendEvent(new RoomReadyEvent { RoomId = "CombatRoom" });
         }
 
         private void Start()
@@ -137,14 +144,20 @@ namespace Features.Combat
             this.RegisterEvent<HandDiscardRequestEvent>(OnHandDiscardRequest)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
+            this.RegisterEvent<BattleVictoryEvent>(_ => OnBattleEnd())
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<BattleDefeatEvent>(_ => OnBattleEnd())
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+
             UIKit.OpenPanel<BattleBottomPanel>();
 
             this.SendCommand<StartBattleCommand>();
         }
 
-        private void OnPlayerMoved(PlayerMoveExecutedEvent e)
+        private void OnPlayerMoved(PlayerMoveExecutedEvent @event)
         {
-            board.ShiftEnemies(e.OldSlotIndex, e.NewSlotIndex);
+            board.ShiftEnemies(@event.OldSlotIndex, @event.NewSlotIndex);
         }
 
         private void Update()
@@ -161,18 +174,24 @@ namespace Features.Combat
             }
         }
 
-        private void OnHeroDeath(HeroDeathEvent e)
+        private void OnHeroDeath(HeroDeathEvent @event)
         {
             this.SendCommand<SendBattleDefeatCommand>();
         }
 
-        private void OnEnemyDied(EnemyDiedEvent e)
+        private void OnBattleEnd()
+        {
+            this.GetUtility<IDamageTextSpawner>().ClearAll();
+            GetArchitecture().SendEvent<BattleEndCleanupEvent>();
+        }
+
+        private void OnEnemyDied(EnemyDiedEvent @event)
         {
             if (!board.GetActiveEnemies().Any())
                 this.SendCommand<SendBattleVictoryCommand>();
         }
 
-        private void OnHandDiscardRequest(HandDiscardRequestEvent e)
+        private void OnHandDiscardRequest(HandDiscardRequestEvent @event)
         {
             DiscardSelectPanelData data = new()
             {
@@ -197,6 +216,9 @@ namespace Features.Combat
                 MaxHealth = 100,
                 InitialHealth = 80
             }));
+
+            if (invincibleMode)
+                this.GetModel<IHeroModel>().Invincible.Value = true;
 
             this.SendCommand(new SetHeroSlotCommand(4));
         }

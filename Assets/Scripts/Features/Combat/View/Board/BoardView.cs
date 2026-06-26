@@ -37,8 +37,6 @@ namespace Features.Combat.View.Board
 
         public int SlotCount { get => mSlots.Count; }
 
-        public float MoveDuration { get => moveDuration; }
-
         public IArchitecture GetArchitecture()
         {
             return GameMain.Interface;
@@ -50,11 +48,11 @@ namespace Features.Combat.View.Board
             this.RegisterEvent<EnemyDiedEvent>(OnEnemyDied).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
-        private void OnEnemyDied(EnemyDiedEvent e)
+        private void OnEnemyDied(EnemyDiedEvent @event)
         {
             for (int i = EnemyViews.Count - 1; i >= 0; i--)
             {
-                if (EnemyViews[i].SlotIndex == e.SlotIndex)
+                if (EnemyViews[i].SlotIndex == @event.SlotIndex)
                 {
                     RemoveEnemy(EnemyViews[i]);
                     break;
@@ -86,14 +84,6 @@ namespace Features.Combat.View.Board
         public RectTransform GetSlotTransform(int index)
         {
             return index >= 0 && index < mSlots.Count ? mSlots[index].SlotRect : null;
-        }
-
-        public int GetSlotIndex(RectTransform slotRect)
-        {
-            for (int i = 0; i < mSlots.Count; i++)
-                if (mSlots[i].SlotRect == slotRect)
-                    return i;
-            return -1;
         }
 
         public EnemyView GetEnemyAtSlot(int slotIndex)

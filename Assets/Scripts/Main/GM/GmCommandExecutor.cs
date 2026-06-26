@@ -21,6 +21,7 @@ namespace Main.GM
 
             switch (cmd)
             {
+                #region 通用
                 case "help":
                     foreach (string line in GmHelpContent.Lines)
                         onOutput(line);
@@ -30,6 +31,13 @@ namespace Main.GM
                     onOutput("__CLEAR__");
                     break;
 
+                case "hotkeys":
+                    onOutput("=== 快捷键 ===");
+                    onOutput("~ - 打开/关闭 GM 控制台");
+                    break;
+                #endregion
+
+                #region 卡牌
                 case "givecard":
                     HandleGiveCard(parts, controller, onOutput);
                     break;
@@ -46,6 +54,14 @@ namespace Main.GM
                     HandleDiscard(parts, controller, onOutput);
                     break;
 
+                case "keephand":
+                    controller.SendCommand<ToggleKeepHandCommand>();
+                    bool isKept = controller.GetModel<ICardModel>().KeepHandOnTurnEnd;
+                    onOutput($"回合结束保留手牌: {(isKept ? "开启" : "关闭")}");
+                    break;
+                #endregion
+
+                #region 英雄
                 case "herohp":
                     HandleHeroHp(parts, onOutput, controller);
                     break;
@@ -63,6 +79,23 @@ namespace Main.GM
                     onOutput("已杀死英雄");
                     break;
 
+                case "invincible":
+                    HandleInvincible(controller, onOutput);
+                    break;
+                #endregion
+
+                #region 敌人
+                case "kill":
+                    HandleKillSlot(parts, onOutput, controller);
+                    break;
+
+                case "killall":
+                    controller.SendCommand<KillAllEnemiesCommand>();
+                    onOutput("已消灭所有敌人");
+                    break;
+                #endregion
+
+                #region 资源
                 case "energy":
                     HandleEnergy(parts, onOutput, controller);
                     break;
@@ -70,26 +103,7 @@ namespace Main.GM
                 case "gold":
                     HandleGold(parts, onOutput, controller);
                     break;
-
-                case "keephand":
-                    controller.SendCommand<ToggleKeepHandCommand>();
-                    bool isKept = controller.GetModel<ICardModel>().KeepHandOnTurnEnd;
-                    onOutput($"回合结束保留手牌: {(isKept ? "开启" : "关闭")}");
-                    break;
-
-                case "killall":
-                    controller.SendCommand<KillAllEnemiesCommand>();
-                    onOutput("已消灭所有敌人");
-                    break;
-
-                case "kill":
-                    HandleKillSlot(parts, onOutput, controller);
-                    break;
-
-                case "hotkeys":
-                    onOutput("=== 快捷键 ===");
-                    onOutput("~ - 打开/关闭 GM 控制台");
-                    break;
+                #endregion
 
                 default:
                     onOutput($"未知指令: {cmd}，输入 'help' 查看可用指令");
@@ -298,6 +312,13 @@ namespace Main.GM
             int slotIndex = slot - 1;
             controller.SendCommand(new KillEnemyAtSlotCommand(slotIndex));
             onOutput($"已消灭槽位 {slot} 的敌人");
+        }
+
+        private static void HandleInvincible(IController controller, Action<string> onOutput)
+        {
+            controller.SendCommand<ToggleInvincibleCommand>();
+            bool isInvincible = controller.GetModel<IHeroModel>().Invincible.Value;
+            onOutput($"英雄无敌: {(isInvincible ? "开启" : "关闭")}");
         }
 
         private static bool CardExists(int cardId, IController controller)

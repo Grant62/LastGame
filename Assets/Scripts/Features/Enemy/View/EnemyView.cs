@@ -3,6 +3,7 @@ using Core.Architecture;
 using DG.Tweening;
 using Features.Combat.Command;
 using Features.Combat.Targeting;
+using Features.Combat.Utility;
 using Features.Combat.View;
 using Features.Enemy.Command;
 using QFramework;
@@ -63,6 +64,8 @@ namespace Features.Enemy.View
                 mArmor -= absorbed;
                 remaining -= absorbed;
                 shieldView.SetArmor(mArmor);
+                if (absorbed > 0)
+                    this.GetUtility<IDamageTextSpawner>().Spawn($"-{absorbed}", transform.position, Color.white);
             }
 
             if (remaining > 0)
@@ -70,6 +73,7 @@ namespace Features.Enemy.View
                 mHealth -= remaining;
                 mHealth = Mathf.Max(0, mHealth);
                 RefreshHealthBar(true);
+                this.GetUtility<IDamageTextSpawner>().Spawn(remaining, transform.position, Color.red);
 
                 if (mHealth <= 0)
                 {

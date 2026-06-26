@@ -38,10 +38,7 @@ namespace Features.Card.Command
                     {
                         MakeSlot(info.Effect1_Type, info.Effect1_Target, info.Effect1_Param1, info.Effect1_Param2, info.Effect1_Condition),
                         MakeSlot(info.Effect2_Type, info.Effect2_Target, info.Effect2_Param1, info.Effect2_Param2, info.Effect2_Condition),
-                        MakeSlot(info.Effect3_Type, info.Effect3_Target, info.Effect3_Param1, info.Effect3_Param2, info.Effect3_Condition),
-                        MakeSlot(info.Effect4_Type, info.Effect4_Target, info.Effect4_Param1, info.Effect4_Param2, info.Effect4_Condition),
-                        MakeSlot(info.Effect5_Type, info.Effect5_Target, info.Effect5_Param1, info.Effect5_Param2, info.Effect5_Condition),
-                        MakeSlot(info.Effect6_Type, info.Effect6_Target, info.Effect6_Param1, info.Effect6_Param2, info.Effect6_Condition)
+                        MakeSlot(info.Effect3_Type, info.Effect3_Target, info.Effect3_Param1, info.Effect3_Param2, info.Effect3_Condition)
                     }
                 });
             }

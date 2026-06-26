@@ -9,11 +9,13 @@ namespace Features.Card.Utility
     public class CardHoverDisplay : ICardHoverDisplay
     {
         private readonly CardView mCardView;
+        private readonly IKeywordResolver mKeywordResolver;
         private readonly float mHoverScale = 1.3f;
 
-        public CardHoverDisplay(CardView hoverCard)
+        public CardHoverDisplay(CardView hoverCard, IKeywordResolver keywordResolver)
         {
             mCardView = hoverCard;
+            mKeywordResolver = keywordResolver;
 
             mCardView.CanvasGroup.blocksRaycasts = false;
             mCardView.HandDragHandler.enabled = false;
@@ -24,6 +26,11 @@ namespace Features.Card.Utility
         public void Show(CardData data, Vector3 position)
         {
             mCardView.Setup(data);
+
+            string keywords = mKeywordResolver.GetKeywordExplanations(data.Desc);
+            if (!string.IsNullOrEmpty(keywords))
+                mCardView.Desc.text = mCardView.Desc.text + "\n\n" + keywords;
+
             mCardView.transform.position = position;
             mCardView.RectTransform.localScale = Vector3.one * 0.8f;
             mCardView.gameObject.SetActive(true);

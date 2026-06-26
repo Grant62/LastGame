@@ -21,7 +21,6 @@ namespace Features.Card.Utility
 
             GameObject go = new("[Pool] CardView");
             go.SetActive(false);
-            Object.DontDestroyOnLoad(go);
             mPoolRoot = go.transform;
         }
 
@@ -29,6 +28,7 @@ namespace Features.Card.Utility
         {
             CardView card = mPool.Allocate();
             card.transform.SetParent(parent, false);
+            card.InitFromParent();
             card.Setup(data, enableEffects);
             return card;
         }

@@ -1048,6 +1048,422 @@ StringEventSystem.Global.Send("TEST_TWO", 10);
 - 多值匹配时使用 switch 表达式代替 `if-else` 链。
 - **禁止防御式判空**：架构保证非空的引用（`GetComponent`/`GetSystem`/`GetModel`/`GetUtility` 在已初始化的上下文中）不写 `if (x == null) return;` 或 `if (x != null)` 包裹。让异常暴露问题，不隐藏 bug。
 
+## SPA 场景管理系统
+
+### 设计目标
+
+借鉴 STS2 的 SPA（Single Page Application）容器模式，整个游戏 **只有 1 个 Unity Scene**，通过容器组件交换 Prefab 子节点来实现"场景切换"。所有 "场景"（Logo、主菜单、角色选择、战斗、商店等）都是普通 Prefab，通过 `SceneContainer` 组件挂载/卸载。
+
+**与 Unity 多场景方案对比：**
+
+| 维度 | Unity Additive 多场景 | SPA 容器换 Prefab（本项目采用） |
+|---|---|---|
+| 切换速度 | 慢（序列化/反序列化） | 快（Instantiate + Destroy） |
+| Canvas 分层 | 每个场景独立 Canvas，Sort Order 难协调 | 共享同一棵根 Canvas 树，Sort Order 由预制体自行管理 |
+| 全局 UI 复用 | 需要单独场景或 DontDestroyOnLoad | 天然挂在根 Canvas 下，不随容器切换销毁 |
+| 与 QFramework 集成 | 每个场景需重新注册 Utility | 架构全局存活，场景 Utility 在 `OnSceneEnter` 注册、`OnSceneExit` 注销 |
+
+### 根架构
+
+`GameRoot`（`PersistentMonoSingleton`）在 `BeforeSceneLoad` 时自动创建，**代码动态构建**以下根结构：
+
+```
+GameRoot (DontDestroyOnLoad)
+  ├── EventSystem
+  └── RootCanvas (Canvas, ScreenSpaceOverlay)
+       ├── BgLayer (Transform) — 背景层
+       ├── SceneContainer (SceneContainer 组件) — 一级：Logo / MainMenu / Run 之间切换
+       ├── OverlayContainer (SceneContainer 组件) — 覆盖层：Reward / GameOver / Settings
+       └── TransitionLayer (Image, 全屏黑色, RaycastTarget) — 淡入淡出遮罩
+```
+
+**GameRoot 构建代码：**
+
+```csharp
+// Core/Architecture/GameRoot.cs 扩展
+protected override void Awake()
+{
+    base.Awake();
+    IArchitecture _ = GameMain.Interface;
+    BuildRootCanvas();
+}
+
+private void BuildRootCanvas()
+{
+    var rootCanvas = new GameObject("RootCanvas").AddComponent<Canvas>();
+    rootCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+    rootCanvas.transform.SetParent(transform);
+    rootCanvas.gameObject.AddComponent<CanvasScaler>();
+    rootCanvas.gameObject.AddComponent<GraphicRaycaster>();
+
+    BgLayer = new GameObject("BgLayer").transform;
+    BgLayer.SetParent(rootCanvas.transform);
+
+    SceneContainer = new GameObject("SceneContainer").AddComponent<SceneContainer>();
+    SceneContainer.transform.SetParent(rootCanvas.transform);
+
+    OverlayContainer = new GameObject("OverlayContainer").AddComponent<SceneContainer>();
+    OverlayContainer.transform.SetParent(rootCanvas.transform);
+
+    TransitionLayer = new GameObject("TransitionLayer").AddComponent<Image>();
+    TransitionLayer.color = Color.black;
+    TransitionLayer.raycastTarget = true;
+    TransitionLayer.transform.SetParent(rootCanvas.transform, false);
+    // 全屏拉伸
+    TransitionLayer.rectTransform.anchorMin = Vector2.zero;
+    TransitionLayer.rectTransform.anchorMax = Vector2.one;
+    TransitionLayer.rectTransform.sizeDelta = Vector2.zero;
+}
+```
+
+### 核心类
+
+#### SceneBase — 所有"场景"的基类
+
+```csharp
+// Core/SceneManagement/SceneBase.cs
+namespace Core.SceneManagement
+{
+    public abstract class SceneBase : MonoBehaviour
+    {
+        /// <summary>场景唯一标识，与 Prefab 资源名对应</summary>
+        public abstract string SceneId { get; }
+
+        /// <summary>所属容器类型</summary>
+        public abstract SceneContainerType ContainerType { get; }
+
+        /// <summary>加载后初始化（注册 Utility、启动逻辑、发 RoomReadyEvent 等）</summary>
+        public virtual UniTask OnSceneEnter(SceneLoadContext ctx) => UniTask.CompletedTask;
+
+        /// <summary>即将被移除（注销 Utility、清理临时对象）</summary>
+        public virtual UniTask OnSceneExit() => UniTask.CompletedTask;
+
+        /// <summary>有覆盖层压在上面（暂停输入、暂停动画等）</summary>
+        public virtual void OnScenePause() { }
+
+        /// <summary>覆盖层移除，恢复</summary>
+        public virtual void OnSceneResume() { }
+    }
+
+    public enum SceneContainerType
+    {
+        Main,    // 一级 SceneContainer：Logo / MainMenu / Run
+        Room,    // Run 内的二级 RoomContainer：Combat / Map / Event / Shop / RestSite / Treasure
+        Overlay  // OverlayContainer：Reward / GameOver / Settings
+    }
+}
+```
+
+#### SceneContainer — 容器组件
+
+```csharp
+// Core/SceneManagement/SceneContainer.cs
+public class SceneContainer : MonoBehaviour
+{
+    public SceneBase CurrentScene { get; private set; }
+
+    public async UniTask SetCurrentScene(SceneBase newScene, SceneLoadContext ctx = null,
+        bool withTransition = true)
+    {
+        ISceneTransition transition = GameMain.Interface.GetUtility<ISceneTransition>();
+
+        if (withTransition) await transition.FadeOut();
+
+        if (CurrentScene != null)
+        {
+            await CurrentScene.OnSceneExit();
+            Destroy(CurrentScene.gameObject);
+        }
+
+        if (newScene != null)
+        {
+            newScene.transform.SetParent(transform, false);
+            await newScene.OnSceneEnter(ctx ?? SceneLoadContext.Empty);
+            CurrentScene = newScene;
+        }
+
+        if (withTransition) await transition.FadeIn();
+    }
+
+    public void Clear()
+    {
+        if (CurrentScene != null)
+        {
+            Destroy(CurrentScene.gameObject);
+            CurrentScene = null;
+        }
+    }
+}
+```
+
+#### ISceneManager — 场景调度 System
+
+```csharp
+// Core/SceneManagement/ISceneManager.cs
+public interface ISceneManager : ISystem
+{
+    SceneBase CurrentMainScene { get; }
+    SceneBase CurrentRoomScene { get; }
+
+    /// <summary>切换到指定一级场景（销毁旧的）</summary>
+    UniTask LoadMainScene(string sceneId, SceneLoadContext ctx = null);
+
+    /// <summary>切换到指定房间（销毁旧的）</summary>
+    UniTask LoadRoomScene(string sceneId, SceneLoadContext ctx = null);
+
+    /// <summary>打开覆盖层（保留底层不销毁）</summary>
+    UniTask ShowOverlay(string overlayId, SceneLoadContext ctx = null);
+
+    /// <summary>关闭最上层覆盖层</summary>
+    UniTask HideOverlay();
+
+    /// <summary>预加载场景 Prefab（后台异步）</summary>
+    UniTask PreloadScene(string sceneId);
+}
+```
+
+`SceneManager` 内部持有 `SceneContainer`（一级）、`SceneContainer`（RoomContainer，在 RunScene 内）、`SceneContainer`（OverlayContainer）三个引用，在 `GameMain.Init()` 中注册时注入。
+
+#### ISceneTransition — 过渡效果 Utility
+
+```csharp
+// Core/SceneManagement/ISceneTransition.cs
+public interface ISceneTransition : IUtility
+{
+    /// <summary>淡出到黑色（0.3 秒）</summary>
+    UniTask FadeOut(float duration = 0.3f);
+
+    /// <summary>淡入到透明</summary>
+    UniTask FadeIn(float duration = 0.3f);
+
+    /// <summary>立即设置状态（无动画）</summary>
+    void SetImmediate(bool isBlack);
+}
+
+// 实现：用 DOTween DOFade 控制 TransitionLayer.Image 的 alpha
+```
+
+#### SceneLoadContext — 场景传参
+
+```csharp
+// Core/SceneManagement/SceneLoadContext.cs
+public class SceneLoadContext
+{
+    public static readonly SceneLoadContext Empty = new();
+
+    public string CharacterId { get; set; }   // 进入 Run 时的角色 ID
+    public string LevelId { get; set; }       // 进入战斗时的关卡/房间 ID
+    public object UserData { get; set; }      // 任意自定义数据
+}
+```
+
+### GameReadyEvent 语义拆分
+
+| 事件 | 含义 | 发送时机 | 生命周期内触发次数 |
+|---|---|---|---|
+| `GameReadyEvent` | 全局架构初始化完成 | `GameMain.Init()` 完成后 | 1 次 |
+| `SceneReadyEvent` | 一级场景进入完毕 | `SceneContainer.SetCurrentScene` 完成后 | 与主场景切换次数相同 |
+| `RoomReadyEvent` | 游戏内房间进入完毕 | `RoomContainer.SetCurrentScene` 完成后 | 与房间切换次数相同 |
+| `RoomExitedEvent` | 房间即将销毁 | `RoomContainer` 移除旧房间前 | 与 `RoomReadyEvent` 配对 |
+
+**System 订阅变更：**
+
+```csharp
+// CardEffectSystem、StatusTickSystem 等由订阅 GameReadyEvent
+// 改为订阅 RoomReadyEvent（每次进战斗房间重新缓存 Utility）
+protected override void OnInit()
+{
+    this.RegisterEvent<CardPlayedEvent>(OnCardPlayed);
+    this.RegisterEvent<RoomReadyEvent>(_ => OnRoomReady()); // 原 GameReadyEvent
+}
+
+private void OnRoomReady()
+{
+    mTargetSelector = this.GetUtility<ITargetSelector>();
+    mCtx = new EffectContext(...);
+}
+
+// 监听到 RoomExitedEvent 时释放场景持有引用，防止残留
+this.RegisterEvent<RoomExitedEvent>(_ =>
+{
+    mTargetSelector = null;
+    mCtx = null;
+});
+```
+
+### 场景 Prefab 规划
+
+```
+Assets/GameResource/Prefabs/Scenes/
+├── Logo/
+│   └── LogoScene.prefab              # SceneBase, ContainerType=Main
+├── MainMenu/
+│   └── MainMenuScene.prefab          # SceneBase, ContainerType=Main
+├── CharacterSelect/
+│   └── CharacterSelectScene.prefab   # SceneBase, ContainerType=Main
+├── Run/
+│   └── RunScene.prefab               # SceneBase, ContainerType=Main
+│        └── 内涵:
+│             ├── NGlobalUi 节点 — 跨房间不变的 UI（顶部状态栏、设置/图鉴按钮）
+│             └── RoomContainer (SceneContainer 组件) — 二级容器
+├── Rooms/
+│   ├── CombatRoom.prefab             # SceneBase, ContainerType=Room
+│   │    └── 内涵: BoardView, EnemyViews, HeroView, SwordView,
+│   │             HandPanel, OverlayCanvas, Arrow/Cursor/HoverCard View Prefab
+│   ├── MapRoom.prefab
+│   ├── EventRoom.prefab
+│   ├── ShopRoom.prefab
+│   ├── RestSiteRoom.prefab
+│   └── TreasureRoom.prefab
+└── Overlays/
+    ├── RewardOverlay.prefab           # SceneBase, ContainerType=Overlay
+    ├── GameOverOverlay.prefab
+    ├── SettingsOverlay.prefab
+    └── CardCollectionOverlay.prefab
+```
+
+**Canvas 规则：** 每个 Prefab 根节点自带 `Canvas` 组件。Sort Order 由 Prefab 内部预设：
+- Main 类型：100 起步（Logo=100, MainMenu=110, Run=120）
+- Room 类型：200 起步
+- Overlay 类型：300 起步
+
+### 完整启动与切换流程
+
+```
+Unity 引擎启动
+  └── [BeforeSceneLoad] GameRoot.AutoInit()
+       ├── new GameObject("GameRoot") → 挂 GameRoot → Awake()
+       ├── BuildRootCanvas() — 代码动态构建 RootCanvas 子树
+       ├── GameMain.Interface → Init()
+       │    ├── 注册所有 System / Model / 全局 Utility
+       │    ├── RegisterUtility<ISceneTransition>(new SceneTransition(TransitionLayer))
+       │    └── RegisterSystem<ISceneManager>(... 注入 SceneContainer / OverlayContainer 引用)
+       └── 发送 GameReadyEvent
+
+GameRoot.Start()
+  └── this.GetSystem<ISceneManager>().LoadMainScene("LogoScene")
+       ├── ISceneTransition.SetImmediate(true) — 初始黑屏
+       ├── ResKit 加载 LogoScene.prefab → Instantiate
+       ├── SceneContainer.SetCurrentScene(logoScene)
+       ├── ISceneTransition.FadeIn(1.5f)
+       └── 用户点击/超时 → FadeOut → LoadMainScene("MainMenuScene") → FadeIn
+
+主菜单 → 新游戏:
+  LoadMainScene("CharacterSelectScene")
+  → 选角色 → LoadMainScene("RunScene", ctx{CharacterId="hero_01"})
+  → RunScene.OnSceneEnter() 生成地图
+  → LoadRoomScene("MapRoom")
+  → 用户选节点 → LoadRoomScene("CombatRoom", ctx{LevelId="room_01"})
+
+战斗结束:
+  → LoadRoomScene("MapRoom") 或 LoadRoomScene("TreasureRoom")
+  → 需要选奖励时: ShowOverlay("RewardOverlay") ← 不销毁底层
+
+游戏结束:
+  → ShowOverlay("GameOverOverlay")
+  → 用户点击返回 → FadeOut → LoadMainScene("MainMenuScene") → FadeIn
+```
+
+### 现有代码迁移
+
+#### GameRoot 改造
+
+| 现有 | 改造后 |
+|---|---|
+| `Awake()` 只调 `GameMain.Interface` | 新增 `BuildRootCanvas()`，构建 RootCanvas 子树 |
+| 无 `ISceneManager` / `ISceneTransition` | `GameMain.Init()` 中注册两者 |
+| `Start()` 为空 | `Start()` 中调 `LoadMainScene("LogoScene")` |
+
+#### CombatController → CombatRoom
+
+| 现有代码 | 迁移后 |
+|---|---|
+| `CombatController : MonoBehaviour, IController` | `CombatRoom : SceneBase, IController` |
+| `Awake()` → `LoadCardDefinesCommand` + `RegisterUtilities` | `OnSceneEnter()` |
+| `Awake()` → `Instantiate(heroPrefab)` | `OnSceneEnter()` |
+| `Start()` → PositionHero / InitHero / InitSword / InitEnemies / InitDeck / StartBattle | `OnSceneEnter()` |
+| `Start()` → Event 注册（PlayerMoveExecuted 等） | `OnSceneEnter()` 中注册，框架随 GameObject 销毁自动注销 |
+| `Update()` → GM 面板 | `CombatRoom.Update()` |
+| `OnDestroy()` → 无清理 | 不需要，Utility 由下一次 `OnSceneEnter` 覆盖注册 |
+
+#### Utility 注册/注销
+
+```csharp
+// CombatRoom.OnSceneEnter() 中
+protected override async UniTask OnSceneEnter(SceneLoadContext ctx)
+{
+    GameMain.Interface.RegisterUtility<IBoardAccess>(new BoardAccess(board));
+    GameMain.Interface.RegisterUtility<IArrowDisplay>(new ArrowDisplay(...));
+    // ... 其余 10 个
+
+    // 初始化完成后通知所有 System
+    GameMain.Interface.SendEvent<RoomReadyEvent>();
+
+    // 发起战斗逻辑（原 Start 内容）
+    PositionHeroAtCenter();
+    InitHero();
+    InitSword();
+    InitEnemies();
+    InitDeck();
+    StartBattle();
+}
+
+// CombatRoom.OnSceneExit() 中
+protected override async UniTask OnSceneExit()
+{
+    GameMain.Interface.SendEvent<RoomExitedEvent>();
+}
+```
+
+#### 全局 UI 抽出
+
+当前挂在 Combat 场景内的以下 UI 应移到 `RunScene/NGlobalUi` 下：
+
+| 现有位置 | 迁移到 |
+|---|---|
+| `PileGridPanel`（牌堆查看器） | `RunScene/NGlobalUi` — 跨房间存在 |
+| `BattleBottomPanel`（结束回合按钮、血量状态栏） | `RunScene/NGlobalUi` |
+| `HandPanel`（手牌区域） | 跟随 `CombatRoom`，不变 |
+
+### 与渲染分层的关系
+
+当前的三 Canvas 分层（Background/Game/Overlay）是针对单个战斗场景的内部布局。SPA 引入后，**每个 SceneBase Prefab 自带完整的 Canvas 层级结构**，全局不再需要统一的三 Canvas 划分。
+
+`CombatRoom.prefab` 内部沿用相同的 Sort Order 惯例（背景=0, 游戏交互=10, 覆盖=20），但 Sort Order 加 200 基值以避免与其他房间冲突。
+
+### 目录结构
+
+```
+Assets/Scripts/Core/SceneManagement/
+├── SceneBase.cs
+├── SceneContainer.cs
+├── ISceneManager.cs
+├── SceneManager.cs
+├── ISceneTransition.cs
+├── SceneTransition.cs
+├── SceneLoadContext.cs
+├── Event/
+│   ├── SceneReadyEvent.cs
+│   ├── SceneExitedEvent.cs
+│   ├── RoomReadyEvent.cs
+│   └── RoomExitedEvent.cs
+└── Define/
+    └── SceneContainerType.cs
+```
+
+### 实施阶段
+
+| 阶段 | 内容 | 新增/改动 | 风险 |
+|---|---|---|---|
+| **P0 基础设施** | `SceneBase`、`SceneContainer`、`ISceneManager`/`SceneManager`、`ISceneTransition`/`SceneTransition`、`SceneLoadContext`、4 个 Event struct | 10 个新文件 | 低 |
+| **P0 GameRoot 改造** | `BuildRootCanvas()`；`GameMain.Init()` 注册 `ISceneManager` + `ISceneTransition`；`GameRoot.Start()` 调用 `LoadMainScene` | 改 3 个文件 | 低 |
+| **P0 事件拆分** | 新增 `RoomReadyEvent`、`RoomExitedEvent`；`CardEffectSystem` 等由 `GameReadyEvent` 改为 `RoomReadyEvent` | 改 ~3 个 System | 低 |
+| **P1 CombatRoom** | 创建 `CombatRoom : SceneBase`，迁移 `RegisterUtilities` + `Start` 逻辑；创建 CombatRoom.prefab | 1 新文件 + 1 Prefab | 中 |
+| **P1 Logo + MainMenu**（最小闭环） | `LogoScene` + `MainMenuScene`（含简单 UI），打通 启动→Logo→主菜单→进战斗 流程 | 2 文件 + 2 Prefab | 中 |
+| **P1 RunScene** | `RunScene`（RoomContainer + NGlobalUi），作为局内父容器 | 1 文件 + 1 Prefab | 中 |
+| **P2 后续场景** | MapRoom、EventRoom、ShopRoom、RestSiteRoom、TreasureRoom | 每场景 1 文件 + 1 Prefab | 低 |
+| **P2 覆盖层** | RewardOverlay、GameOverOverlay、SettingsOverlay、CardCollectionOverlay | 每覆盖层 1 文件 + 1 Prefab | 低 |
+
 ## 项目渲染分层架构（2026-05-31 确定）
 
 本项目采用 **多 Canvas Overlay 分层架构**，按渲染顺序分三层：
