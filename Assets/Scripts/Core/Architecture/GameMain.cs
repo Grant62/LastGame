@@ -5,11 +5,15 @@ using Features.Combat.Model;
 using Features.Combat.System;
 using Features.Combat.Targeting.Model;
 using Features.Combat.Targeting.System;
+using Features.Enemy.Model;
+using Features.Enemy.System;
 using Features.Hero.Model;
 using Features.Resource.Model;
 using Features.Resource.System;
+using Features.Run.Model;
 using Features.Sword.Model;
 using Features.Sword.System;
+using Main.GM;
 using QFramework;
 using Services.ExcelTool;
 
@@ -38,6 +42,12 @@ namespace Core.Architecture
             RegisterSystem<IInteractionSystem>(new InteractionSystem());
             RegisterSystem(new StatusTickSystem());
             RegisterSystem(new SpinDamageSystem());
+
+            RegisterModel<IEnemyDefineModel>(new EnemyDefineModel());
+            RegisterModel<IEnemyModel>(new EnemyModel());
+            RegisterSystem<IEnemyAISystem>(new EnemyAISystem());
+            RegisterModel<IRunModel>(new RunModel());
+            RegisterSystem(new GmSystem());
         }
     }
 }

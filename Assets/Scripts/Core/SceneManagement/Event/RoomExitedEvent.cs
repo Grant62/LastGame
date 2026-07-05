@@ -1,4 +1,4 @@
-namespace Core.SceneManagement
+namespace Core.SceneManagement.Event
 {
     public struct RoomExitedEvent
     {

@@ -10,14 +10,8 @@ using UnityEngine.UI;
 
 namespace Features.Card.UI
 {
-    public class PileGridPanelData : UIPanelData
+    public partial class PileGridPanel : MonoBehaviour, IController
     {
-        public List<CardData> Cards;
-    }
-
-    public partial class PileGridPanel : UIPanel, IController
-    {
-        private ICardViewPool mCardPool;
         private readonly List<CardView> mCardViews = new();
 
         [BoxGroup("滚动")]
@@ -28,26 +22,22 @@ namespace Features.Card.UI
             return GameMain.Interface;
         }
 
-        protected override void OnInit(IUIData uiData = null)
+        private void Awake()
         {
-            mCardPool = this.GetUtility<ICardViewPool>();
             GetComponent<ScrollRect>().scrollSensitivity = scrollSensitivity;
-            Close.onClick.AddListener(CloseSelf);
+            Close.onClick.AddListener(OnClose);
         }
 
-        protected override void OnOpen(IUIData uiData = null)
+        public void Show(List<CardData> cards)
         {
-            PileGridPanelData data = uiData as PileGridPanelData;
-            if (data?.Cards == null)
-                return;
-
-            LayoutCards(data.Cards);
+            gameObject.SetActive(true);
+            LayoutCards(cards);
         }
 
-        protected override void OnClose()
+        private void OnClose()
         {
             ReleaseCards();
-            Close.onClick.RemoveListener(CloseSelf);
+            gameObject.SetActive(false);
         }
 
         private void LayoutCards(List<CardData> cards)
@@ -56,20 +46,19 @@ namespace Features.Card.UI
 
             foreach (CardData cardData in cards)
             {
-                CardView card = mCardPool.Get(cardData, Content, false);
+                CardView card = this.GetUtility<ICardViewPool>().Get(cardData, Content, false);
                 card.HandDragHandler.enabled = false;
                 card.CardHoverHandler.enabled = false;
                 card.RectTransform.localEulerAngles = Vector3.zero;
-
                 mCardViews.Add(card);
             }
         }
 
         private void ReleaseCards()
         {
+            ICardViewPool pool = this.GetUtility<ICardViewPool>();
             foreach (CardView view in mCardViews)
-                mCardPool.Return(view);
-
+                pool.Return(view);
             mCardViews.Clear();
         }
     }

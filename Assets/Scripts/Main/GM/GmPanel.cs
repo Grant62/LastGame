@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Text;
 using Core.Architecture;
-using DG.Tweening;
+using Cysharp.Threading.Tasks;
 using Features.Card.Event;
 using Features.Combat.System;
 using QFramework;
@@ -14,7 +14,6 @@ namespace Main.GM
         private GmCommandExecutor mExecutor;
         private GmHistory mHistory;
         private readonly StringBuilder mOutputBuffer = new();
-        private bool mIsOpen;
 
         public IArchitecture GetArchitecture()
         {
@@ -37,23 +36,40 @@ namespace Main.GM
             InputField.onSubmit.RemoveListener(OnSubmitCommand);
             this.GetSystem<IInteractionSystem>().EndAnimation();
             Time.timeScale = 1f;
-            DOTween.timeScale = 1f;
         }
 
         private void OnDestroy()
         {
-            if (mIsOpen)
-            {
-                Time.timeScale = 1f;
-                DOTween.timeScale = 1f;
-            }
+            Time.timeScale = 1f;
+        }
+
+        public void Open()
+        {
+            this.GetSystem<IInteractionSystem>().BeginAnimation();
+            GameMain.Interface.SendEvent<ForceClearHoverEvent>();
+            GameMain.Interface.SendEvent<ForceEndAllDragsEvent>();
+            Time.timeScale = 0f;
+
+            mOutputBuffer.Clear();
+            OutputText.text = "";
+
+            InputField.text = "";
+            InputField.ActivateInputField();
+            InputField.Select();
+
+            ShowHelp();
+        }
+
+        public void Close()
+        {
+            Time.timeScale = 1f;
+            mOutputBuffer.Clear();
+            OutputText.text = "";
+            gameObject.SetActive(false);
         }
 
         private void Update()
         {
-            if (!mIsOpen)
-                return;
-
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 if (!string.IsNullOrEmpty(InputField.text))
@@ -93,38 +109,6 @@ namespace Main.GM
             }
         }
 
-        public void Open()
-        {
-            mIsOpen = true;
-            this.GetSystem<IInteractionSystem>().BeginAnimation();
-            GetArchitecture().SendEvent<ForceClearHoverEvent>();
-            GetArchitecture().SendEvent<ForceEndAllDragsEvent>();
-            transform.SetAsLastSibling();
-            Time.timeScale = 0f;
-            DOTween.timeScale = 0f;
-
-            mOutputBuffer.Clear();
-            OutputText.text = "";
-
-            InputField.text = "";
-            InputField.ActivateInputField();
-            InputField.Select();
-
-            ShowHelp();
-        }
-
-        private void Close()
-        {
-            mIsOpen = false;
-            Time.timeScale = 1f;
-            DOTween.timeScale = 1f;
-
-            mOutputBuffer.Clear();
-            OutputText.text = "";
-
-            gameObject.SetActive(false);
-        }
-
         private void OnSubmitCommand(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -137,12 +121,12 @@ namespace Main.GM
             mExecutor.Execute(command, this, AppendOutput);
 
             InputField.text = "";
-            StartCoroutine(RefocusInput());
+            RefocusInputAsync().Forget();
         }
 
-        private IEnumerator RefocusInput()
+        private async UniTaskVoid RefocusInputAsync()
         {
-            yield return null;
+            await UniTask.NextFrame();
             InputField.ActivateInputField();
         }
 

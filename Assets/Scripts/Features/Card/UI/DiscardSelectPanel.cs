@@ -12,13 +12,13 @@ using UnityEngine.UI;
 
 namespace Features.Card.UI
 {
-    public class DiscardSelectPanelData : UIPanelData
+    public class DiscardSelectPanelData
     {
         public List<CardData> HandCards;
         public Action<CardData> OnSelected;
     }
 
-    public class DiscardSelectPanel : UIPanel, IController
+    public class DiscardSelectPanel : MonoBehaviour, IController
     {
         [SerializeField] private Transform content;
         [SerializeField] private ScrollRect scrollRect;
@@ -36,15 +36,15 @@ namespace Features.Card.UI
             return GameMain.Interface;
         }
 
-        protected override void OnInit(IUIData uiData = null)
+        private void Awake()
         {
             mCardPool = this.GetUtility<ICardViewPool>();
             confirmBtn.onClick.AddListener(OnConfirm);
         }
 
-        protected override void OnOpen(IUIData uiData = null)
+        public void Open(DiscardSelectPanelData data)
         {
-            DiscardSelectPanelData data = uiData as DiscardSelectPanelData ?? throw new ArgumentNullException(nameof(uiData));
+            gameObject.SetActive(true);
             mCallback = data.OnSelected;
             tipText.text = "选择 1 张手牌弃掉";
             LayoutCards(data.HandCards);
@@ -53,10 +53,11 @@ namespace Features.Card.UI
                 scrollRect.verticalScrollbar.gameObject.SetActive(true);
         }
 
-        protected override void OnClose()
+        private void Close()
         {
             ReleaseCards();
             mCallback = null;
+            gameObject.SetActive(false);
         }
 
         private void LayoutCards(List<CardData> handCards)
@@ -111,7 +112,7 @@ namespace Features.Card.UI
             CardData selectedData = index >= 0 && index < handPile.Count ? handPile[index] : null;
 
             mCallback?.Invoke(selectedData);
-            CloseSelf();
+            Close();
         }
 
         private void ReleaseCards()

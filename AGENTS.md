@@ -14,7 +14,7 @@ Unity 6 (6000.0.x) 卡牌/肉鸽游戏，使用 QFramework 架构。
 
 ### QFramework 版本说明
 
-本项目使用完整的 QFramework.Toolkits（包含 QFramework.cs 架构 + 全部工具集）。四层架构与 CQRS 模式是项目核心设计范式。所有 System、Model 统一注册到 `Architecture<T>.Init()` 中，Utility 按类型分别在 `Init()` 或场景 MonoBehaviour 的 `Awake()` 中注册。
+本项目使用 QFramework.cs 架构层（四层架构 + CQRS 模式）。**QFramework.Toolkits 工具集（UIKit/ResKit 等）已废弃不用**，资源加载统一使用 Unity Addressables，UI 面板自管理。所有 System、Model 统一注册到 `Architecture<T>.Init()` 中，Utility 按类型分别在 `Init()` 或场景 MonoBehaviour 的 `Awake()` 中注册。
 
 **QFramework 官方文档：** `Doc/QFramework v1.0.92 使用指南 .md`
 
@@ -162,7 +162,7 @@ IUtility      (工具层)  ← 基础设施封装（存储、网络、SDK 等）
 |---|---|---|---|---|
 | 获取 System | ✓ | ✓ | | |
 | 获取 Model | ✓ | ✓ | | |
-| 获取 Utility | | | ✓ | |
+| 获取 Utility | ✓ | ✓ | ✓ | |
 | 发送 Command | ✓ | | | |
 | 发送 Query | ✓ | ✓ | | |
 | 监听 Event | ✓ | ✓ | | |
@@ -173,7 +173,7 @@ IUtility      (工具层)  ← 基础设施封装（存储、网络、SDK 等）
 ```csharp
 // IController
 public interface IController : IBelongToArchitecture, ICanSendCommand, ICanGetSystem,
-    ICanGetModel, ICanRegisterEvent, ICanSendQuery
+    ICanGetModel, ICanRegisterEvent, ICanSendQuery, ICanGetUtility
 {
 }
 
@@ -594,7 +594,11 @@ container.Get<INetworkService>().Connect();
 
 ## QFramework.Toolkits 工具集规范
 
-### ResKit（资源管理）
+> **注意：UIKit 和 ResKit 已废弃不用。** 本章节仅供了解框架原始能力，项目实际使用 Addressables + 自管理面板。以下工具仍在使用：ActionKit、PoolKit、FSMKit、SingletonKit、CodeGenKit。
+
+### ResKit（资源管理）— 已废弃
+
+> 本项目使用 Unity Addressables 替代 ResKit。本节仅供参考。
 
 **开发流程：**
 1. 确保模拟模式勾选（Ctrl+E 面板）
@@ -644,30 +648,6 @@ public class MyPanel : UIPanel
 | `mResLoader.Add2Load(name, callback)` + `LoadAsync()` | 异步 |
 | `mResLoader.Recycle2Cache()` | 释放引用（引用计数归零才真正卸载） |
 | 资源名代码生成（QAssets.cs） | 避免拼写错误 |
-
----
-
-### UIKit（界面管理）
-
-**UIPanel 生命周期：** `OnInit` → `OnOpen` → `OnShow` → `OnHide` → `OnClose`
-
-**常用 API：**
-
-| API | 说明 |
-|---|---|
-| `UIKit.OpenPanel<T>(uiData)` | 同步打开 |
-| `UIKit.OpenPanelAsync<T>(uiData)` | 异步打开（WebGL 必须） |
-| `UIKit.ClosePanel<T>()` | 关闭 |
-| `this.CloseSelf()` | 面板关闭自身 |
-| `UIKit.HidePanel<T>()` / `ShowPanel<T>()` | 隐藏/显示 |
-| `UIKit.GetPanel<T>()` | 获取实例 |
-| `UIKit.Stack.Push()` / `UIPanel.Back()` | 界面堆栈 |
-
-**UI 层级：** `UILevel.Common`（默认）、`UILevel.Forward`、`UILevel.UITop`、`UILevel.Guide`
-
-**UIElement：** 子控件，Bind 设置 `标记类型=Element` 自动生成。
-
-**推荐：** 每个界面一个独立测试场景，用 `UIPanelTester` 运行。
 
 ---
 
@@ -1048,460 +1028,234 @@ StringEventSystem.Global.Send("TEST_TWO", 10);
 - 多值匹配时使用 switch 表达式代替 `if-else` 链。
 - **禁止防御式判空**：架构保证非空的引用（`GetComponent`/`GetSystem`/`GetModel`/`GetUtility` 在已初始化的上下文中）不写 `if (x == null) return;` 或 `if (x != null)` 包裹。让异常暴露问题，不隐藏 bug。
 
+## UI 渲染架构
+
+### 分层总览
+
+所有 UI 层是 `GameRoot` 的 `UIRoot` Transform 下的兄弟 Canvas 节点，按创建顺序（即 sibling index）排列：
+
+```
+GameRoot (DontDestroyOnLoad)
+  └── UIRoot (Transform, 纯容器)
+       ├── BgLayer       (Canvas, sort=0)   — 背景
+       ├── SceneContainer (Canvas, sort=5)  — 场景 Prefab 挂载点
+       ├── CommonLayer   (Canvas, sort=10)  — 跨房间全局 UI
+       ├── CombatOverlay (Canvas, sort=15)  — 战斗内悬浮物
+       └── PopUILayer    (Canvas, sort=20)  — 弹窗/面板
+```
+
+> **关键规则：** 每个场景 Prefab（LogoSceneRoot、CombatRoomRoot 等）**可以包含 Canvas 组件**。Sort Order 由各预制体内部在 Editor 中预设，与上述 5 层 Canvas 的 sort order 配合管理整体渲染顺序。
+
+### 各层职责
+
+| 层 | 内容 | 说明 |
+|---|---|---|
+| BgLayer | 背景图、装饰 | 通过 SceneContainer 管理的场景自行渲染 |
+| SceneContainer | LogoSceneRoot / RunSceneRoot / MainMenuSceneRoot | `SceneContainer` 组件挂在这，Addressables 加载的场景 Prefab 放这里 |
+| CommonLayer | TopBarPanel、BattleBottomPanel | 跨房间不变的全局 UI，运行期间加载一次 |
+| CombatOverlay | hoverCard、ArrowView、CursorView、DamageText | 战斗内悬浮层，CombatController.RegisterUtilities() 注册时 Instantiate 到本层 |
+| PopUILayer | GmPanel、PileGridPanel、DiscardSelectPanel | 弹出面板层 |
+
+**渲染顺序：** 依赖 Canvas.sortingOrder（0→5→10→15→20），不使用 sibling 顺序。
+
+**Canvas 规范：** 每层 Canvas 统一 `ScaleWithScreenSize` + `1920x1080` + `MatchWidthOrHeight=1`，代码中 `SetupCanvas()` 方法统一创建。
+
+### UI 面板管理
+
+**已废弃 UIKit。** 所有面板均为 `MonoBehaviour` 子类（非 `UIPanel`），通过 `Addressables.InstantiateAsync("PanelName", GameRoot.XXXLayer)` 直接加载并挂载到对应 Canvas 层。
+
+| 面板 | 加载位置 | 加载时机 |
+|---|---|---|
+| TopBarPanel | `RunScene.OnSceneEnter()` → `GameRoot.CommonLayer` | 进入 Run 时 |
+| BattleBottomPanel | `CombatController.Start()` → `GameRoot.CommonLayer` | 进入战斗时 |
+| GmPanel | `GmSystem.OnInit()` → `GameRoot.PopUILayer` | 首次按 backtick 时 |
+| PileGridPanel | `PileEntry.OnClick()` → `GameRoot.PopUILayer` | 点击牌堆按钮时（缓存实例） |
+| DiscardSelectPanel | `CombatController.OnHandDiscardRequest()` → `GameRoot.PopUILayer` | 需要弃牌时 |
+
+### 弹窗栈管理
+
+弹出面板（PopUILayer）通过栈结构管理，支持 ESC 逆序关闭。借鉴 UIKit 的 `Stack.Push()`/`Back()` 模式：
+
+```csharp
+public class PanelStack
+{
+    private readonly Stack<PanelInfo> mStack = new();
+
+    public void Push(UIPanelBase panel)
+    {
+        mStack.Push(panel.Info);
+        panel.Close(destroy: true);
+    }
+
+    public async UniTask Pop()
+    {
+        if (mStack.Count == 0)
+            return;
+
+        PanelInfo prev = mStack.Pop();
+        await OpenPanelAsync(prev.Address, prev.UIData);
+    }
+
+    public async UniTask Back(UIPanelBase current)
+    {
+        if (mStack.Count == 0)
+            return;
+
+        PanelInfo prev = mStack.Pop();
+        current.Close(destroy: true);
+        await OpenPanelAsync(prev.Address, prev.UIData);
+    }
+}
+```
+
+> 关键：栈中存的是 `PanelInfo`（Addressables 地址 + 数据），而非 `GameObject`。Pop 时用保存的地址重新加载面板。
+
+### 面板生命周期
+
+借鉴 UIKit 的 `PanelState` 状态机，所有自管面板遵循统一生命周期：
+
+```csharp
+public abstract class UIPanelBase : MonoBehaviour
+{
+    public PanelState State { get; protected set; }
+
+    public void Init() { OnInit(); }
+    public void Open(object uiData = null) { State = PanelState.Opening; OnOpen(uiData); }
+    public void Show() { gameObject.SetActive(true); OnShow(); }
+    public void Hide() { State = PanelState.Hide; gameObject.SetActive(false); OnHide(); }
+    public void Close(bool destroy = true) { State = PanelState.Closed; OnClose(); if (destroy) Destroy(gameObject); }
+
+    protected virtual void OnInit() { }
+    protected virtual void OnOpen(object uiData) { }
+    protected virtual void OnShow() { }
+    protected virtual void OnHide() { }
+    protected virtual void OnClose() { }
+}
+```
+
+### 面板单例 / 多实例
+
+借鉴 UIKit 的 `PanelOpenType.Single/Multiple`：
+
+- **Single**：全局只一个实例，已存在则 `Show()` + 重新 `Open()`，不重复加载
+- **Multiple**：允许多实例共存（如确认框栈）
+
+```csharp
+public async UniTask<T> OpenPanelAsync<T>(string address, object uiData, Transform parent)
+    where T : UIPanelBase
+{
+    T existing = mTable.Find<T>();
+    if (existing != null)
+    {
+        existing.gameObject.SetActive(true);
+        existing.Open(uiData);
+        return existing;
+    }
+
+    GameObject go = await Addressables.InstantiateAsync(address, parent).Task;
+    T panel = go.GetComponent<T>();
+    mTable.Add(panel);
+    panel.Init();
+    panel.Open(uiData);
+    return panel;
+}
+```
+
+### 面板注册表
+
+借鉴 UIKit 的 `UIPanelTable` 多索引设计，按类型/名称双索引 O(1) 查找：
+
+```csharp
+public class PanelTable
+{
+    private Dictionary<string, UIPanelBase> mNameIndex = new();
+    private Dictionary<Type, UIPanelBase> mTypeIndex = new();
+
+    public void Add(UIPanelBase panel)
+    {
+        mNameIndex[panel.name] = panel;
+        mTypeIndex[panel.GetType()] = panel;
+    }
+
+    public T Find<T>() where T : UIPanelBase =>
+        mTypeIndex.TryGetValue(typeof(T), out var panel) ? panel as T : null;
+
+    public void Remove(UIPanelBase panel)
+    {
+        mNameIndex.Remove(panel.name);
+        mTypeIndex.Remove(panel.GetType());
+    }
+
+    public void ClearAll()
+    {
+        foreach (var panel in mTypeIndex.Values)
+            panel.Close(destroy: true);
+        mNameIndex.Clear();
+        mTypeIndex.Clear();
+    }
+}
+```
+
 ## SPA 场景管理系统
 
 ### 设计目标
 
-借鉴 STS2 的 SPA（Single Page Application）容器模式，整个游戏 **只有 1 个 Unity Scene**，通过容器组件交换 Prefab 子节点来实现"场景切换"。所有 "场景"（Logo、主菜单、角色选择、战斗、商店等）都是普通 Prefab，通过 `SceneContainer` 组件挂载/卸载。
-
-**与 Unity 多场景方案对比：**
-
-| 维度 | Unity Additive 多场景 | SPA 容器换 Prefab（本项目采用） |
-|---|---|---|
-| 切换速度 | 慢（序列化/反序列化） | 快（Instantiate + Destroy） |
-| Canvas 分层 | 每个场景独立 Canvas，Sort Order 难协调 | 共享同一棵根 Canvas 树，Sort Order 由预制体自行管理 |
-| 全局 UI 复用 | 需要单独场景或 DontDestroyOnLoad | 天然挂在根 Canvas 下，不随容器切换销毁 |
-| 与 QFramework 集成 | 每个场景需重新注册 Utility | 架构全局存活，场景 Utility 在 `OnSceneEnter` 注册、`OnSceneExit` 注销 |
+整个游戏 **只有 1 个 Unity Scene**，通过容器组件交换 Prefab 来实现"场景切换"。
 
 ### 根架构
 
-`GameRoot`（`PersistentMonoSingleton`）在 `BeforeSceneLoad` 时自动创建，**代码动态构建**以下根结构：
-
-```
-GameRoot (DontDestroyOnLoad)
-  ├── EventSystem
-  └── RootCanvas (Canvas, ScreenSpaceOverlay)
-       ├── BgLayer (Transform) — 背景层
-       ├── SceneContainer (SceneContainer 组件) — 一级：Logo / MainMenu / Run 之间切换
-       ├── OverlayContainer (SceneContainer 组件) — 覆盖层：Reward / GameOver / Settings
-       └── TransitionLayer (Image, 全屏黑色, RaycastTarget) — 淡入淡出遮罩
-```
-
-**GameRoot 构建代码：**
+`GameRoot`（`PersistentMonoSingleton`）在 `BeforeSceneLoad` 时自动创建，`BuildRootCanvas()` 代码动态构建上述 5 层 Canvas 结构。`GameRoot` 暴露静态属性供外部访问：
 
 ```csharp
-// Core/Architecture/GameRoot.cs 扩展
-protected override void Awake()
-{
-    base.Awake();
-    IArchitecture _ = GameMain.Interface;
-    BuildRootCanvas();
-}
-
-private void BuildRootCanvas()
-{
-    var rootCanvas = new GameObject("RootCanvas").AddComponent<Canvas>();
-    rootCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-    rootCanvas.transform.SetParent(transform);
-    rootCanvas.gameObject.AddComponent<CanvasScaler>();
-    rootCanvas.gameObject.AddComponent<GraphicRaycaster>();
-
-    BgLayer = new GameObject("BgLayer").transform;
-    BgLayer.SetParent(rootCanvas.transform);
-
-    SceneContainer = new GameObject("SceneContainer").AddComponent<SceneContainer>();
-    SceneContainer.transform.SetParent(rootCanvas.transform);
-
-    OverlayContainer = new GameObject("OverlayContainer").AddComponent<SceneContainer>();
-    OverlayContainer.transform.SetParent(rootCanvas.transform);
-
-    TransitionLayer = new GameObject("TransitionLayer").AddComponent<Image>();
-    TransitionLayer.color = Color.black;
-    TransitionLayer.raycastTarget = true;
-    TransitionLayer.transform.SetParent(rootCanvas.transform, false);
-    // 全屏拉伸
-    TransitionLayer.rectTransform.anchorMin = Vector2.zero;
-    TransitionLayer.rectTransform.anchorMax = Vector2.one;
-    TransitionLayer.rectTransform.sizeDelta = Vector2.zero;
-}
+GameRoot.CommonLayer   // Transform
+GameRoot.CombatOverlay // Transform
+GameRoot.PopUILayer    // Transform
 ```
 
 ### 核心类
 
-#### SceneBase — 所有"场景"的基类
+#### SceneBase — 场景基类
 
 ```csharp
-// Core/SceneManagement/SceneBase.cs
-namespace Core.SceneManagement
+public abstract class SceneBase : MonoBehaviour
 {
-    public abstract class SceneBase : MonoBehaviour
-    {
-        /// <summary>场景唯一标识，与 Prefab 资源名对应</summary>
-        public abstract string SceneId { get; }
-
-        /// <summary>所属容器类型</summary>
-        public abstract SceneContainerType ContainerType { get; }
-
-        /// <summary>加载后初始化（注册 Utility、启动逻辑、发 RoomReadyEvent 等）</summary>
-        public virtual UniTask OnSceneEnter(SceneLoadContext ctx) => UniTask.CompletedTask;
-
-        /// <summary>即将被移除（注销 Utility、清理临时对象）</summary>
-        public virtual UniTask OnSceneExit() => UniTask.CompletedTask;
-
-        /// <summary>有覆盖层压在上面（暂停输入、暂停动画等）</summary>
-        public virtual void OnScenePause() { }
-
-        /// <summary>覆盖层移除，恢复</summary>
-        public virtual void OnSceneResume() { }
-    }
-
-    public enum SceneContainerType
-    {
-        Main,    // 一级 SceneContainer：Logo / MainMenu / Run
-        Room,    // Run 内的二级 RoomContainer：Combat / Map / Event / Shop / RestSite / Treasure
-        Overlay  // OverlayContainer：Reward / GameOver / Settings
-    }
+    public abstract string SceneId { get; }
+    public abstract SceneContainerType ContainerType { get; }
+    public virtual UniTask OnSceneEnter(SceneLoadContext ctx) => UniTask.CompletedTask;
+    public virtual UniTask OnSceneExit() => UniTask.CompletedTask;
+    public virtual void OnScenePause() { }
+    public virtual void OnSceneResume() { }
 }
+
+public enum SceneContainerType { Main, Room, Overlay }
 ```
 
-#### SceneContainer — 容器组件
+#### SceneContainer — 容器组件（纯 MonoBehaviour，非 IController）
 
 ```csharp
-// Core/SceneManagement/SceneContainer.cs
 public class SceneContainer : MonoBehaviour
 {
     public SceneBase CurrentScene { get; private set; }
-
-    public async UniTask SetCurrentScene(SceneBase newScene, SceneLoadContext ctx = null,
-        bool withTransition = true)
-    {
-        ISceneTransition transition = GameMain.Interface.GetUtility<ISceneTransition>();
-
-        if (withTransition) await transition.FadeOut();
-
-        if (CurrentScene != null)
-        {
-            await CurrentScene.OnSceneExit();
-            Destroy(CurrentScene.gameObject);
-        }
-
-        if (newScene != null)
-        {
-            newScene.transform.SetParent(transform, false);
-            await newScene.OnSceneEnter(ctx ?? SceneLoadContext.Empty);
-            CurrentScene = newScene;
-        }
-
-        if (withTransition) await transition.FadeIn();
-    }
-
-    public void Clear()
-    {
-        if (CurrentScene != null)
-        {
-            Destroy(CurrentScene.gameObject);
-            CurrentScene = null;
-        }
-    }
+    public async UniTask SetCurrentScene(SceneBase newScene, SceneLoadContext ctx = null) { ... }
+    public void Clear() { ... }
 }
 ```
 
 #### ISceneManager — 场景调度 System
 
 ```csharp
-// Core/SceneManagement/ISceneManager.cs
 public interface ISceneManager : ISystem
 {
     SceneBase CurrentMainScene { get; }
     SceneBase CurrentRoomScene { get; }
-
-    /// <summary>切换到指定一级场景（销毁旧的）</summary>
+    void SetRoomContainer(SceneContainer roomContainer);
     UniTask LoadMainScene(string sceneId, SceneLoadContext ctx = null);
-
-    /// <summary>切换到指定房间（销毁旧的）</summary>
     UniTask LoadRoomScene(string sceneId, SceneLoadContext ctx = null);
-
-    /// <summary>打开覆盖层（保留底层不销毁）</summary>
-    UniTask ShowOverlay(string overlayId, SceneLoadContext ctx = null);
-
-    /// <summary>关闭最上层覆盖层</summary>
-    UniTask HideOverlay();
-
-    /// <summary>预加载场景 Prefab（后台异步）</summary>
     UniTask PreloadScene(string sceneId);
 }
 ```
 
-`SceneManager` 内部持有 `SceneContainer`（一级）、`SceneContainer`（RoomContainer，在 RunScene 内）、`SceneContainer`（OverlayContainer）三个引用，在 `GameMain.Init()` 中注册时注入。
-
-#### ISceneTransition — 过渡效果 Utility
-
-```csharp
-// Core/SceneManagement/ISceneTransition.cs
-public interface ISceneTransition : IUtility
-{
-    /// <summary>淡出到黑色（0.3 秒）</summary>
-    UniTask FadeOut(float duration = 0.3f);
-
-    /// <summary>淡入到透明</summary>
-    UniTask FadeIn(float duration = 0.3f);
-
-    /// <summary>立即设置状态（无动画）</summary>
-    void SetImmediate(bool isBlack);
-}
-
-// 实现：用 DOTween DOFade 控制 TransitionLayer.Image 的 alpha
-```
-
-#### SceneLoadContext — 场景传参
-
-```csharp
-// Core/SceneManagement/SceneLoadContext.cs
-public class SceneLoadContext
-{
-    public static readonly SceneLoadContext Empty = new();
-
-    public string CharacterId { get; set; }   // 进入 Run 时的角色 ID
-    public string LevelId { get; set; }       // 进入战斗时的关卡/房间 ID
-    public object UserData { get; set; }      // 任意自定义数据
-}
-```
-
-### GameReadyEvent 语义拆分
-
-| 事件 | 含义 | 发送时机 | 生命周期内触发次数 |
-|---|---|---|---|
-| `GameReadyEvent` | 全局架构初始化完成 | `GameMain.Init()` 完成后 | 1 次 |
-| `SceneReadyEvent` | 一级场景进入完毕 | `SceneContainer.SetCurrentScene` 完成后 | 与主场景切换次数相同 |
-| `RoomReadyEvent` | 游戏内房间进入完毕 | `RoomContainer.SetCurrentScene` 完成后 | 与房间切换次数相同 |
-| `RoomExitedEvent` | 房间即将销毁 | `RoomContainer` 移除旧房间前 | 与 `RoomReadyEvent` 配对 |
-
-**System 订阅变更：**
-
-```csharp
-// CardEffectSystem、StatusTickSystem 等由订阅 GameReadyEvent
-// 改为订阅 RoomReadyEvent（每次进战斗房间重新缓存 Utility）
-protected override void OnInit()
-{
-    this.RegisterEvent<CardPlayedEvent>(OnCardPlayed);
-    this.RegisterEvent<RoomReadyEvent>(_ => OnRoomReady()); // 原 GameReadyEvent
-}
-
-private void OnRoomReady()
-{
-    mTargetSelector = this.GetUtility<ITargetSelector>();
-    mCtx = new EffectContext(...);
-}
-
-// 监听到 RoomExitedEvent 时释放场景持有引用，防止残留
-this.RegisterEvent<RoomExitedEvent>(_ =>
-{
-    mTargetSelector = null;
-    mCtx = null;
-});
-```
-
-### 场景 Prefab 规划
-
-```
-Assets/GameResource/Prefabs/Scenes/
-├── Logo/
-│   └── LogoScene.prefab              # SceneBase, ContainerType=Main
-├── MainMenu/
-│   └── MainMenuScene.prefab          # SceneBase, ContainerType=Main
-├── CharacterSelect/
-│   └── CharacterSelectScene.prefab   # SceneBase, ContainerType=Main
-├── Run/
-│   └── RunScene.prefab               # SceneBase, ContainerType=Main
-│        └── 内涵:
-│             ├── NGlobalUi 节点 — 跨房间不变的 UI（顶部状态栏、设置/图鉴按钮）
-│             └── RoomContainer (SceneContainer 组件) — 二级容器
-├── Rooms/
-│   ├── CombatRoom.prefab             # SceneBase, ContainerType=Room
-│   │    └── 内涵: BoardView, EnemyViews, HeroView, SwordView,
-│   │             HandPanel, OverlayCanvas, Arrow/Cursor/HoverCard View Prefab
-│   ├── MapRoom.prefab
-│   ├── EventRoom.prefab
-│   ├── ShopRoom.prefab
-│   ├── RestSiteRoom.prefab
-│   └── TreasureRoom.prefab
-└── Overlays/
-    ├── RewardOverlay.prefab           # SceneBase, ContainerType=Overlay
-    ├── GameOverOverlay.prefab
-    ├── SettingsOverlay.prefab
-    └── CardCollectionOverlay.prefab
-```
-
-**Canvas 规则：** 每个 Prefab 根节点自带 `Canvas` 组件。Sort Order 由 Prefab 内部预设：
-- Main 类型：100 起步（Logo=100, MainMenu=110, Run=120）
-- Room 类型：200 起步
-- Overlay 类型：300 起步
-
-### 完整启动与切换流程
-
-```
-Unity 引擎启动
-  └── [BeforeSceneLoad] GameRoot.AutoInit()
-       ├── new GameObject("GameRoot") → 挂 GameRoot → Awake()
-       ├── BuildRootCanvas() — 代码动态构建 RootCanvas 子树
-       ├── GameMain.Interface → Init()
-       │    ├── 注册所有 System / Model / 全局 Utility
-       │    ├── RegisterUtility<ISceneTransition>(new SceneTransition(TransitionLayer))
-       │    └── RegisterSystem<ISceneManager>(... 注入 SceneContainer / OverlayContainer 引用)
-       └── 发送 GameReadyEvent
-
-GameRoot.Start()
-  └── this.GetSystem<ISceneManager>().LoadMainScene("LogoScene")
-       ├── ISceneTransition.SetImmediate(true) — 初始黑屏
-       ├── ResKit 加载 LogoScene.prefab → Instantiate
-       ├── SceneContainer.SetCurrentScene(logoScene)
-       ├── ISceneTransition.FadeIn(1.5f)
-       └── 用户点击/超时 → FadeOut → LoadMainScene("MainMenuScene") → FadeIn
-
-主菜单 → 新游戏:
-  LoadMainScene("CharacterSelectScene")
-  → 选角色 → LoadMainScene("RunScene", ctx{CharacterId="hero_01"})
-  → RunScene.OnSceneEnter() 生成地图
-  → LoadRoomScene("MapRoom")
-  → 用户选节点 → LoadRoomScene("CombatRoom", ctx{LevelId="room_01"})
-
-战斗结束:
-  → LoadRoomScene("MapRoom") 或 LoadRoomScene("TreasureRoom")
-  → 需要选奖励时: ShowOverlay("RewardOverlay") ← 不销毁底层
-
-游戏结束:
-  → ShowOverlay("GameOverOverlay")
-  → 用户点击返回 → FadeOut → LoadMainScene("MainMenuScene") → FadeIn
-```
-
-### 现有代码迁移
-
-#### GameRoot 改造
-
-| 现有 | 改造后 |
-|---|---|
-| `Awake()` 只调 `GameMain.Interface` | 新增 `BuildRootCanvas()`，构建 RootCanvas 子树 |
-| 无 `ISceneManager` / `ISceneTransition` | `GameMain.Init()` 中注册两者 |
-| `Start()` 为空 | `Start()` 中调 `LoadMainScene("LogoScene")` |
-
-#### CombatController → CombatRoom
-
-| 现有代码 | 迁移后 |
-|---|---|
-| `CombatController : MonoBehaviour, IController` | `CombatRoom : SceneBase, IController` |
-| `Awake()` → `LoadCardDefinesCommand` + `RegisterUtilities` | `OnSceneEnter()` |
-| `Awake()` → `Instantiate(heroPrefab)` | `OnSceneEnter()` |
-| `Start()` → PositionHero / InitHero / InitSword / InitEnemies / InitDeck / StartBattle | `OnSceneEnter()` |
-| `Start()` → Event 注册（PlayerMoveExecuted 等） | `OnSceneEnter()` 中注册，框架随 GameObject 销毁自动注销 |
-| `Update()` → GM 面板 | `CombatRoom.Update()` |
-| `OnDestroy()` → 无清理 | 不需要，Utility 由下一次 `OnSceneEnter` 覆盖注册 |
-
-#### Utility 注册/注销
-
-```csharp
-// CombatRoom.OnSceneEnter() 中
-protected override async UniTask OnSceneEnter(SceneLoadContext ctx)
-{
-    GameMain.Interface.RegisterUtility<IBoardAccess>(new BoardAccess(board));
-    GameMain.Interface.RegisterUtility<IArrowDisplay>(new ArrowDisplay(...));
-    // ... 其余 10 个
-
-    // 初始化完成后通知所有 System
-    GameMain.Interface.SendEvent<RoomReadyEvent>();
-
-    // 发起战斗逻辑（原 Start 内容）
-    PositionHeroAtCenter();
-    InitHero();
-    InitSword();
-    InitEnemies();
-    InitDeck();
-    StartBattle();
-}
-
-// CombatRoom.OnSceneExit() 中
-protected override async UniTask OnSceneExit()
-{
-    GameMain.Interface.SendEvent<RoomExitedEvent>();
-}
-```
-
-#### 全局 UI 抽出
-
-当前挂在 Combat 场景内的以下 UI 应移到 `RunScene/NGlobalUi` 下：
-
-| 现有位置 | 迁移到 |
-|---|---|
-| `PileGridPanel`（牌堆查看器） | `RunScene/NGlobalUi` — 跨房间存在 |
-| `BattleBottomPanel`（结束回合按钮、血量状态栏） | `RunScene/NGlobalUi` |
-| `HandPanel`（手牌区域） | 跟随 `CombatRoom`，不变 |
-
-### 与渲染分层的关系
-
-当前的三 Canvas 分层（Background/Game/Overlay）是针对单个战斗场景的内部布局。SPA 引入后，**每个 SceneBase Prefab 自带完整的 Canvas 层级结构**，全局不再需要统一的三 Canvas 划分。
-
-`CombatRoom.prefab` 内部沿用相同的 Sort Order 惯例（背景=0, 游戏交互=10, 覆盖=20），但 Sort Order 加 200 基值以避免与其他房间冲突。
-
-### 目录结构
-
-```
-Assets/Scripts/Core/SceneManagement/
-├── SceneBase.cs
-├── SceneContainer.cs
-├── ISceneManager.cs
-├── SceneManager.cs
-├── ISceneTransition.cs
-├── SceneTransition.cs
-├── SceneLoadContext.cs
-├── Event/
-│   ├── SceneReadyEvent.cs
-│   ├── SceneExitedEvent.cs
-│   ├── RoomReadyEvent.cs
-│   └── RoomExitedEvent.cs
-└── Define/
-    └── SceneContainerType.cs
-```
-
-### 实施阶段
-
-| 阶段 | 内容 | 新增/改动 | 风险 |
-|---|---|---|---|
-| **P0 基础设施** | `SceneBase`、`SceneContainer`、`ISceneManager`/`SceneManager`、`ISceneTransition`/`SceneTransition`、`SceneLoadContext`、4 个 Event struct | 10 个新文件 | 低 |
-| **P0 GameRoot 改造** | `BuildRootCanvas()`；`GameMain.Init()` 注册 `ISceneManager` + `ISceneTransition`；`GameRoot.Start()` 调用 `LoadMainScene` | 改 3 个文件 | 低 |
-| **P0 事件拆分** | 新增 `RoomReadyEvent`、`RoomExitedEvent`；`CardEffectSystem` 等由 `GameReadyEvent` 改为 `RoomReadyEvent` | 改 ~3 个 System | 低 |
-| **P1 CombatRoom** | 创建 `CombatRoom : SceneBase`，迁移 `RegisterUtilities` + `Start` 逻辑；创建 CombatRoom.prefab | 1 新文件 + 1 Prefab | 中 |
-| **P1 Logo + MainMenu**（最小闭环） | `LogoScene` + `MainMenuScene`（含简单 UI），打通 启动→Logo→主菜单→进战斗 流程 | 2 文件 + 2 Prefab | 中 |
-| **P1 RunScene** | `RunScene`（RoomContainer + NGlobalUi），作为局内父容器 | 1 文件 + 1 Prefab | 中 |
-| **P2 后续场景** | MapRoom、EventRoom、ShopRoom、RestSiteRoom、TreasureRoom | 每场景 1 文件 + 1 Prefab | 低 |
-| **P2 覆盖层** | RewardOverlay、GameOverOverlay、SettingsOverlay、CardCollectionOverlay | 每覆盖层 1 文件 + 1 Prefab | 低 |
-
-## 项目渲染分层架构（2026-05-31 确定）
-
-本项目采用 **多 Canvas Overlay 分层架构**，按渲染顺序分三层：
-
-### 分层总览
-
-```
-BackgroundCanvas（order 0）
-────────────────────────────────────────
-  背景图、场景装饰
-
-GameCanvas（order 10）
-────────────────────────────────────────
-  BoardPanel（棋盘面板 + SlotView 格子）
-    ├── EnemyView（敌人，SkeletonGraphic + 血条 Image）
-    └── SwordView（飞剑，Image）
-  HeroView（玩家，SkeletonGraphic）
-  HandPanel（手牌布局，CardView Image + TMP_Text）
-  TopBarPanel（血量/金币/层数）
-  结束回合按钮
-
-OverlayCanvas（order 20）
-────────────────────────────────────────
-  PileGridPanel（网格牌堆查看器，ScrollRect + GridLayoutGroup）
-  HoverCard（悬停放大的卡牌）
-  DragGhost（拖拽中的手牌副本）
-  ArrowView / CursorView（拖拽指向时的箭头+光标）
-  弹窗 / 对话框
-```
-
-### 分层原则
-
-| 渲染层 | Sort Order | 内容 | 原因 |
-|---|---|---|---|
-| BackgroundCanvas | 0 | 背景、装饰 | 始终在最底层 |
-| GameCanvas | 10 | 所有游戏交互 View（棋盘、敌人、英雄、手牌、状态栏） | 游戏主体内容 |
-| OverlayCanvas | 20 | 悬浮卡牌、拖拽幽灵、牌堆查看、界面UI、弹窗、Arrow/Cursor | 必须覆盖在游戏 View 之上 |
-| Spine 骨骼 | GameCanvas 下，`SkeletonGraphic` 组件 | Spine 官方提供 UGUI 支持 |
+**已删除：** `ShowOverlay`/`HideOverlay`（未使用）、`ISceneTransition`/`SceneTransition`（废弃）、OverlayContainer。
 
 ### 交互输入架构
 
@@ -1596,7 +1350,6 @@ Effect 子类（纯数据+行为，无架构感知）
 | 场景对象通过 `IBoardAccess` Utility 获取 | 不使用 `FindObjectOfType` |
 | 效果组合优于继承 | 每张卡 = `ManualTargetEffect[]` + `OtherEffects[]` |
 
----
 
 ## 战斗钩子系统（Combat Hook System）
 
@@ -2072,385 +1825,3 @@ public class CombatFlowSystem : AbstractSystem, ICombatFlowSystem
 
 > **关键信号：** 当你第一次在 Command 或 Effect 里调 `StartCoroutine()` 来等动画完成时，立即引入 `CombatFlowSystem`。Command 不应该知道有"等待"这回事。
 
-## 随机系统
-
-| 项目 | 说明 |
-|---|---|
-| 算法 | **xoshiro128** |
-| 父种子 | `IRandomSystem.SetParentSeed(seed)`，存档/复现的核心 |
-| 模块分叉 | 不同系统使用独立生成器（`RandomModuleIds.Combat/Events/Merchant/Map/Monsters`） |
-| 位置种子 | `RangeForPosition()` 基于 Combat 模块序列，位置键影响偏移，可复现但有变化 |
-
-所有 `UnityEngine.Random` 已替换为 `IRandomSystem.Range()`。
-
----
-
-## 敌人波次生成与 AI 系统（待实现）
-
-### 参考来源
-
-- **Shogun Showdown** (`E:\UnityProject\ShogunSource\Assembly-CSharp\`)
-  - 波次：`WavesFactory.cs` → `Wave.cs` → `WaveRoom.cs` + `CombatGrid.cs`
-  - AI：`Agent.cs`（基类）→ `Enemy.cs`（抽象）→ 20+ 具体敌人
-  - 回合：`CombatManager.cs.ProcessTurn()` 严格分阶段（Flip → Move → Attack → PlayTile）
-- **Slay the Spire 2** (`E:\SteamLibrary\steamapps\common\Slay the Spire 2\data_sts2_windows_x86_64\sts2.dll`)
-  - Godot 引擎，Canonical/Mutable 模式（也是本项目参考的 Canonical/Mutable 设计来源）
-
-### 当前现状
-
-| 已有 | 缺失 |
-|------|------|
-| `EnemyView`：HP、护甲、SlotIndex、状态列表 | 无 `EnemyData`（运行时数据类） |
-| `BoardView`：9槽位、`SpawnEnemy(i)`、`ShiftEnemies()` | 无 `IEnemyModel` / `EnemyModel` |
-| `TurnSystem`：PlayerTurn/EnemyTurn 框架 | `StartEnemyTurn()` 为空壳（仅 1 秒延迟） |
-| `SlotView`：`SlotIndex`、`SlotRect` | 无敌人移动逻辑 |
-| `HeroModel`：`CurSlotIndex`、`IsFacingRight` | 敌人无朝向概念 |
-| `StatusTickSystem`：冰冻/中毒层数管理 | 无敌人回合 AI（不会攻击玩家） |
-| `InitEnemiesCommand`：硬编码 5 个敌人 | 无波次系统、无 Excel 配置驱动 |
-| `EffectContext`：依赖注入容器 | 无 `IBoardAccess` 外的敌人相关 Utility |
-
-### 目录结构规划
-
-```
-Features/Enemy/
-├── Define/
-│   └── EnemyDefine.cs           # 已有，需扩展为 Canonical 模板
-├── Data/
-│   └── EnemyData.cs             # 新增：运行时 Mutable 实例
-├── Model/
-│   ├── IEnemyModel.cs           # 新增
-│   └── EnemyModel.cs            # 新增
-├── System/
-│   ├── IEnemyAISystem.cs        # 新增：AI 决策
-│   └── EnemyAISystem.cs         # 新增
-├── Command/
-│   ├── EnemyTakeDamageCommand.cs   # 已有
-│   ├── EnemyGainArmorCommand.cs    # 已有
-│   ├── SpawnEnemyWaveCommand.cs    # 新增：生成一波
-│   └── EnemyMoveCommand.cs         # 新增：敌人移动
-├── Event/
-│   ├── EnemyMovedEvent.cs          # 新增
-│   ├── EnemyAttackHeroEvent.cs     # 新增
-│   └── WaveSpawnedEvent.cs         # 新增
-└── View/
-    └── EnemyView.cs                # 已有，需加朝向/移动动画
-
-Features/Combat/
-├── Wave/
-│   ├── Define/
-│   │   ├── WaveDefine.cs           # 新增：单波配置数据容器
-│   │   └── WaveRoomDefine.cs       # 新增：房间波次序列
-│   ├── System/
-│   │   ├── IWaveSystem.cs          # 新增
-│   │   └── WaveSystem.cs           # 新增
-│   └── Event/
-│       └── WaveEvents.cs           # 新增：WaveSpawned, WaveCleared 等
-```
-
-### 敌人数据模型（Canonical / Mutable）
-
-延续项目 Canonical/Mutable 模式：
-
-```csharp
-// Features/Enemy/Data/EnemyData.cs —— Mutable 运行时实例
-public class EnemyData
-{
-    public string CanonicalId { get; set; }       // 对应 EnemyDefine.MonsterId
-    public bool IsMutable { get; private set; }
-    public int HP      { get; set; }
-    public int MaxHP   { get; set; }
-    public int Armor   { get; set; }
-    public int Damage  { get; set; }
-    public int SlotIndex { get; set; }
-    public bool IsFacingRight { get; set; }       // 朝向
-    public EnemyActionEnum NextAction { get; set; } // 下回合预告
-    public int AttackCooldown       { get; set; }   // 当前攻击冷却
-    public int AttackCooldownMax    { get; set; }   // 攻击间隔（回合数）
-    public int MoveSpeed            { get; set; }   // 每回合移动格数（默认 1）
-    public EnemyBehaviourType Behaviour { get; set; }
-    public List<StatusModifier> Statuses { get; set; }
-
-    public EnemyData MutableClone() => (EnemyData)MemberwiseClone();
-}
-
-public enum EnemyBehaviourType { Melee, Ranged, Burst, Support }
-```
-
-```csharp
-// IEnemyModel
-public interface IEnemyModel : IModel
-{
-    BindableProperty<int> EnemyCount { get; }     // 存活敌人数
-    EasyEvent OnEnemiesChanged { get; }            // 集合变更
-    EasyEvent<int> OnEnemyDied { get; }            // SlotIndex
-
-    List<EnemyData> GetActiveEnemies();
-    EnemyData GetEnemyAtSlot(int slotIndex);
-    void AddEnemy(EnemyData enemy);
-    void RemoveEnemy(int slotIndex);
-}
-```
-
-### 敌人 AI 决策核心
-
-参考 Shogun Showdown 的 `Enemy.AIPickAction()` + `DecideNextAction()` 管道：
-
-**决策时机：** 每回合初 `TurnSystem.StartEnemyTurn()` 调用 `IEnemyAISystem.DecideAllActions()`。
-
-**行动阶段顺序（参考 Shogun `ProcessTurn()`）：**
-```
-Flip phase  → 所有敌人同时翻转朝向
-Move phase  → 所有敌人同时移动
-Attack phase → 所有敌人依次攻击（等待动画完成）
-```
-
-**通用 AI 决策树（简化版，适配 9 槽固定棋盘）：**
-
-```
-PickAction(enemy)
-├── 1. 禁用状态（冰冻 > 0 ）？   → Wait
-├── 2. 未面向英雄？              → FaceTarget（翻转朝向）
-├── 3. 攻击冷却中？              → 等待冷却（不动作）
-├── 4. 与英雄相邻（|SlotDiff| == 1）？
-│      └── 冷却为 0 且面向英雄？ → Attack
-│      └── 否则                  → Wait
-├── 5. 不面向英雄且距离 > 0？    → MoveTowardsTarget（向英雄移动 1 格）
-├── 6. 路径被其他敌人阻挡？      → Wait（等前方敌人先动）
-└── 7. 否则                      → Wait
-```
-
-**参考 Shogun 的关键位置/方向辅助方法（用 SlotIndex 替代 Cell 递归）：**
-
-| 方法 | 对应 Shogun | 9槽适配 |
-|------|-------------|---------|
-| `TargetDir()` | 比较 transform.x | `heroSlot > enemySlot → Right` |
-| `IsFacingTarget()` | `FacingDir == TargetDir()` | `IsFacingRight == (heroSlot > enemySlot)` |
-| `DistanceFromTarget()` | `Cell.Neighbour(dir, n)` 递归 | `\|heroSlot - enemySlot\|` |
-| `IsPathToTargetFree()` | 遍历 CellsInBetween | 遍历中间 `slotIndex`，查 `BoardView.GetEnemyAtSlot(s)` |
-| `MoveTowardsTarget()` | 向目标方向 WalkTo | `SlotIndex += dir`，检查边界(0~8) + 空位 |
-| `MoveAwayFromTarget()` | 反向移动 | `SlotIndex -= dir` |
-| `FaceTarget()` | FlipLeft/FlipRight | 设置 `IsFacingRight` |
-| `CanMove(dir)` | `HasFreeCell(dir)` | `SlotIndex + dir` ∈ [0,8] 且 `GetEnemyAtSlot` == null |
-
-**多种 AI 行为类型（参考 Shogun 具体敌人实现）：**
-
-| 行为类型 | 参考敌人 | 特点 |
-|---------|---------|------|
-| `Melee` | AshigaruEnemy | 靠近→攻击→后退→冷却→重复。攻击后强制后撤 1 回合 |
-| `Ranged` | ArcherEnemy | 远程，攻击后不后退。无需相邻即可攻击 |
-| `Burst` | ChargerEnemy | 低血量，需要蓄力冷却多回合但伤害高 |
-| `Support` | ShielderEnemy | 优先给无盾友军上盾，单独时自我防御 |
-
-### 波次子系统
-
-参考 Shogun Showdown 的 `WavesFactory` + `Wave` + `WaveRoom` 三件套。
-
-**WaveDefine（Excel 配置）：**
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| Id | string | 波次模板 ID |
-| RoomId | string | 所属房间 |
-| EnemyIds | int[] | 敌人 MonsterId 列表（决定数量+种类） |
-| Duration | int | 回合超时（超时自动刷下一波） |
-| Probability | float | 随机权重 |
-| WaveOrder | int | 在波次序列中的顺序 |
-
-**IWaveSystem：**
-
-```csharp
-public interface IWaveSystem : ISystem
-{
-    int CurrentWave { get; }              // 当前波次索引（0-based）
-    int TotalWaves { get; }
-    int TurnsToNextWave { get; }          // 距下一波剩余的回合数
-    bool IsLastWave { get; }
-
-    void BeginWaveRoom(string roomId);    // 读取配置 + 刷第一波
-    void SpawnNextWave();                 // 刷出下一波敌人
-    void OnEnemyTurnEnd();                // 每回合末检查推进
-}
-```
-
-**波次推进逻辑（参考 `WaveRoom.ProcessTurn`）：**
-
-```
-OnEnemyTurnEnd():
-    nTurnsToNextWave--
-    
-    if 敌人全灭 AND NOT 末波 AND NOT 太拥挤:
-        → SpawnNextWave()     // 立即刷下一波
-    
-    elif nTurnsToNextWave <= 0 AND NOT 太拥挤:
-        → SpawnNextWave()     // 超时刷下一波
-    
-    elif 末波 AND 敌人全灭:
-        → 战斗胜利
-    
-    拥挤检查: 现有敌人数 + 下波敌人数 > MaxEnemiesOnBoard
-    MaxEnemiesOnBoard = slotCount / 2（默认 9/2 = 4）
-```
-
-**SpawnNextWave() 流程：**
-
-```
-1. iWave++
-2. wave = Waves[iWave]
-3. foreach enemyId in wave.EnemyIds:
-      slot = PickSpawnSlot()   // 选空格
-      BoardView.SpawnEnemy(slot)
-      enemy.Init(enemyId, ...)
-4. nTurnsToNextWave = wave.Duration
-5. SendEvent<WaveSpawnedEvent>(iWave)
-```
-
-**刷怪位置算法（`PickSpawnSlot`，简化自 Shogun `SpawningProbabilities`）：**
-
-```
-候选槽位 = [0..8] 中去掉:
-  - 英雄所在槽位
-  - 已有敌人的槽位
-
-优先级排序:
-  1. 边缘槽位优先 (0 和 8)
-  2. 避免紧邻英雄 (|slot - heroSlot| >= 2)
-  3. 避免过于集中 (已有敌人相邻的槽降权)
-
-最终随机选一个候选
-```
-
-### 接入 TurnSystem
-
-改造当前空的 `StartEnemyTurn()`：
-
-```csharp
-// TurnSystem.cs 改造
-private async UniTaskVoid StartEnemyTurn()
-{
-    this.SendEvent<EnemyTurnStartEvent>();
-
-    var waveSystem = this.GetSystem<IWaveSystem>();
-    var aiSystem = this.GetSystem<IEnemyAISystem>();
-
-    // 1. AI 决策所有敌人动作
-    var actions = aiSystem.DecideAllActions();  // List<(EnemyData, EnemyAction)>
-
-    // 2. Flip phase —— 所有翻转
-    foreach (var (enemy, action) in actions.Where(a => a.IsFlip))
-        ExecuteFlip(enemy);
-    await DelayOrUntilComplete(0.15f);
-
-    // 3. Move phase —— 所有移动（并行动画）
-    var moveTasks = actions.Where(a => a.IsMove)
-        .Select(a => ExecuteMove(a.enemy, a.dir));
-    await UniTask.WhenAll(moveTasks);
-
-    // 4. Attack phase —— 依次攻击
-    foreach (var (enemy, action) in actions.Where(a => a.IsAttack))
-    {
-        if (!enemy.IsAlive) continue;
-        await ExecuteAttack(enemy);
-        if (HeroIsDead()) { SendBattleDefeat(); return; }
-    }
-
-    // 5. 状态结算（中毒扣血、冰冻层数衰减）
-    await StatusTickSystem.OnEnemyTurnEnd();
-
-    // 6. 波次推进检查
-    waveSystem.OnEnemyTurnEnd();
-
-    this.SendEvent<EnemyTurnEndEvent>();
-    StartPlayerTurn();
-}
-```
-
-### Attack 方法初步
-
-简化自 Shogun `Agent.ReceiveAttack`：
-
-```csharp
-async UniTask ExecuteAttack(EnemyData enemy)
-{
-    IHeroModel hero = this.GetModel<IHeroModel>();
-
-    int damage = enemy.Damage;
-
-    // 钩子系统修正（预留）
-    // damage = CombatHookSystem.ModifyDamageDealt(hero, damage);
-
-    // 虚弱状态修正（已有 StatusModifier 系统）
-    if (enemy.Statuses.HasAny(StatusType.Weak))
-        damage = (int)(damage * 0.75f);
-
-    // 护甲先行吸收
-    if (hero.Armor.Value > 0)
-    {
-        int absorbed = Mathf.Min(hero.Armor.Value, damage);
-        hero.Armor.Value -= absorbed;
-        damage -= absorbed;
-    }
-
-    // 应用伤害
-    if (damage > 0)
-    {
-        if (hero.Invincible.Value) damage = 0;
-        hero.Health.Value -= damage;
-    }
-
-    // 敌人攻击冷却
-    enemy.AttackCooldown = enemy.AttackCooldownMax;
-}
-```
-
-### 实施阶段计划
-
-| 阶段 | 内容 | 新增文件数 | 依赖 |
-|------|------|-----------|------|
-| P0 | `EnemyData` + `IEnemyModel`/`EnemyModel` | 3 | 无 |
-| P0 | `IEnemyAISystem`/`EnemyAISystem` 基础版（Move/Attack/Flip） | 2 | EnemyModel |
-| P0 | 改造 `TurnSystem.StartEnemyTurn()`，接入 AI | 0（改现有） | EnemyAISystem |
-| P1 | `EnemyView` 新增朝向翻转、移动动画（DOTween） | 0（改现有） | EnemyData |
-| P1 | `IWaveSystem`/`WaveSystem` + `WaveDefine` + `WaveRoomDefine` | 5 | EnemyModel |
-| P1 | `SpawnEnemyWaveCommand` + `PickSpawnSlot` 算法 | 1 | WaveSystem + BoardView |
-| P2 | 多种敌人 AI 行为（Melee/Ranged/Burst/Support） | 0（扩展现有） | EnemyAISystem |
-| P2 | 状态效果接入 AI（冰冻=跳过回合、中毒=EndOfTurn 扣血） | 0（扩展现有） | StatusTickSystem |
-| P2 | 动作预告 UI（参考 Shogun `TelegraphAction` 图标提示） | 2 | EnemyView |
-| P3 | Excel 表 `EnemyDefine` + `WaveConfig` 完整数据 | 0（配表） | 所有系统就绪 |
-| P3 | 钩子系统（`CombatHookSystem`）接入伤害/移动 | 5 | 上述全部 |
-| P3 | Elite 敌人变体（双倍打击/快速/重型/腐蚀） | 3 | 多种 AI 行为 |
-
-### 参考的 Shogun 算法数据结构
-
-**波次回合 Duration 设计规律（来自 Shogun WavesFactory 实测数据）：**
-
-| 每波敌人数 | 典型 Duration（回合） | 说明 |
-|-----------|---------------------|------|
-| 1 个敌人 | 2~9 | 催促快速推波 |
-| 2 个敌人 | 9~16 | 标准战斗 |
-| 3 个敌人 | 12~18 | 高压波次 |
-| 4 个敌人 | 14~18 | 精英波次 |
-| 仅剩 1 敌 | min(当前, 6) | 强制上限防拖延 |
-
-**敌人 AI 内部状态（每个 EnemyData 副本独立持有）：**
-
-参考 Shogun 具体敌人实现（`AshigaruEnemy` / `ShinobiEnemy`）：
-
-| 状态字段 | 类型 | 用途 |
-|---------|------|------|
-| `AttackCooldown` | int | 当前冷却回合（0=可攻击） |
-| `AttackCooldownMax` | int | 攻击后重置值 |
-| `MoveSpeed` | int | 每回合移动格数 |
-| `Behaviour` | enum | 行为类型（决定决策分支） |
-| `PreviousAction` | EnemyActionEnum | 上回合动作（用于交替模式） |
-| `PatternIndex` | int | 行为模式阶段（用于多阶段 AI） |
-| `EliteType` | enum | 精英变体（None/DoubleStrike/Quick/Heavy） |
-
-**Elite 变体修改规则（参考 Shogun `Enemy.InitialMaxHP`）：**
-
-| Elite 类型 | HP 修改 | AI 修改 |
-|-----------|---------|---------|
-| DoubleStrike | +2 | 攻击时连打两次 |
-| Quick | +0 | 跳过攻击冷却（每回合都可攻击） |
-| Heavy | +1 | 不能移动 |
-| ReactiveShield | +1 | 受击后自动加盾 |
-| Corrupted | +1 | 死亡时生成一个小怪

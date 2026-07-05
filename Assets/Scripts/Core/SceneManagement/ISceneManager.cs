@@ -9,13 +9,11 @@ namespace Core.SceneManagement
 
         SceneBase CurrentRoomScene { get; }
 
-        UniTask LoadMainScene(string sceneId, SceneLoadContext ctx = null, bool withTransition = false);
+        void SetRoomContainer(SceneContainer roomContainer);
+
+        UniTask LoadMainScene(string sceneId, SceneLoadContext ctx = null);
 
         UniTask LoadRoomScene(string sceneId, SceneLoadContext ctx = null);
-
-        UniTask ShowOverlay(string overlayId, SceneLoadContext ctx = null);
-
-        UniTask HideOverlay();
 
         UniTask PreloadScene(string sceneId);
     }

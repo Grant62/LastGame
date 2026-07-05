@@ -1,10 +1,9 @@
-using QFramework;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Features.Combat.UI
 {
-    public class BattleBottomPanel : UIPanel
+    public class BattleBottomPanel : MonoBehaviour
     {
         [BoxGroup("子组件")]
         [SerializeField] private EndTurnBtn endTurnBtn;
@@ -14,9 +13,5 @@ namespace Features.Combat.UI
         [SerializeField] private PileEntry discardEntrance;
         [BoxGroup("子组件")]
         [SerializeField] private PileEntry consumeEntrance;
-
-        protected override void OnInit(IUIData uiData = null) { }
-
-        protected override void OnClose() { }
     }
 }

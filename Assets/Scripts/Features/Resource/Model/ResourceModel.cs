@@ -7,7 +7,6 @@ namespace Features.Resource.Model
         public BindableProperty<int> CurEnergy { get; } = new();
         public BindableProperty<int> MaxEnergy { get; } = new(3);
         public BindableProperty<int> Gold { get; } = new(500);
-        public BindableProperty<int> Floor { get; } = new(1);
 
         protected override void OnInit() { }
     }

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using System.Linq;
-using Configuration.ExcelData.Container;
 using Core.Architecture;
 using Core.SceneManagement;
+using Core.SceneManagement.Event;
 using Core.Systems;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Features.Card.Command;
 using Features.Card.Event;
@@ -15,23 +15,22 @@ using Features.Card.Utility;
 using Features.Card.View;
 using Features.Combat.Command;
 using Features.Combat.Event;
-using Features.Combat.UI;
 using Features.Combat.Utility;
 using Features.Combat.View.Board;
+using Features.Enemy.Command;
 using Features.Enemy.Utility;
 using Features.Hero.Command;
-using Features.Hero.Define;
 using Features.Hero.Event;
 using Features.Hero.Model;
 using Features.Hero.View;
 using Features.Sword.Model;
 using Features.Sword.View;
-using Main.GM;
 using Presentation.Effects;
 using QFramework;
-using Services.ExcelTool;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Features.Combat
 {
@@ -48,6 +47,8 @@ namespace Features.Combat
         [BoxGroup("预制体")]
         [SerializeField] private GameObject cursorViewPrefab;
         [BoxGroup("预制体")]
+        [SerializeField] private float cursorHeightOffset = 275f;
+        [BoxGroup("预制体")]
         [SerializeField] private SwordView swordPrefab;
         [BoxGroup("预制体")]
         [SerializeField] private DamageTextUI damageTextPrefab;
@@ -57,11 +58,6 @@ namespace Features.Combat
         [BoxGroup("卡牌测试")]
         [SerializeField] private TextAsset testDeckJson;
 
-        [BoxGroup("Overlay")]
-        [SerializeField] private Canvas overlayCanvas;
-
-        [BoxGroup("GM")]
-        [SerializeField] private GmPanel gmPanel;
         [BoxGroup("GM")]
         [SerializeField] private bool invincibleMode;
 
@@ -75,8 +71,6 @@ namespace Features.Combat
 
         private void Awake()
         {
-            this.SendCommand<LoadCardDefinesCommand>();
-
             mHeroUI = Instantiate(heroPrefab, transform);
 
             RegisterUtilities();
@@ -88,22 +82,16 @@ namespace Features.Combat
 
             GameMain.Interface.RegisterUtility<IEnemyViewPool>(new EnemyViewPool(board.EnemyPrefab));
 
-            GameMain.Interface.RegisterUtility<ICardViewPool>(new CardViewPool(cardUIPrefab));
-
             GameMain.Interface.RegisterUtility<ITargetResolver>(
                 new EnemyTargetResolver(() => board.EnemyViews, this.GetSystem<IRandomSystem>()));
 
             GameMain.Interface.RegisterUtility<ITargetSelector>(new TargetSelector(mHeroUI));
 
-            Transform overlayTrans = overlayCanvas.transform;
-
-            EntryInfoContainer entryContainer = this.GetUtility<IBinaryDataMgr>().GetTable<EntryInfoContainer>();
-            IKeywordResolver keywordResolver = new KeywordResolver(entryContainer);
-            GameMain.Interface.RegisterUtility(keywordResolver);
+            Transform overlayTrans = GameRoot.CombatOverlay;
 
             CardView hoverCard = Instantiate(cardUIPrefab, overlayTrans);
             GameMain.Interface.RegisterUtility<ICardHoverDisplay>(
-                new CardHoverDisplay(hoverCard, keywordResolver));
+                new CardHoverDisplay(hoverCard, this.GetUtility<IKeywordResolver>()));
 
             GameObject arrowView = Instantiate(arrowViewPrefab, overlayTrans);
             GameObject arrowHead = arrowView.transform.Find("Head").gameObject;
@@ -112,12 +100,10 @@ namespace Features.Combat
                 new ArrowDisplay(arrowHead, arrowLine));
 
             GameObject cursorView = Instantiate(cursorViewPrefab, overlayTrans);
-            GameMain.Interface.RegisterUtility<ICursorDisplay>(new CursorDisplay(cursorView));
+            GameMain.Interface.RegisterUtility<ICursorDisplay>(new CursorDisplay(cursorView, cursorHeightOffset));
 
             GameMain.Interface.RegisterUtility<IDamageTextSpawner>(
-                new DamageTextSpawner(damageTextPrefab, overlayCanvas.transform));
-
-            GameMain.Interface.RegisterUtility<ICardSpriteCache>(new CardSpriteCache());
+                new DamageTextSpawner(damageTextPrefab, overlayTrans));
 
             GameMain.Interface.SendEvent(new RoomReadyEvent { RoomId = "CombatRoom" });
         }
@@ -129,16 +115,15 @@ namespace Features.Combat
             InitHero();
             InitSword();
             InitSpiritSwordTracking();
-            this.SendCommand<InitEnemiesCommand>();
+
+            this.SendCommand<LoadEnemyDefinesCommand>();
+
             InitDeck();
 
             this.RegisterEvent<PlayerMoveExecutedEvent>(OnPlayerMoved)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
             this.RegisterEvent<HeroDeathEvent>(OnHeroDeath)
-                .UnRegisterWhenGameObjectDestroyed(gameObject);
-
-            this.RegisterEvent<EnemyDiedEvent>(OnEnemyDied)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
             this.RegisterEvent<HandDiscardRequestEvent>(OnHandDiscardRequest)
@@ -150,28 +135,24 @@ namespace Features.Combat
             this.RegisterEvent<BattleDefeatEvent>(_ => OnBattleEnd())
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            UIKit.OpenPanel<BattleBottomPanel>();
+            this.RegisterEvent<FloorClearedEvent>(OnFloorCleared)
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            LoadBattleBottomPanel();
 
             this.SendCommand<StartBattleCommand>();
+        }
+
+        private async void LoadBattleBottomPanel()
+        {
+            AsyncOperationHandle<GameObject> handle = Addressables.InstantiateAsync(
+                "BattleBottomPanel", GameRoot.CommonLayer);
+            await handle.Task;
         }
 
         private void OnPlayerMoved(PlayerMoveExecutedEvent @event)
         {
             board.ShiftEnemies(@event.OldSlotIndex, @event.NewSlotIndex);
-        }
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.BackQuote))
-            {
-                if (gmPanel.gameObject.activeSelf)
-                    gmPanel.gameObject.SetActive(false);
-                else
-                {
-                    gmPanel.gameObject.SetActive(true);
-                    gmPanel.Open();
-                }
-            }
         }
 
         private void OnHeroDeath(HeroDeathEvent @event)
@@ -182,13 +163,14 @@ namespace Features.Combat
         private void OnBattleEnd()
         {
             this.GetUtility<IDamageTextSpawner>().ClearAll();
-            GetArchitecture().SendEvent<BattleEndCleanupEvent>();
+            GameMain.Interface.SendEvent<BattleEndCleanupEvent>();
         }
 
-        private void OnEnemyDied(EnemyDiedEvent @event)
+        private void OnFloorCleared(FloorClearedEvent @event)
         {
-            if (!board.GetActiveEnemies().Any())
-                this.SendCommand<SendBattleVictoryCommand>();
+            this.GetSystem<ISceneManager>()
+                .LoadRoomScene("PreBattleRoomRoot")
+                .Forget();
         }
 
         private void OnHandDiscardRequest(HandDiscardRequestEvent @event)
@@ -206,17 +188,20 @@ namespace Features.Combat
                 }
             };
 
-            UIKit.OpenPanel<DiscardSelectPanel>(UILevel.PopUI, data);
+            LoadDiscardSelectPanel(data);
+        }
+
+        private async void LoadDiscardSelectPanel(DiscardSelectPanelData data)
+        {
+            AsyncOperationHandle<GameObject> handle = Addressables.InstantiateAsync(
+                "DiscardSelectPanel", GameRoot.PopUILayer);
+            GameObject instance = await handle.Task;
+            DiscardSelectPanel panel = instance.GetComponent<DiscardSelectPanel>();
+            panel.Open(data);
         }
 
         private void InitHero()
         {
-            this.SendCommand(new SetupHeroCommand(new HeroDefine
-            {
-                MaxHealth = 100,
-                InitialHealth = 80
-            }));
-
             if (invincibleMode)
                 this.GetModel<IHeroModel>().Invincible.Value = true;
 
@@ -246,6 +231,20 @@ namespace Features.Combat
             ISwordModel sword = this.GetModel<ISwordModel>();
             sword.OnSpiritSwordsChanged.Register(SyncSpiritSwordViews)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
+        }
+
+        private void InitDeck()
+        {
+            if (this.GetModel<ICardModel>().Library.Count > 0)
+                return;
+
+            if (testMode && testDeckJson != null)
+            {
+                this.SendCommand(new InitDeckFromJsonCommand(testDeckJson));
+                return;
+            }
+
+            this.SendCommand<LoadDeckFromExcelCommand>();
         }
 
         private void SyncSpiritSwordViews()
@@ -287,17 +286,6 @@ namespace Features.Combat
                 spiritView.transform.position = board.GetSlotTransform(slotIndex).position
                                                 + Vector3.up * swordPrefab.YOffset;
             }
-        }
-
-        private void InitDeck()
-        {
-            if (testMode && testDeckJson != null)
-            {
-                this.SendCommand(new InitDeckFromJsonCommand(testDeckJson));
-                return;
-            }
-
-            this.SendCommand<LoadDeckFromExcelCommand>();
         }
     }
 }

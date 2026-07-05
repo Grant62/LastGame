@@ -1,3 +1,4 @@
+using Core.SceneManagement.Define;
 using Cysharp.Threading.Tasks;
 using QFramework;
 using UnityEngine;
@@ -22,7 +23,7 @@ namespace Core.SceneManagement
         private async UniTaskVoid OnStartGame()
         {
             await this.GetSystem<ISceneManager>()
-                .LoadMainScene("CombatRoomRoot", withTransition: true);
+                .LoadMainScene("RunSceneRoot");
         }
     }
 }

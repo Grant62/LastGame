@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Core.Architecture;
 using DG.Tweening;
 using Features.Combat.Event;
+using Features.Enemy.Model;
 using Features.Enemy.Utility;
 using Features.Enemy.View;
 using QFramework;
@@ -50,6 +51,9 @@ namespace Features.Combat.View.Board
 
         private void OnEnemyDied(EnemyDiedEvent @event)
         {
+            IEnemyModel enemyModel = this.GetModel<IEnemyModel>();
+            enemyModel.RemoveEnemy(@event.SlotIndex);
+
             for (int i = EnemyViews.Count - 1; i >= 0; i--)
             {
                 if (EnemyViews[i].SlotIndex == @event.SlotIndex)
@@ -58,6 +62,17 @@ namespace Features.Combat.View.Board
                     break;
                 }
             }
+        }
+
+        public void ClearAllEnemies()
+        {
+            for (int i = EnemyViews.Count - 1; i >= 0; i--)
+            {
+                EnemyViews[i].gameObject.SetActive(false);
+                RemoveEnemy(EnemyViews[i]);
+            }
+
+            EnemyViews.Clear();
         }
 
         public IEnumerable<EnemyView> GetActiveEnemies()
@@ -113,6 +128,40 @@ namespace Features.Combat.View.Board
         {
             EnemyViews.Remove(enemy);
             this.GetUtility<IEnemyViewPool>().Return(enemy);
+        }
+
+        public int FindLeftEmptySlot(int heroSlot)
+        {
+            for (int i = 0; i < heroSlot; i++)
+            {
+                if (GetEnemyAtSlot(i) == null)
+                    return i;
+            }
+
+            return -1;
+        }
+
+        public int FindRightEmptySlot(int heroSlot)
+        {
+            for (int i = 8; i > heroSlot; i--)
+            {
+                if (GetEnemyAtSlot(i) == null)
+                    return i;
+            }
+
+            return -1;
+        }
+
+        public void MoveEnemy(int fromSlot, int toSlot)
+        {
+            EnemyView enemy = GetEnemyAtSlot(fromSlot);
+            if (enemy == null)
+                return;
+
+            SlotView targetSlot = mSlots[toSlot];
+            enemy.SlotIndex = toSlot;
+            enemy.transform.SetParent(targetSlot.SlotRect, false);
+            enemy.transform.DOMove(targetSlot.SlotRect.position, moveDuration).SetEase(Ease.OutCubic);
         }
 
         public void ShiftEnemies(int oldPlayerIndex, int newPlayerIndex)

@@ -11,15 +11,20 @@ namespace Features.Enemy.Utility
 
         public EnemyViewPool(EnemyView prefab)
         {
-            mPool = new SimpleObjectPool<EnemyView>(
-                () => Object.Instantiate(prefab),
-                null,
-                5
-            );
-
             GameObject go = new("[Pool] EnemyView");
             go.SetActive(false);
             mPoolRoot = go.transform;
+
+            mPool = new SimpleObjectPool<EnemyView>(
+                () =>
+                {
+                    EnemyView obj = Object.Instantiate(prefab, mPoolRoot);
+                    obj.gameObject.SetActive(false);
+                    return obj;
+                },
+                null,
+                5
+            );
         }
 
         public EnemyView Get(Transform parent)
@@ -33,6 +38,7 @@ namespace Features.Enemy.Utility
 
         public void Return(EnemyView enemy)
         {
+            enemy.gameObject.SetActive(false);
             enemy.transform.SetParent(mPoolRoot, false);
             mPool.Recycle(enemy);
         }

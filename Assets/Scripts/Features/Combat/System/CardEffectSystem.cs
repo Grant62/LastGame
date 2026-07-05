@@ -1,4 +1,4 @@
-using Core.SceneManagement;
+using Core.SceneManagement.Event;
 using Core.Systems;
 using Features.Card.Event;
 using Features.Card.Model;

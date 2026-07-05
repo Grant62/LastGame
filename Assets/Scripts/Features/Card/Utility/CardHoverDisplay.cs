@@ -40,6 +40,7 @@ namespace Features.Card.Utility
         public void Hide()
         {
             mCardView.RectTransform.DOScale(1f, 0.08f).SetEase(Ease.InCubic)
+                .SetUpdate(true)
                 .OnComplete(() => mCardView.gameObject.SetActive(false));
         }
     }

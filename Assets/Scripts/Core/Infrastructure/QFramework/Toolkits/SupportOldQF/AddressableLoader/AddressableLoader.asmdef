@@ -3,7 +3,6 @@
   "references": [
     "QFramework",
     "QFramework.CoreKit",
-    "UIKit",
     "Unity.Addressables",
     "Unity.ResourceManager"
   ],

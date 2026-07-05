@@ -1,20 +1,20 @@
 using Core.Architecture;
 using Features.Hero.Model;
 using Features.Resource.Model;
+using Features.Run.Model;
 using QFramework;
+using TMPro;
+using UnityEngine;
 
 namespace Features.Combat.UI
 {
-    public partial class TopBarPanel : ViewController, IController
+    public partial class TopBarPanel : MonoBehaviour
     {
-        public IArchitecture GetArchitecture()
-        {
-            return GameMain.Interface;
-        }
+        [SerializeField] private TextMeshProUGUI levelLabel;
 
         private void Start()
         {
-            IHeroModel hero = this.GetModel<IHeroModel>();
+            IHeroModel hero = GameMain.Interface.GetModel<IHeroModel>();
 
             hero.Health.RegisterWithInitValue(v => RefreshLifeLabel(hero))
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
@@ -25,9 +25,20 @@ namespace Features.Combat.UI
             hero.Invincible.Register(_ => RefreshLifeLabel(hero))
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            IResourceModel resource = this.GetModel<IResourceModel>();
+            IResourceModel resource = GameMain.Interface.GetModel<IResourceModel>();
             resource.Gold.RegisterWithInitValue(v => CoinLabel.text = v.ToString())
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            IRunModel run = GameMain.Interface.GetModel<IRunModel>();
+            run.CurrentLayer.RegisterWithInitValue(_ => RefreshLevelLabel(run))
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+            run.CurrentStep.RegisterWithInitValue(_ => RefreshLevelLabel(run))
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+        }
+
+        private void RefreshLevelLabel(IRunModel run)
+        {
+            levelLabel.text = $"关卡 {run.CurrentLayer.Value}-{run.CurrentStep.Value}";
         }
 
         private void RefreshLifeLabel(IHeroModel hero)

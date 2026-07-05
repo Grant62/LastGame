@@ -1,37 +1,18 @@
-using Core.Architecture;
 using Cysharp.Threading.Tasks;
-using QFramework;
 using UnityEngine;
 
 namespace Core.SceneManagement
 {
-    public class SceneContainer : MonoBehaviour, IController
+    public class SceneContainer : MonoBehaviour
     {
         public SceneBase CurrentScene { get; private set; }
 
-        public IArchitecture GetArchitecture()
+        public async UniTask SetCurrentScene(SceneBase newScene, SceneLoadContext ctx = null)
         {
-            return GameMain.Interface;
-        }
-
-        public async UniTask SetCurrentScene(SceneBase newScene, SceneLoadContext ctx = null,
-            bool withTransition = true)
-        {
-            ISceneTransition transition = null;
-
-            try
-            {
-                transition = this.GetUtility<ISceneTransition>();
-            }
-            catch { }
-
-            if (withTransition && transition != null)
-                await transition.FadeOut();
-
             if (CurrentScene != null)
             {
                 await CurrentScene.OnSceneExit();
-                DestroyImmediate(CurrentScene.gameObject);
+                Destroy(CurrentScene.gameObject);
                 CurrentScene = null;
             }
 
@@ -41,16 +22,13 @@ namespace Core.SceneManagement
                 await newScene.OnSceneEnter(ctx ?? SceneLoadContext.Empty);
                 CurrentScene = newScene;
             }
-
-            if (withTransition && transition != null)
-                await transition.FadeIn();
         }
 
         public void Clear()
         {
             if (CurrentScene != null)
             {
-                DestroyImmediate(CurrentScene.gameObject);
+                Destroy(CurrentScene.gameObject);
                 CurrentScene = null;
             }
         }

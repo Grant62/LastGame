@@ -58,11 +58,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cb7dc7d974d5e747b0bf020afcac7c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Features.Sword.UI.SwordUI
-  yOffset: 240
-  swordImage: {fileID: 1779234873928980325}
+  yOffset: 340
   skyY: 2000
   moveDuration: 0.3
   entryDuration: 0.6
+  swordImage: {fileID: 1779234873928980325}
+  spinSpeed: 720
+  spiritAlpha: 0.4
 --- !u!114 &1779234873928980325
 MonoBehaviour:
   m_ObjectHideFlags: 0

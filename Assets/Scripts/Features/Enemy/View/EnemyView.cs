@@ -6,8 +6,12 @@ using Features.Combat.Targeting;
 using Features.Combat.Utility;
 using Features.Combat.View;
 using Features.Enemy.Command;
+using Features.Enemy.Define;
 using QFramework;
+using Spine;
+using Spine.Unity;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Features.Enemy.View
 {
@@ -17,8 +21,15 @@ namespace Features.Enemy.View
         private int mMaxHealth;
         private int mArmor;
         private Tween mHealthTween;
+        private SkeletonGraphic mSkeleton;
+        private Transform mSpineTrans;
 
         [SerializeField] private ShieldView shieldView;
+        [SerializeField] private GameObject intentRoot;
+        [SerializeField] private Image intentIcon;
+        [SerializeField] private Sprite attackIconSprite;
+        [SerializeField] private Sprite moveIconSprite;
+        [SerializeField] private Sprite moveAttackIconSprite;
 
         public int MonsterId { get; private set; }
         public int Damage { get; private set; }
@@ -44,6 +55,67 @@ namespace Features.Enemy.View
             Damage = damage;
             RefreshHealthBar(false);
             shieldView.SetArmor(0);
+
+            if (mSkeleton == null)
+            {
+                mSkeleton = GetComponentInChildren<SkeletonGraphic>();
+                if (mSkeleton != null)
+                {
+                    mSpineTrans = mSkeleton.transform;
+                    mSkeleton.AnimationState.SetAnimation(0, "ready", true);
+                }
+            }
+        }
+
+        public void SetFacing(bool faceRight)
+        {
+            if (mSpineTrans == null)
+            {
+                mSpineTrans = transform.Find("Spine");
+                if (mSpineTrans == null)
+                    return;
+            }
+
+            Vector3 scale = mSpineTrans.localScale;
+            scale.x = Mathf.Abs(scale.x) * (faceRight ? 1f : -1f);
+            mSpineTrans.localScale = scale;
+        }
+
+        public void ShowIntent(EnemyIntentType intent)
+        {
+            if (intentRoot != null)
+                intentRoot.SetActive(intent != EnemyIntentType.None);
+
+            if (intentIcon == null)
+                return;
+
+            switch (intent)
+            {
+                case EnemyIntentType.Attack:
+                    intentIcon.sprite = attackIconSprite;
+                    break;
+                case EnemyIntentType.Move:
+                    intentIcon.sprite = moveIconSprite;
+                    break;
+                case EnemyIntentType.MoveAttack:
+                    intentIcon.sprite = moveAttackIconSprite;
+                    break;
+                default:
+                    intentIcon.sprite = null;
+                    break;
+            }
+
+            if (intentIcon.sprite != null)
+                intentIcon.SetNativeSize();
+        }
+
+        public void PlayAttack()
+        {
+            if (mSkeleton != null)
+            {
+                TrackEntry track = mSkeleton.AnimationState.SetAnimation(0, "hit1", false);
+                track.Complete += _ => mSkeleton.AnimationState.SetAnimation(0, "ready", true);
+            }
         }
 
         public void TakeDamage(int amount)
@@ -54,6 +126,9 @@ namespace Features.Enemy.View
         public void ApplyDamage(int amount)
         {
             if (amount <= 0)
+                return;
+
+            if (mHealth <= 0)
                 return;
 
             int remaining = amount;
@@ -75,15 +150,39 @@ namespace Features.Enemy.View
                 RefreshHealthBar(true);
                 this.GetUtility<IDamageTextSpawner>().Spawn(remaining, transform.position, Color.red);
 
+                if (mSkeleton != null)
+                {
+                    TrackEntry track = mSkeleton.AnimationState.SetAnimation(0, "hit2", false);
+                    track.Complete += _ => mSkeleton.AnimationState.SetAnimation(0, "ready", true);
+                }
+
                 if (mHealth <= 0)
                 {
-                    transform.DOScale(0f, 0.3f).OnComplete(() =>
-                    {
-                        gameObject.SetActive(false);
-                        this.SendCommand(new SendEnemyDiedCommand(SlotIndex));
-                    });
+                    KillEnemy();
                 }
             }
+        }
+
+        private void KillEnemy()
+        {
+            if (mSkeleton != null)
+            {
+                TrackEntry dieTrack = mSkeleton.AnimationState.SetAnimation(0, "dead", false);
+                dieTrack.Complete += _ => { DoCleanup(); };
+            }
+            else
+            {
+                DoCleanup();
+            }
+        }
+
+        private void DoCleanup()
+        {
+            transform.DOScale(0f, 0.3f).OnComplete(() =>
+            {
+                gameObject.SetActive(false);
+                this.SendCommand(new SendEnemyDiedCommand(SlotIndex));
+            });
         }
 
         public void TakeHeal(int amount)

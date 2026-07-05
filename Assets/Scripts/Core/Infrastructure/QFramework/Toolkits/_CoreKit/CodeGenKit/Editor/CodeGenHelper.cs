@@ -52,26 +52,10 @@ namespace QFramework
                     return trans.parent.name + "(" + trans.parent.GetComponent<ViewController>().ScriptName + ")";
                 }
 
-                if (trans.parent.IsUIPanel())
-                {
-                    return "UIPanel" + "(" + trans.parent.name + ")";
-                }
-
-
                 trans = trans.parent;
             }
 
             return trans.name;
-        }
-
-        public static bool IsUIPanel(this Component component)
-        {
-            if (component.GetComponent("UIPanel"))
-            {
-                return true;
-            }
-
-            return false;
         }
 
         public static string PathToParent(Transform trans, string parentName)

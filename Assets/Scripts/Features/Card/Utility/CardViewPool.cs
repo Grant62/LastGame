@@ -13,15 +13,21 @@ namespace Features.Card.Utility
 
         public CardViewPool(CardView prefab)
         {
+            GameObject go = new("[Pool] CardView");
+            mPoolRoot = go.transform;
+
             mPool = new SimpleObjectPool<CardView>(
-                () => Object.Instantiate(prefab),
+                () =>
+                {
+                    CardView card = Object.Instantiate(prefab);
+                    card.transform.SetParent(mPoolRoot, false);
+                    return card;
+                },
                 null,
                 5
             );
 
-            GameObject go = new("[Pool] CardView");
             go.SetActive(false);
-            mPoolRoot = go.transform;
         }
 
         public CardView Get(CardData data, Transform parent, bool enableEffects = true)

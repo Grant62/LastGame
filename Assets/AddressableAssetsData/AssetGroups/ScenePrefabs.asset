@@ -20,6 +20,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d401c2f8e5f07146997b3cb07c25b24
+    m_Address: PreBattleRoomRoot
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6ea1fd3d608def941a51d88a6b2ed643
+    m_Address: RunSceneRoot
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9548b4318eb92c044a4c0a6fe1c16fd7
     m_Address: LogoSceneRoot
     m_ReadOnly: 0
