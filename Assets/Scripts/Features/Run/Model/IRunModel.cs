@@ -7,5 +7,7 @@ namespace Features.Run.Model
         BindableProperty<int> CurrentLayer { get; }
 
         BindableProperty<int> CurrentStep { get; }
+
+        BindableProperty<int> ShortRestCount { get; }
     }
 }

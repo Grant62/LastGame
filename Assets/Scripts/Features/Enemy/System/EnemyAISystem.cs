@@ -41,6 +41,14 @@ namespace Features.Enemy.System
                     continue;
 
                 (EnemyIntentType intent, _) = DecideAction(enemy, heroSlot);
+
+                if (intent == EnemyIntentType.Move)
+                {
+                    int nextSlot = enemy.SlotIndex + (enemy.SlotIndex < heroSlot ? 1 : -1);
+                    if (Math.Abs(nextSlot - heroSlot) == 1)
+                        intent = EnemyIntentType.MoveAttack;
+                }
+
                 enemy.CurrentIntent = intent;
                 model.CachedIntents[enemy.SlotIndex] = intent;
             }

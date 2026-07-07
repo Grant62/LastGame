@@ -15,6 +15,7 @@ using Features.Card.Utility;
 using Features.Card.View;
 using Features.Combat.Command;
 using Features.Combat.Event;
+using Features.Combat.System;
 using Features.Combat.Utility;
 using Features.Combat.View.Board;
 using Features.Enemy.Command;
@@ -87,6 +88,8 @@ namespace Features.Combat
 
             GameMain.Interface.RegisterUtility<ITargetSelector>(new TargetSelector(mHeroUI));
 
+            GameMain.Interface.RegisterUtility<ICardViewPool>(new CardViewPool(cardUIPrefab, transform));
+
             Transform overlayTrans = GameRoot.CombatOverlay;
 
             CardView hoverCard = Instantiate(cardUIPrefab, overlayTrans);
@@ -143,10 +146,37 @@ namespace Features.Combat
             this.SendCommand<StartBattleCommand>();
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (this.GetSystem<IPopupStackSystem>().HandleEsc())
+                    return;
+            }
+
+            if (Time.timeScale == 0f)
+                return;
+
+            ITurnSystem turn = this.GetSystem<ITurnSystem>();
+            if (!turn.IsPlayerTurn)
+                return;
+
+            if (Input.GetKeyDown(KeyCode.E))
+                turn.EndPlayerTurn();
+
+            if (Input.GetKeyDown(KeyCode.Tab))
+                ToggleDrawPile();
+        }
+
+        private void ToggleDrawPile()
+        {
+            PileGridPanel.ToggleDrawPile(this.GetModel<ICardModel>().DrawPile);
+        }
+
         private async void LoadBattleBottomPanel()
         {
             AsyncOperationHandle<GameObject> handle = Addressables.InstantiateAsync(
-                "BattleBottomPanel", GameRoot.CommonLayer);
+                "BattleBottomPanel", transform);
             await handle.Task;
         }
 
@@ -198,6 +228,7 @@ namespace Features.Combat
             GameObject instance = await handle.Task;
             DiscardSelectPanel panel = instance.GetComponent<DiscardSelectPanel>();
             panel.Open(data);
+            this.GetSystem<IPopupStackSystem>().Push(instance);
         }
 
         private void InitHero()

@@ -60,10 +60,13 @@ namespace Features.Enemy.View
             {
                 mSkeleton = GetComponentInChildren<SkeletonGraphic>();
                 if (mSkeleton != null)
-                {
                     mSpineTrans = mSkeleton.transform;
-                    mSkeleton.AnimationState.SetAnimation(0, "ready", true);
-                }
+            }
+
+            if (mSkeleton != null)
+            {
+                mSkeleton.AnimationState.ClearTracks();
+                mSkeleton.AnimationState.SetAnimation(0, "ready", true);
             }
         }
 
@@ -81,12 +84,9 @@ namespace Features.Enemy.View
             mSpineTrans.localScale = scale;
         }
 
-        public void ShowIntent(EnemyIntentType intent)
+        public void ShowIntent(EnemyIntentType intent, bool flipArrow = false)
         {
-            if (intentRoot != null)
-                intentRoot.SetActive(intent != EnemyIntentType.None);
-
-            if (intentIcon == null)
+            if (intentIcon == null || intentRoot == null)
                 return;
 
             switch (intent)
@@ -105,8 +105,15 @@ namespace Features.Enemy.View
                     break;
             }
 
-            if (intentIcon.sprite != null)
-                intentIcon.SetNativeSize();
+            bool visible = intentIcon.sprite != null;
+            intentRoot.SetActive(visible);
+
+            if (visible)
+            {
+                Vector3 scale = intentIcon.transform.localScale;
+                scale.x = flipArrow ? -1f : 1f;
+                intentIcon.transform.localScale = scale;
+            }
         }
 
         public void PlayAttack()
@@ -178,11 +185,8 @@ namespace Features.Enemy.View
 
         private void DoCleanup()
         {
-            transform.DOScale(0f, 0.3f).OnComplete(() =>
-            {
-                gameObject.SetActive(false);
-                this.SendCommand(new SendEnemyDiedCommand(SlotIndex));
-            });
+            gameObject.SetActive(false);
+            this.SendCommand(new SendEnemyDiedCommand(SlotIndex));
         }
 
         public void TakeHeal(int amount)

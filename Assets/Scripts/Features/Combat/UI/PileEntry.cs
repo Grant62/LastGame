@@ -6,8 +6,6 @@ using Features.Card.UI;
 using QFramework;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
 
 namespace Features.Combat.UI
@@ -18,7 +16,6 @@ namespace Features.Combat.UI
         [SerializeField] private PileType pileType;
 
         private ICardModel mCardModel;
-        private PileGridPanel mCachedPanel;
 
         public IArchitecture GetArchitecture()
         {
@@ -72,7 +69,7 @@ namespace Features.Combat.UI
                 gameObject.SetActive(count > 0);
         }
 
-        private async void OnClick()
+        private void OnClick()
         {
             List<CardData> pile = pileType switch
             {
@@ -86,15 +83,7 @@ namespace Features.Combat.UI
             if (pile == null)
                 return;
 
-            if (mCachedPanel == null)
-            {
-                AsyncOperationHandle<GameObject> handle = Addressables.InstantiateAsync(
-                    "PileGridPanel", GameRoot.PopUILayer);
-                GameObject instance = await handle.Task;
-                mCachedPanel = instance.GetComponent<PileGridPanel>();
-            }
-
-            mCachedPanel.Show(pile);
+            PileGridPanel.ShowOrCreate(pile);
         }
     }
 }

@@ -1,4 +1,5 @@
 using Features.Combat.Event;
+using Features.Combat.System;
 using QFramework;
 
 namespace Features.Combat.Command
@@ -15,6 +16,7 @@ namespace Features.Combat.Command
         protected override void OnExecute()
         {
             this.SendEvent(new EnemyDiedEvent(mSlotIndex));
+            this.GetSystem<ITurnSystem>().CheckStepComplete();
         }
     }
 }

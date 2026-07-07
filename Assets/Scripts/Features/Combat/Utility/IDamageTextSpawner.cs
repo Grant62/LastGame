@@ -8,5 +8,6 @@ namespace Features.Combat.Utility
         void Spawn(int value, Vector2 screenPos, Color color);
         void Spawn(string text, Vector2 screenPos, Color color);
         void ClearAll();
+        void Dispose();
     }
 }

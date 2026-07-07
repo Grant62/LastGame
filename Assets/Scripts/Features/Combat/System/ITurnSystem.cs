@@ -8,5 +8,6 @@ namespace Features.Combat.System
         bool IsPlayerTurn { get; }
         void StartBattle();
         void EndPlayerTurn();
+        void CheckStepComplete();
     }
 }

@@ -1,16 +1,19 @@
 using Core.Architecture;
+using DG.Tweening;
 using Features.Hero.Model;
 using Features.Resource.Model;
 using Features.Run.Model;
 using QFramework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Features.Combat.UI
 {
     public partial class TopBarPanel : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI levelLabel;
+        [SerializeField] private Image healthBarFill;
 
         private void Start()
         {
@@ -46,6 +49,13 @@ namespace Features.Combat.UI
             LifeLabel.text = hero.Invincible.Value
                 ? "\u221e"
                 : $"{hero.Health.Value}/{hero.MaxHealth.Value}";
+
+            float ratio = hero.Invincible.Value
+                ? 1f
+                : (float)hero.Health.Value / hero.MaxHealth.Value;
+
+            healthBarFill.DOKill();
+            healthBarFill.DOFillAmount(ratio, 0.3f);
         }
     }
 }

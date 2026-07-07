@@ -9,5 +9,6 @@ namespace Features.Card.Interfaces
     {
         CardView Get(CardData data, Transform parent, bool enableEffects = true);
         void Return(CardView view);
+        void Dispose();
     }
 }

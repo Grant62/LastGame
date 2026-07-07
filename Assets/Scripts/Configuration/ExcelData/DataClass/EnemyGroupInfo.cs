@@ -4,6 +4,8 @@ namespace Configuration.ExcelData.DataClass
     {
         public int GroupId;
         public string LevelNum;
+        public string LevelType;
         public string Content;
+        public string Attribute;
     }
 }

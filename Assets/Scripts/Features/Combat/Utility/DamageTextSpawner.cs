@@ -59,5 +59,11 @@ namespace Features.Combat.Utility
 
             mActiveTexts.Clear();
         }
+
+        public void Dispose()
+        {
+            ClearAll();
+            Object.Destroy(mPoolRoot.gameObject);
+        }
     }
 }

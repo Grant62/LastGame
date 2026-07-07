@@ -73,6 +73,12 @@ namespace Features.Card.View
             }
         }
 
+        private void OnDestroy()
+        {
+            mEnergyUnregister?.UnRegister();
+            mEnergyUnregister = null;
+        }
+
         public void Reset()
         {
             mEnergyUnregister?.UnRegister();

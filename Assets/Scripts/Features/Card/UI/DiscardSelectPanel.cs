@@ -5,6 +5,7 @@ using Features.Card.Data;
 using Features.Card.Interfaces;
 using Features.Card.Model;
 using Features.Card.View;
+using Features.Combat.System;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -51,12 +52,15 @@ namespace Features.Card.UI
 
             if (scrollRect != null && scrollRect.verticalScrollbar != null)
                 scrollRect.verticalScrollbar.gameObject.SetActive(true);
+
+            GameMain.Interface.GetSystem<IPopupStackSystem>().Push(gameObject);
         }
 
         private void Close()
         {
             ReleaseCards();
             mCallback = null;
+            GameMain.Interface.GetSystem<IPopupStackSystem>().Remove(gameObject);
             gameObject.SetActive(false);
         }
 

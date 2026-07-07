@@ -77,24 +77,10 @@ namespace Features.Run.UI
                 return;
             }
 
-            bool isCurrent = data.State == RoomBoxState.Current;
-            if (!isCurrent || data.ShortRestCount <= 0)
-            {
-                shortRestButton.interactable = false;
-                shortRestButtonLabel.text = "短休";
-                shortRestButton.gameObject.SetActive(true);
-            }
-            else
-            {
+            bool show = data.State == RoomBoxState.Current && data.ShortRestCount > 0;
+            shortRestButton.gameObject.SetActive(show);
+            if (show)
                 shortRestButton.interactable = true;
-                shortRestButtonLabel.text = "短休";
-                shortRestButton.gameObject.SetActive(true);
-            }
-
-            if (shortRestTooltip != null)
-            {
-                shortRestTooltip.SetActive(false);
-            }
         }
 
         private void SetupBossPreview(RoomPreviewData data, bool isBoss)
@@ -102,7 +88,7 @@ namespace Features.Run.UI
             if (bossPreviewText == null)
                 return;
 
-            if (isBoss && !string.IsNullOrEmpty(data.BossPreview))
+            if (!string.IsNullOrEmpty(data.BossPreview))
             {
                 bossPreviewText.text = data.BossPreview;
                 bossPreviewText.gameObject.SetActive(true);

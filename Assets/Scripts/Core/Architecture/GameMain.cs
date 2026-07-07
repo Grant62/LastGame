@@ -47,6 +47,7 @@ namespace Core.Architecture
             RegisterModel<IEnemyModel>(new EnemyModel());
             RegisterSystem<IEnemyAISystem>(new EnemyAISystem());
             RegisterModel<IRunModel>(new RunModel());
+            RegisterSystem<IPopupStackSystem>(new PopupStackSystem());
             RegisterSystem(new GmSystem());
         }
     }

@@ -1052,7 +1052,7 @@ GameRoot (DontDestroyOnLoad)
 |---|---|---|
 | BgLayer | 背景图、装饰 | 通过 SceneContainer 管理的场景自行渲染 |
 | SceneContainer | LogoSceneRoot / RunSceneRoot / MainMenuSceneRoot | `SceneContainer` 组件挂在这，Addressables 加载的场景 Prefab 放这里 |
-| CommonLayer | TopBarPanel、BattleBottomPanel | 跨房间不变的全局 UI，运行期间加载一次 |
+| CommonLayer | TopBarPanel | 跨房间不变的全局 UI，运行期间加载一次 |
 | CombatOverlay | hoverCard、ArrowView、CursorView、DamageText | 战斗内悬浮层，CombatController.RegisterUtilities() 注册时 Instantiate 到本层 |
 | PopUILayer | GmPanel、PileGridPanel、DiscardSelectPanel | 弹出面板层 |
 
@@ -1067,134 +1067,49 @@ GameRoot (DontDestroyOnLoad)
 | 面板 | 加载位置 | 加载时机 |
 |---|---|---|
 | TopBarPanel | `RunScene.OnSceneEnter()` → `GameRoot.CommonLayer` | 进入 Run 时 |
-| BattleBottomPanel | `CombatController.Start()` → `GameRoot.CommonLayer` | 进入战斗时 |
+| BattleBottomPanel | `CombatController.Start()` → `CombatController.transform`（CombatRoom 内） | 进入战斗时，随房间销毁 |
 | GmPanel | `GmSystem.OnInit()` → `GameRoot.PopUILayer` | 首次按 backtick 时 |
-| PileGridPanel | `PileEntry.OnClick()` → `GameRoot.PopUILayer` | 点击牌堆按钮时（缓存实例） |
+| PileGridPanel | `PileGridPanel.ShowOrCreate(pile)` → `GameRoot.PopUILayer` | 点击牌堆按钮或 Tab 键（全局单例 + `ToggleDrawPile`） |
 | DiscardSelectPanel | `CombatController.OnHandDiscardRequest()` → `GameRoot.PopUILayer` | 需要弃牌时 |
 
 ### 弹窗栈管理
 
-弹出面板（PopUILayer）通过栈结构管理，支持 ESC 逆序关闭。借鉴 UIKit 的 `Stack.Push()`/`Back()` 模式：
+弹出面板（PopUILayer）通过 `IPopupStackSystem`（ISystem）管理，支持 ESC 逆序关闭：
 
 ```csharp
-public class PanelStack
+// Features/Combat/System/IPopupStackSystem.cs
+public interface IPopupStackSystem : ISystem
 {
-    private readonly Stack<PanelInfo> mStack = new();
+    void Push(GameObject panel);       // 面板打开 → 入栈
+    void Remove(GameObject panel);     // 面板自己关闭 → 出栈
+    bool HandleEsc();                  // ESC → 关栈顶，return true=已处理
+}
 
-    public void Push(UIPanelBase panel)
+// Features/Combat/System/PopupStackSystem.cs
+public class PopupStackSystem : AbstractSystem, IPopupStackSystem
+{
+    private readonly Stack<GameObject> mStack = new();
+
+    public void Push(GameObject panel) => mStack.Push(panel);
+
+    public void Remove(GameObject panel)
     {
-        mStack.Push(panel.Info);
-        panel.Close(destroy: true);
+        if (mStack.Count > 0 && mStack.Peek() == panel)
+            mStack.Pop();
     }
 
-    public async UniTask Pop()
+    public bool HandleEsc()
     {
-        if (mStack.Count == 0)
-            return;
-
-        PanelInfo prev = mStack.Pop();
-        await OpenPanelAsync(prev.Address, prev.UIData);
-    }
-
-    public async UniTask Back(UIPanelBase current)
-    {
-        if (mStack.Count == 0)
-            return;
-
-        PanelInfo prev = mStack.Pop();
-        current.Close(destroy: true);
-        await OpenPanelAsync(prev.Address, prev.UIData);
+        if (mStack.Count == 0) return false;
+        mStack.Pop().SetActive(false);
+        return true;
     }
 }
 ```
 
-> 关键：栈中存的是 `PanelInfo`（Addressables 地址 + 数据），而非 `GameObject`。Pop 时用保存的地址重新加载面板。
+**ESC 入口：** `CombatController.Update()` 最前面检查 ESC → `HandleEsc()`。
 
-### 面板生命周期
-
-借鉴 UIKit 的 `PanelState` 状态机，所有自管面板遵循统一生命周期：
-
-```csharp
-public abstract class UIPanelBase : MonoBehaviour
-{
-    public PanelState State { get; protected set; }
-
-    public void Init() { OnInit(); }
-    public void Open(object uiData = null) { State = PanelState.Opening; OnOpen(uiData); }
-    public void Show() { gameObject.SetActive(true); OnShow(); }
-    public void Hide() { State = PanelState.Hide; gameObject.SetActive(false); OnHide(); }
-    public void Close(bool destroy = true) { State = PanelState.Closed; OnClose(); if (destroy) Destroy(gameObject); }
-
-    protected virtual void OnInit() { }
-    protected virtual void OnOpen(object uiData) { }
-    protected virtual void OnShow() { }
-    protected virtual void OnHide() { }
-    protected virtual void OnClose() { }
-}
-```
-
-### 面板单例 / 多实例
-
-借鉴 UIKit 的 `PanelOpenType.Single/Multiple`：
-
-- **Single**：全局只一个实例，已存在则 `Show()` + 重新 `Open()`，不重复加载
-- **Multiple**：允许多实例共存（如确认框栈）
-
-```csharp
-public async UniTask<T> OpenPanelAsync<T>(string address, object uiData, Transform parent)
-    where T : UIPanelBase
-{
-    T existing = mTable.Find<T>();
-    if (existing != null)
-    {
-        existing.gameObject.SetActive(true);
-        existing.Open(uiData);
-        return existing;
-    }
-
-    GameObject go = await Addressables.InstantiateAsync(address, parent).Task;
-    T panel = go.GetComponent<T>();
-    mTable.Add(panel);
-    panel.Init();
-    panel.Open(uiData);
-    return panel;
-}
-```
-
-### 面板注册表
-
-借鉴 UIKit 的 `UIPanelTable` 多索引设计，按类型/名称双索引 O(1) 查找：
-
-```csharp
-public class PanelTable
-{
-    private Dictionary<string, UIPanelBase> mNameIndex = new();
-    private Dictionary<Type, UIPanelBase> mTypeIndex = new();
-
-    public void Add(UIPanelBase panel)
-    {
-        mNameIndex[panel.name] = panel;
-        mTypeIndex[panel.GetType()] = panel;
-    }
-
-    public T Find<T>() where T : UIPanelBase =>
-        mTypeIndex.TryGetValue(typeof(T), out var panel) ? panel as T : null;
-
-    public void Remove(UIPanelBase panel)
-    {
-        mNameIndex.Remove(panel.name);
-        mTypeIndex.Remove(panel.GetType());
-    }
-
-    public void ClearAll()
-    {
-        foreach (var panel in mTypeIndex.Values)
-            panel.Close(destroy: true);
-        mNameIndex.Clear();
-        mTypeIndex.Clear();
-    }
-}
-```
+**各面板接入：** `GmPanel.Open()/Close()`、`PileGridPanel.Show()/OnClose()`、`DiscardSelectPanel.Open()/Close()` 分别调 `Push`/`Remove`。
 
 ## SPA 场景管理系统
 
@@ -1256,6 +1171,22 @@ public interface ISceneManager : ISystem
 ```
 
 **已删除：** `ShowOverlay`/`HideOverlay`（未使用）、`ISceneTransition`/`SceneTransition`（废弃）、OverlayContainer。
+
+### CombatRoom 生命周期
+
+每场战斗结束，`CombatRoom.OnSceneExit()` 执行统一清理：
+
+```csharp
+public override UniTask OnSceneExit()
+{
+    this.SendCommand(new ShuffleAllToDrawPileCommand());  // 手牌/弃牌堆/消耗堆洗回抽牌堆
+    foreach (Transform child in GameRoot.CombatOverlay)    // 清 hoverCard/arrow/cursor
+        Object.Destroy(child.gameObject);
+    GameMain.Interface.GetUtility<IEnemyViewPool>().Dispose();       // 清敌人池
+    GameMain.Interface.GetUtility<IDamageTextSpawner>().Dispose();   // 清伤害文字池
+    return UniTask.CompletedTask;
+}
+```
 
 ### 交互输入架构
 

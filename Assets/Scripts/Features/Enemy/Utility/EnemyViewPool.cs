@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Features.Enemy.View;
 using QFramework;
 using UnityEngine;
@@ -32,6 +33,7 @@ namespace Features.Enemy.Utility
             EnemyView enemy = mPool.Allocate();
             enemy.transform.SetParent(parent, false);
             enemy.transform.localScale = Vector3.one;
+            enemy.transform.DOKill();
             enemy.gameObject.SetActive(true);
             return enemy;
         }
@@ -41,6 +43,11 @@ namespace Features.Enemy.Utility
             enemy.gameObject.SetActive(false);
             enemy.transform.SetParent(mPoolRoot, false);
             mPool.Recycle(enemy);
+        }
+
+        public void Dispose()
+        {
+            Object.Destroy(mPoolRoot.gameObject);
         }
     }
 }

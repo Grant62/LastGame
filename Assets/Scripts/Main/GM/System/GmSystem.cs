@@ -28,7 +28,9 @@ namespace Main.GM
                     return;
 
                 GameObject instance = Object.Instantiate(mHandle.Result, GameRoot.PopUILayer);
+                instance.transform.SetAsLastSibling();
                 mPanel = instance.GetComponent<GmPanel>();
+                mPanel.Close();
             }
 
             if (mPanel.gameObject.activeSelf)

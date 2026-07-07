@@ -11,9 +11,10 @@ namespace Features.Card.Utility
         private readonly SimpleObjectPool<CardView> mPool;
         private readonly Transform mPoolRoot;
 
-        public CardViewPool(CardView prefab)
+        public CardViewPool(CardView prefab, Transform parent)
         {
             GameObject go = new("[Pool] CardView");
+            go.transform.SetParent(parent, false);
             mPoolRoot = go.transform;
 
             mPool = new SimpleObjectPool<CardView>(
@@ -44,6 +45,11 @@ namespace Features.Card.Utility
             view.Reset();
             view.transform.SetParent(mPoolRoot, false);
             mPool.Recycle(view);
+        }
+
+        public void Dispose()
+        {
+            Object.Destroy(mPoolRoot.gameObject);
         }
     }
 }

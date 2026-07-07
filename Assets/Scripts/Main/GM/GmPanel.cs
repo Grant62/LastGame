@@ -58,10 +58,14 @@ namespace Main.GM
             InputField.Select();
 
             ShowHelp();
+
+            transform.SetAsLastSibling();
+            GameMain.Interface.GetSystem<IPopupStackSystem>().Push(gameObject);
         }
 
         public void Close()
         {
+            GameMain.Interface.GetSystem<IPopupStackSystem>().Remove(gameObject);
             Time.timeScale = 1f;
             mOutputBuffer.Clear();
             OutputText.text = "";

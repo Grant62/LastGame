@@ -1,10 +1,15 @@
+using System.Collections.Generic;
+using Configuration.ExcelData.Container;
+using Configuration.ExcelData.DataClass;
 using Core.Architecture;
 using Core.SceneManagement;
 using Core.SceneManagement.Define;
 using Cysharp.Threading.Tasks;
+using Features.Hero.Model;
 using Features.Run.Data;
 using Features.Run.Model;
 using QFramework;
+using Services.ExcelTool;
 using TMPro;
 using UnityEngine;
 
@@ -22,17 +27,57 @@ namespace Features.Run.UI
         [SerializeField] private TMP_Text headerRestCountText;
 
         private RoomPreviewData[] mData;
+        private int mLastLayer;
+        private EnemyGroupInfoContainer mTable;
 
         public new IArchitecture GetArchitecture()
         {
             return GameMain.Interface;
         }
 
-        public override async UniTask OnSceneEnter(SceneLoadContext ctx)
+        public override UniTask OnSceneEnter(SceneLoadContext ctx)
         {
+            mTable ??= this.GetUtility<IBinaryDataMgr>().GetTable<EnemyGroupInfoContainer>();
+
+            IRunModel run = this.GetModel<IRunModel>();
+            int layer = run.CurrentLayer.Value;
+
+            if (layer != mLastLayer && mLastLayer > 0)
+                OnLayerChanged(mLastLayer);
+
+            mLastLayer = layer;
+
+            if (run.CurrentStep.Value == 3 && GetLevelType(layer, 3) == "Boss")
+                AutoShortRest(run);
+
             BuildData();
             RenderAll();
-            await UniTask.CompletedTask;
+            return UniTask.CompletedTask;
+        }
+
+        private void OnLayerChanged(int prevLayer)
+        {
+            IRunModel run = this.GetModel<IRunModel>();
+
+            if (GetLevelType(prevLayer, 3) == "Boss")
+            {
+                IHeroModel hero = this.GetModel<IHeroModel>();
+                hero.Health.Value = hero.MaxHealth.Value;
+            }
+
+            run.ShortRestCount.Value = 2;
+        }
+
+        private void AutoShortRest(IRunModel run)
+        {
+            int count = run.ShortRestCount.Value;
+            if (count <= 0)
+                return;
+
+            IHeroModel hero = this.GetModel<IHeroModel>();
+            int heal = Mathf.CeilToInt(hero.MaxHealth.Value * 0.25f);
+            hero.Health.Value = Mathf.Min(hero.Health.Value + heal * count, hero.MaxHealth.Value);
+            run.ShortRestCount.Value = 0;
         }
 
         private void BuildData()
@@ -40,9 +85,7 @@ namespace Features.Run.UI
             IRunModel run = this.GetModel<IRunModel>();
             int layer = run.CurrentLayer.Value;
             int currentStep = run.CurrentStep.Value;
-            int shortRestCount = 1;
-
-            string[] stepTypes = { "Normal", "Elite", "Boss" };
+            int shortRestCount = run.ShortRestCount.Value;
 
             mData = new RoomPreviewData[3];
             for (int i = 0; i < 3; i++)
@@ -56,13 +99,33 @@ namespace Features.Run.UI
                 else
                     state = RoomBoxState.Upcoming;
 
+                EnemyGroupInfo info = GetInfo(layer, step);
+                string levelType = info?.LevelType ?? "Normal";
+                string bossPreview = info?.Attribute ?? "";
                 bool canShortRest = step != 3;
 
-                mData[i] = new RoomPreviewData(layer, step, stepTypes[i], state,
-                    canShortRest, shortRestCount);
+                mData[i] = new RoomPreviewData(layer, step, levelType, state,
+                    canShortRest, shortRestCount, bossPreview);
             }
 
             headerRestCountText.text = $"剩余短休次数: {shortRestCount}";
+        }
+
+        private EnemyGroupInfo GetInfo(int layer, int step)
+        {
+            string levelNum = $"{layer}-{step}";
+            foreach (KeyValuePair<int, EnemyGroupInfo> kv in mTable?.DataDic ?? new Dictionary<int, EnemyGroupInfo>())
+            {
+                if (kv.Value.LevelNum == levelNum)
+                    return kv.Value;
+            }
+
+            return null;
+        }
+
+        private string GetLevelType(int layer, int step)
+        {
+            return GetInfo(layer, step)?.LevelType ?? "Normal";
         }
 
         private void RenderAll()
@@ -111,20 +174,16 @@ namespace Features.Run.UI
 
         private void OnShortRest(int stepIndex)
         {
-            if (stepIndex >= 0 && stepIndex < mData.Length)
-            {
-                mData[stepIndex] = new RoomPreviewData(
-                    mData[stepIndex].Layer,
-                    mData[stepIndex].Step,
-                    mData[stepIndex].StepTypeText,
-                    RoomBoxState.Rested,
-                    mData[stepIndex].CanShortRest,
-                    0,
-                    mData[stepIndex].BossPreview
-                );
-            }
+            IRunModel run = this.GetModel<IRunModel>();
+            run.ShortRestCount.Value--;
 
-            headerRestCountText.text = "剩余短休次数: 0";
+            IHeroModel hero = this.GetModel<IHeroModel>();
+            int heal = Mathf.CeilToInt(hero.MaxHealth.Value * 0.25f);
+            hero.Health.Value = Mathf.Min(hero.Health.Value + heal, hero.MaxHealth.Value);
+
+            run.CurrentStep.Value++;
+
+            BuildData();
             RenderAll();
         }
     }

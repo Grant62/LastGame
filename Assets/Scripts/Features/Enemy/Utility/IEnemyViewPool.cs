@@ -8,5 +8,6 @@ namespace Features.Enemy.Utility
     {
         EnemyView Get(Transform parent);
         void Return(EnemyView enemy);
+        void Dispose();
     }
 }

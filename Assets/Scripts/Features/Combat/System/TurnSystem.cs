@@ -32,6 +32,12 @@ namespace Features.Combat.System
 
         protected override void OnInit() { }
 
+        public void CheckStepComplete()
+        {
+            IEnemyModel enemyModel = this.GetModel<IEnemyModel>();
+            HandleStepComplete(enemyModel);
+        }
+
         public void StartBattle()
         {
             TurnCount = 0;
@@ -206,7 +212,7 @@ namespace Features.Combat.System
 
                 EnemyView view = board.GetEnemyAtSlot(kvp.Key);
                 if (view != null)
-                    view.ShowIntent(kvp.Value);
+                    view.ShowIntent(kvp.Value, kvp.Key > heroSlot);
 
                 this.SendEvent(new EnemyIntentEvent { SlotIndex = kvp.Key, Intent = kvp.Value });
             }
