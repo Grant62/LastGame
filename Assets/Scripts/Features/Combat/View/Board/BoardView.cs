@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Core.Architecture;
 using DG.Tweening;
@@ -113,6 +114,13 @@ namespace Features.Combat.View.Board
         {
             enemy = GetEnemyAtSlot(slotIndex);
             return enemy != null;
+        }
+
+        public void ForEachSlotOnPath(int fromSlot, int toSlot, Action<int> onStep)
+        {
+            int step = toSlot > fromSlot ? 1 : -1;
+            for (int i = fromSlot; i != toSlot + step; i += step)
+                onStep(i);
         }
 
         public EnemyView SpawnEnemy(int slotIndex)

@@ -1,6 +1,6 @@
 using Core.Systems;
+using Features.Combat.Define;
 using Features.Combat.Event;
-using Features.Combat.Targeting;
 using Features.Combat.Utility;
 using Features.Combat.View.Board;
 using Features.Enemy.View;

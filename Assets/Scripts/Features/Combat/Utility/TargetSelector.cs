@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Features.Combat.Targeting;
+using Features.Combat.Interfaces;
 using UnityEngine;
 using UnityEngine.EventSystems;
 

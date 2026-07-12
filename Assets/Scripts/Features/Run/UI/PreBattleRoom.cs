@@ -4,8 +4,16 @@ using Configuration.ExcelData.DataClass;
 using Core.Architecture;
 using Core.SceneManagement;
 using Core.SceneManagement.Define;
+using Core.Systems;
 using Cysharp.Threading.Tasks;
+using Features.Card.Model;
+using Features.Card.UI;
+using Features.Card.Utility;
+using Features.Card.View;
+using Features.Combat.Model;
+using Features.Hero.Command;
 using Features.Hero.Model;
+using Features.Run.Command;
 using Features.Run.Data;
 using Features.Run.Model;
 using QFramework;
@@ -25,10 +33,12 @@ namespace Features.Run.UI
         [SerializeField] private RoomBox roomBox2;
         [SerializeField] private RoomBox roomBox3;
         [SerializeField] private TMP_Text headerRestCountText;
+        [SerializeField] private CardView cardViewPrefab;
 
         private RoomPreviewData[] mData;
         private int mLastLayer;
-        private EnemyGroupInfoContainer mTable;
+        private readonly Dictionary<string, EnemyGroupInfo> mInfoByLevelNum = new();
+        private int mSkippedStep = -1;
 
         public new IArchitecture GetArchitecture()
         {
@@ -37,7 +47,12 @@ namespace Features.Run.UI
 
         public override UniTask OnSceneEnter(SceneLoadContext ctx)
         {
-            mTable ??= this.GetUtility<IBinaryDataMgr>().GetTable<EnemyGroupInfoContainer>();
+            GameMain.Interface.RegisterUtility<ICardViewPool>(new CardViewPool(cardViewPrefab, transform));
+
+            EnemyGroupInfoContainer table = this.GetUtility<IBinaryDataMgr>().GetTable<EnemyGroupInfoContainer>();
+            mInfoByLevelNum.Clear();
+            foreach (EnemyGroupInfo info in table.DataDic.Values)
+                mInfoByLevelNum[info.LevelNum] = info;
 
             IRunModel run = this.GetModel<IRunModel>();
             int layer = run.CurrentLayer.Value;
@@ -55,17 +70,19 @@ namespace Features.Run.UI
             return UniTask.CompletedTask;
         }
 
+        public override UniTask OnSceneExit()
+        {
+            this.GetUtility<ICardViewPool>().Dispose();
+            return UniTask.CompletedTask;
+        }
+
         private void OnLayerChanged(int prevLayer)
         {
-            IRunModel run = this.GetModel<IRunModel>();
-
             if (GetLevelType(prevLayer, 3) == "Boss")
-            {
-                IHeroModel hero = this.GetModel<IHeroModel>();
-                hero.Health.Value = hero.MaxHealth.Value;
-            }
+                this.SendCommand<RestoreFullHealthCommand>();
 
-            run.ShortRestCount.Value = 2;
+            IGameConfigModel config = this.GetModel<IGameConfigModel>();
+            this.SendCommand(new ResetShortRestCountCommand(config.ShortRestMaxCount));
         }
 
         private void AutoShortRest(IRunModel run)
@@ -74,10 +91,11 @@ namespace Features.Run.UI
             if (count <= 0)
                 return;
 
+            IGameConfigModel config = this.GetModel<IGameConfigModel>();
             IHeroModel hero = this.GetModel<IHeroModel>();
-            int heal = Mathf.CeilToInt(hero.MaxHealth.Value * 0.25f);
-            hero.Health.Value = Mathf.Min(hero.Health.Value + heal * count, hero.MaxHealth.Value);
-            run.ShortRestCount.Value = 0;
+            int heal = Mathf.CeilToInt(hero.MaxHealth.Value * config.ShortRestHealPercent);
+            this.SendCommand(new HeroTakeHealCommand(heal * count));
+            this.SendCommand(new ResetShortRestCountCommand(0));
         }
 
         private void BuildData()
@@ -93,7 +111,7 @@ namespace Features.Run.UI
                 int step = i + 1;
                 RoomBoxState state;
                 if (step < currentStep)
-                    state = RoomBoxState.Cleared;
+                    state = step == mSkippedStep ? RoomBoxState.Skipped : RoomBoxState.Cleared;
                 else if (step == currentStep)
                     state = RoomBoxState.Current;
                 else
@@ -114,13 +132,8 @@ namespace Features.Run.UI
         private EnemyGroupInfo GetInfo(int layer, int step)
         {
             string levelNum = $"{layer}-{step}";
-            foreach (KeyValuePair<int, EnemyGroupInfo> kv in mTable?.DataDic ?? new Dictionary<int, EnemyGroupInfo>())
-            {
-                if (kv.Value.LevelNum == levelNum)
-                    return kv.Value;
-            }
-
-            return null;
+            mInfoByLevelNum.TryGetValue(levelNum, out EnemyGroupInfo info);
+            return info;
         }
 
         private string GetLevelType(int layer, int step)
@@ -130,9 +143,9 @@ namespace Features.Run.UI
 
         private void RenderAll()
         {
-            if (roomBox1 != null && mData.Length > 0) roomBox1.Render(mData[0]);
-            if (roomBox2 != null && mData.Length > 1) roomBox2.Render(mData[1]);
-            if (roomBox3 != null && mData.Length > 2) roomBox3.Render(mData[2]);
+            if (mData.Length > 0) roomBox1.Render(mData[0]);
+            if (mData.Length > 1) roomBox2.Render(mData[1]);
+            if (mData.Length > 2) roomBox3.Render(mData[2]);
 
             BindClicks();
         }
@@ -152,9 +165,6 @@ namespace Features.Run.UI
                     _ => roomBox3
                 };
 
-                if (box == null)
-                    continue;
-
                 box.SetOnActionClick(() => OnEnterCombat(capturedIndex));
                 box.SetOnShortRestClick(() => OnShortRest(capturedIndex));
             }
@@ -167,6 +177,7 @@ namespace Features.Run.UI
 
         private async UniTaskVoid OnEnterCombatAsync(int stepIndex)
         {
+            mSkippedStep = -1;
             string levelId = $"room_0{stepIndex + 1}";
             await this.GetSystem<ISceneManager>()
                 .LoadRoomScene("CombatRoomRoot", new SceneLoadContext { LevelId = levelId });
@@ -175,16 +186,27 @@ namespace Features.Run.UI
         private void OnShortRest(int stepIndex)
         {
             IRunModel run = this.GetModel<IRunModel>();
-            run.ShortRestCount.Value--;
+            mSkippedStep = run.CurrentStep.Value;
+            this.SendCommand<ConsumeShortRestCommand>();
 
             IHeroModel hero = this.GetModel<IHeroModel>();
-            int heal = Mathf.CeilToInt(hero.MaxHealth.Value * 0.25f);
-            hero.Health.Value = Mathf.Min(hero.Health.Value + heal, hero.MaxHealth.Value);
+            IGameConfigModel config = this.GetModel<IGameConfigModel>();
+            int heal = Mathf.CeilToInt(hero.MaxHealth.Value * config.ShortRestHealPercent);
+            this.SendCommand(new HeroTakeHealCommand(heal));
 
-            run.CurrentStep.Value++;
+            this.SendCommand<AdvanceStepCommand>();
 
             BuildData();
             RenderAll();
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Tab))
+                PileGridPanel.ToggleDrawPile(this.GetModel<ICardModel>().Library);
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+                this.GetSystem<IPopupStackSystem>().HandleEsc();
         }
     }
 }

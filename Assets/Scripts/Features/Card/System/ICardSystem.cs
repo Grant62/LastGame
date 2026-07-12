@@ -15,7 +15,8 @@ namespace Features.Card.System
         void AddToHand(CardData card);
         void AddToConsume(CardData card);
         void ShuffleDrawPile();
-        void ReduceSpinCardCosts();
-        void RestoreCardCosts();
+        void AddToLibrary(CardData card);
+        void RemoveFromLibrary(CardData card);
+        void ReturnToHand(CardData card);
     }
 }

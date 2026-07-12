@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Systems;
-using Features.Combat.Targeting;
+using Features.Combat.Interfaces;
 using Features.Combat.View.Board;
 using Features.Enemy.View;
 using Features.Sword.Model;

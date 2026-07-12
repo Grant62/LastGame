@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Features.Combat.Targeting;
+using Features.Card.Effects;
 using Sirenix.OdinInspector;
 
 namespace Features.Card.Data
@@ -31,6 +31,7 @@ namespace Features.Card.Data
         public int Cost { get; set; }
 
         public string Desc { get; }
+        public string FormattedDesc { get; set; }
         public int Price { get; }
         public string IconAddress { get; }
 

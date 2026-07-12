@@ -7,7 +7,6 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Features.Card.Command;
 using Features.Card.Event;
-using Features.Card.Interfaces;
 using Features.Card.Model;
 using Features.Card.System;
 using Features.Card.UI;
@@ -15,6 +14,7 @@ using Features.Card.Utility;
 using Features.Card.View;
 using Features.Combat.Command;
 using Features.Combat.Event;
+using Features.Combat.Model;
 using Features.Combat.System;
 using Features.Combat.Utility;
 using Features.Combat.View.Board;
@@ -24,6 +24,7 @@ using Features.Hero.Command;
 using Features.Hero.Event;
 using Features.Hero.Model;
 using Features.Hero.View;
+using Features.Resource.Command;
 using Features.Sword.Model;
 using Features.Sword.View;
 using Presentation.Effects;
@@ -141,7 +142,7 @@ namespace Features.Combat
             this.RegisterEvent<FloorClearedEvent>(OnFloorCleared)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            LoadBattleBottomPanel();
+            LoadBattleBottomPanel().Forget();
 
             this.SendCommand<StartBattleCommand>();
         }
@@ -173,7 +174,7 @@ namespace Features.Combat
             PileGridPanel.ToggleDrawPile(this.GetModel<ICardModel>().DrawPile);
         }
 
-        private async void LoadBattleBottomPanel()
+        private async UniTaskVoid LoadBattleBottomPanel()
         {
             AsyncOperationHandle<GameObject> handle = Addressables.InstantiateAsync(
                 "BattleBottomPanel", transform);
@@ -198,8 +199,10 @@ namespace Features.Combat
 
         private void OnFloorCleared(FloorClearedEvent @event)
         {
+            int gold = this.GetModel<IGameConfigModel>().GetFloorClearGold(@event.Step);
+            this.SendCommand(new AddGoldCommand(gold));
             this.GetSystem<ISceneManager>()
-                .LoadRoomScene("PreBattleRoomRoot")
+                .LoadRoomScene("ShopRoomRoot")
                 .Forget();
         }
 
@@ -218,10 +221,10 @@ namespace Features.Combat
                 }
             };
 
-            LoadDiscardSelectPanel(data);
+            LoadDiscardSelectPanel(data).Forget();
         }
 
-        private async void LoadDiscardSelectPanel(DiscardSelectPanelData data)
+        private async UniTaskVoid LoadDiscardSelectPanel(DiscardSelectPanelData data)
         {
             AsyncOperationHandle<GameObject> handle = Addressables.InstantiateAsync(
                 "DiscardSelectPanel", GameRoot.PopUILayer);
@@ -234,7 +237,7 @@ namespace Features.Combat
         private void InitHero()
         {
             if (invincibleMode)
-                this.GetModel<IHeroModel>().Invincible.Value = true;
+                this.SendCommand(new SetInvincibleCommand(true));
 
             this.SendCommand(new SetHeroSlotCommand(4));
         }

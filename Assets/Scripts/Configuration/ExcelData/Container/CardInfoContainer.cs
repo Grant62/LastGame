@@ -7,6 +7,7 @@ namespace Configuration.ExcelData.Container
     [BinaryTable(DataType = typeof(CardInfo))]
     public class CardInfoContainer
     {
-        public Dictionary<int, CardInfo> DataDic = new();
+        private readonly Dictionary<int, CardInfo> mData = new();
+        public IReadOnlyDictionary<int, CardInfo> DataDic => mData;
     }
 }

@@ -5,7 +5,8 @@ namespace Features.Run.Data
         Upcoming,
         Current,
         Rested,
-        Cleared
+        Cleared,
+        Skipped
     }
 
     public readonly struct RoomPreviewData

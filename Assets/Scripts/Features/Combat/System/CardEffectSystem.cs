@@ -1,16 +1,17 @@
 using Core.SceneManagement.Event;
 using Core.Systems;
+using Features.Card.Effects;
 using Features.Card.Event;
 using Features.Card.Model;
 using Features.Card.System;
+using Features.Combat.Interfaces;
 using Features.Combat.Model;
-using Features.Combat.Targeting;
-using Features.Combat.Targeting.System;
 using Features.Combat.Utility;
 using Features.Hero.Model;
 using Features.Resource.Model;
 using Features.Resource.System;
 using Features.Sword.Model;
+using Features.Sword.System;
 using QFramework;
 
 namespace Features.Combat.System
@@ -35,6 +36,7 @@ namespace Features.Combat.System
                 this.GetModel<ISwordModel>(),
                 this.GetModel<ICardModel>(),
                 this.GetSystem<ICardSystem>(),
+                this.GetSystem<ISwordSystem>(),
                 this.GetSystem<IResourceSystem>(),
                 this.GetModel<IResourceModel>(),
                 this.GetUtility<IBoardAccess>(),

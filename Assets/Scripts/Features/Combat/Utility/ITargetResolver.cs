@@ -1,4 +1,5 @@
-using Features.Combat.Targeting;
+using Features.Combat.Define;
+using Features.Combat.Interfaces;
 using QFramework;
 
 namespace Features.Combat.Utility

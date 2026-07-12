@@ -1,4 +1,4 @@
-using Features.Combat.Targeting;
+using Features.Combat.Interfaces;
 
 namespace Features.Card.Effects
 {

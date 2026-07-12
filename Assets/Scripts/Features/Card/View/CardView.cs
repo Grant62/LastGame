@@ -1,7 +1,6 @@
 using Core.Architecture;
 using DG.Tweening;
 using Features.Card.Data;
-using Features.Card.Interfaces;
 using Features.Card.Utility;
 using Features.Resource.Model;
 using QFramework;
@@ -29,10 +28,8 @@ namespace Features.Card.View
 
         public void InitFromParent()
         {
-            if (handDragHandler != null)
-                handDragHandler.InitParentRefs();
-            if (cardHoverHandler != null)
-                cardHoverHandler.InitParentRefs();
+            handDragHandler.InitParentRefs();
+            cardHoverHandler.InitParentRefs();
         }
 
         public IArchitecture GetArchitecture()
@@ -49,8 +46,9 @@ namespace Features.Card.View
         {
             CardData = data;
             Title.text = data.Name;
-            Desc.text = this.GetUtility<IKeywordResolver>().FormatDescription(
+            data.FormattedDesc ??= this.GetUtility<IKeywordResolver>().FormatDescription(
                 data.Desc.Replace("\\n", "\n"));
+            Desc.text = data.FormattedDesc;
             Cost.text = data.Cost == -1 ? "X" : data.Cost.ToString();
             TypeText.text = data.Type;
             Price.text = data.Price.ToString();

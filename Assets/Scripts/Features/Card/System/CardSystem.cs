@@ -1,17 +1,16 @@
 using System.Collections.Generic;
 using Core.Systems;
 using Features.Card.Data;
-using Features.Card.Event;
 using Features.Card.Model;
 using Features.Combat.Event;
+using Features.Combat.Model;
+using Features.Sword.System;
 using QFramework;
 
 namespace Features.Card.System
 {
     public class CardSystem : AbstractSystem, ICardSystem
     {
-        private readonly Dictionary<CardData, int> mOriginalCosts = new();
-
         protected override void OnInit()
         {
             this.RegisterEvent<PlayerTurnStartEvent>(OnPlayerTurnStart);
@@ -22,17 +21,17 @@ namespace Features.Card.System
 
         private void OnBattleVictory(BattleVictoryEvent @event)
         {
-            RestoreCardCosts();
+            this.GetSystem<ISwordSystem>().RestoreCardCosts();
         }
 
         private void OnBattleDefeat(BattleDefeatEvent @event)
         {
-            RestoreCardCosts();
+            this.GetSystem<ISwordSystem>().RestoreCardCosts();
         }
 
         private void OnPlayerTurnStart(PlayerTurnStartEvent @event)
         {
-            DrawCards(5);
+            DrawCards(this.GetModel<IGameConfigModel>().CardsPerTurn);
         }
 
         private void OnPlayerTurnEnd(PlayerTurnEndEvent @event)
@@ -151,6 +150,29 @@ namespace Features.Card.System
             model.OnDrawPileChanged.Trigger();
         }
 
+        public void AddToLibrary(CardData card)
+        {
+            ICardModel model = this.GetModel<ICardModel>();
+            model.Library.Add(card);
+            model.OnLibraryChanged.Trigger();
+        }
+
+        public void RemoveFromLibrary(CardData card)
+        {
+            ICardModel model = this.GetModel<ICardModel>();
+            model.Library.Remove(card);
+            model.OnLibraryChanged.Trigger();
+        }
+
+        public void ReturnToHand(CardData card)
+        {
+            ICardModel model = this.GetModel<ICardModel>();
+            model.DiscardPile.Remove(card);
+            model.OnDiscardPileChanged.Trigger();
+            model.HandPile.Add(card);
+            model.OnHandPileChanged.Trigger();
+        }
+
         private void ShuffleDiscardIntoDrawPile(ICardModel model)
         {
             if (model.DiscardPile.Count == 0)
@@ -161,31 +183,6 @@ namespace Features.Card.System
             Shuffle(model.DrawPile);
             model.OnDiscardPileChanged.Trigger();
             model.OnDrawPileChanged.Trigger();
-        }
-
-        public void ReduceSpinCardCosts()
-        {
-            ICardModel model = this.GetModel<ICardModel>();
-            foreach (CardData card in model.HandPile)
-            {
-                if (card.HasSpinEffect && card.Cost > 0)
-                {
-                    if (!mOriginalCosts.ContainsKey(card))
-                        mOriginalCosts[card] = card.Cost;
-
-                    card.Cost -= 1;
-                }
-            }
-
-            this.SendEvent<HandCardCostChangedEvent>();
-        }
-
-        public void RestoreCardCosts()
-        {
-            foreach (KeyValuePair<CardData, int> kv in mOriginalCosts)
-                kv.Key.Cost = kv.Value;
-
-            mOriginalCosts.Clear();
         }
 
         private void Shuffle(List<CardData> list)

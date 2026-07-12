@@ -1,5 +1,4 @@
 using Features.Card.Data;
-using Features.Card.Interfaces;
 using Features.Card.View;
 using QFramework;
 using UnityEngine;

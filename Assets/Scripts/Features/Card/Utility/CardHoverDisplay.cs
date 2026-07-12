@@ -1,6 +1,5 @@
 using DG.Tweening;
 using Features.Card.Data;
-using Features.Card.Interfaces;
 using Features.Card.View;
 using UnityEngine;
 

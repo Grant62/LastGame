@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using Features.Combat.Targeting;
+using Features.Combat.Define;
+using Features.Combat.Interfaces;
 using Features.Combat.View.Board;
 using Features.Enemy.View;
 using Features.Hero.Model;
@@ -26,10 +27,7 @@ namespace Features.Card.Effects
 
             BoardView board = Ctx.BoardAccess.Board;
 
-            List<int> swordSlots = new();
-            if (swordModel.CurSlotIndex.Value >= 0)
-                swordSlots.Add(swordModel.CurSlotIndex.Value);
-            swordSlots.AddRange(swordModel.SpiritSwordSlots);
+            List<int> swordSlots = swordModel.GetAllSwordSlots();
 
             HashSet<int> covered = LinkSwordsEffect.GetCoveredSlots(playerSlot, swordSlots);
 

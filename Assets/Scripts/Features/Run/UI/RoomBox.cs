@@ -1,4 +1,5 @@
 using System;
+using Core.Infrastructure;
 using Features.Run.Data;
 using TMPro;
 using UnityEngine;
@@ -25,28 +26,28 @@ namespace Features.Run.UI
             stepLabel.text = $"Level {data.Layer}-{data.Step}\n{data.StepTypeText}";
 
             bool isCurrent = data.State == RoomBoxState.Current;
-            bool isBoss = data.StepTypeText.Contains("Boss");
 
             RectTransform rt = GetComponent<RectTransform>();
             rt.localScale = Vector3.one * (isCurrent ? CurrentScale : NormalScale);
 
-            if (backgroundImage != null)
-                backgroundImage.color = isCurrent ? new Color(0.2f, 0.2f, 0.3f, 1f) : new Color(0.1f, 0.1f, 0.12f, 1f);
+            backgroundImage.color = isCurrent ? GameColors.RoomCurrent : GameColors.RoomNonCurrent;
 
             SetupActionButton(data);
             SetupShortRestButton(data);
-            SetupBossPreview(data, isBoss);
+            SetupBossPreview(data);
         }
 
         private void SetupActionButton(RoomPreviewData data)
         {
-            if (actionButton == null || actionButtonLabel == null)
-                return;
-
             switch (data.State)
             {
                 case RoomBoxState.Cleared:
                     actionButtonLabel.text = "已被击败";
+                    actionButton.interactable = false;
+                    actionButton.gameObject.SetActive(true);
+                    break;
+                case RoomBoxState.Skipped:
+                    actionButtonLabel.text = "已跳过";
                     actionButton.interactable = false;
                     actionButton.gameObject.SetActive(true);
                     break;
@@ -68,9 +69,6 @@ namespace Features.Run.UI
 
         private void SetupShortRestButton(RoomPreviewData data)
         {
-            if (shortRestButton == null)
-                return;
-
             if (!data.CanShortRest)
             {
                 shortRestButton.gameObject.SetActive(false);
@@ -83,11 +81,8 @@ namespace Features.Run.UI
                 shortRestButton.interactable = true;
         }
 
-        private void SetupBossPreview(RoomPreviewData data, bool isBoss)
+        private void SetupBossPreview(RoomPreviewData data)
         {
-            if (bossPreviewText == null)
-                return;
-
             if (!string.IsNullOrEmpty(data.BossPreview))
             {
                 bossPreviewText.text = data.BossPreview;
@@ -101,26 +96,22 @@ namespace Features.Run.UI
 
         public void SetOnActionClick(Action onClick)
         {
-            if (actionButton != null)
-                actionButton.onClick.AddListener(() => onClick());
+            actionButton.onClick.AddListener(() => onClick());
         }
 
         public void SetOnShortRestClick(Action onClick)
         {
-            if (shortRestButton != null)
-                shortRestButton.onClick.AddListener(() => onClick());
+            shortRestButton.onClick.AddListener(() => onClick());
         }
 
         public void ShowShortRestTooltip()
         {
-            if (shortRestTooltip != null)
-                shortRestTooltip.SetActive(true);
+            shortRestTooltip.SetActive(true);
         }
 
         public void HideShortRestTooltip()
         {
-            if (shortRestTooltip != null)
-                shortRestTooltip.SetActive(false);
+            shortRestTooltip.SetActive(false);
         }
     }
 }

@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Core.Architecture;
+using Core.Systems;
 using Features.Card.Data;
-using Features.Card.Interfaces;
 using Features.Card.Model;
+using Features.Card.Utility;
 using Features.Card.View;
-using Features.Combat.System;
 using QFramework;
 using TMPro;
 using UnityEngine;
@@ -50,9 +50,7 @@ namespace Features.Card.UI
             tipText.text = "选择 1 张手牌弃掉";
             LayoutCards(data.HandCards);
 
-            if (scrollRect != null && scrollRect.verticalScrollbar != null)
-                scrollRect.verticalScrollbar.gameObject.SetActive(true);
-
+            scrollRect.verticalScrollbar.gameObject.SetActive(true);
             GameMain.Interface.GetSystem<IPopupStackSystem>().Push(gameObject);
         }
 
@@ -123,9 +121,7 @@ namespace Features.Card.UI
         {
             foreach (CardView card in mCardViews)
             {
-                Button btn = card.GetComponent<Button>();
-                if (btn != null)
-                    Destroy(btn);
+                Destroy(card.GetComponent<Button>());
 
                 card.CardImage.material = null;
                 mCardPool.Return(card);

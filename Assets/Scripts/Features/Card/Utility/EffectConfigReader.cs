@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Features.Card.Data;
 using Features.Card.Effects;
-using Features.Combat.Targeting;
+using Features.Combat.Define;
 
 namespace Features.Card.Utility
 {

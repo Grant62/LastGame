@@ -24,7 +24,7 @@ namespace Core.SceneManagement
             GameMain.Interface.SendCommand(new ShuffleAllToDrawPileCommand());
 
             foreach (Transform child in GameRoot.CombatOverlay)
-                Object.Destroy(child.gameObject);
+                Destroy(child.gameObject);
 
             GameMain.Interface.GetUtility<IEnemyViewPool>().Dispose();
             GameMain.Interface.GetUtility<IDamageTextSpawner>().Dispose();

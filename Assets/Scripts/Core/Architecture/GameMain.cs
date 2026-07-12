@@ -3,14 +3,14 @@ using Features.Card.Model;
 using Features.Card.System;
 using Features.Combat.Model;
 using Features.Combat.System;
-using Features.Combat.Targeting.Model;
-using Features.Combat.Targeting.System;
 using Features.Enemy.Model;
 using Features.Enemy.System;
 using Features.Hero.Model;
 using Features.Resource.Model;
 using Features.Resource.System;
 using Features.Run.Model;
+using Features.Shop.Model;
+using Features.Shop.System;
 using Features.Sword.Model;
 using Features.Sword.System;
 using Main.GM;
@@ -36,6 +36,7 @@ namespace Core.Architecture
             RegisterSystem<ICardSystem>(new CardSystem());
             RegisterSystem(new CardEffectSystem());
             RegisterModel<ISwordModel>(new SwordModel());
+            RegisterSystem<ISwordSystem>(new SwordSystem());
             RegisterModel<IGameConfigModel>(new GameConfigModel());
             RegisterSystem<ISlotTargetSystem>(new SlotTargetSystem());
             RegisterUtility<IBinaryDataMgr>(new BinaryDataMgr());
@@ -49,6 +50,8 @@ namespace Core.Architecture
             RegisterModel<IRunModel>(new RunModel());
             RegisterSystem<IPopupStackSystem>(new PopupStackSystem());
             RegisterSystem(new GmSystem());
+            RegisterModel<IShopModel>(new ShopModel());
+            RegisterSystem<IShopSystem>(new ShopSystem());
         }
     }
 }

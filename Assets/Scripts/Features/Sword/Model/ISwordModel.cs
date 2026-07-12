@@ -26,5 +26,7 @@ namespace Features.Sword.Model
 
         List<int> SpiritSwordSlots { get; }
         EasyEvent OnSpiritSwordsChanged { get; }
+
+        List<int> GetAllSwordSlots();
     }
 }

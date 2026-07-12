@@ -2,11 +2,14 @@ using System.Collections.Generic;
 using Core.Architecture;
 using DG.Tweening;
 using Features.Combat.Command;
-using Features.Combat.Targeting;
+using Features.Combat.Define;
+using Features.Combat.Interfaces;
 using Features.Combat.Utility;
 using Features.Combat.View;
 using Features.Enemy.Command;
 using Features.Enemy.Define;
+using Features.Enemy.Event;
+using Features.Hero.Model;
 using QFramework;
 using Spine;
 using Spine.Unity;
@@ -56,6 +59,15 @@ namespace Features.Enemy.View
             RefreshHealthBar(false);
             shieldView.SetArmor(0);
 
+            this.RegisterEvent<EnemyIntentEvent>(e =>
+            {
+                if (e.SlotIndex == SlotIndex)
+                {
+                    bool flip = e.SlotIndex > GameMain.Interface.GetModel<IHeroModel>().CurSlotIndex.Value;
+                    ShowIntent(e.Intent, flip);
+                }
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
             if (mSkeleton == null)
             {
                 mSkeleton = GetComponentInChildren<SkeletonGraphic>();
@@ -86,9 +98,6 @@ namespace Features.Enemy.View
 
         public void ShowIntent(EnemyIntentType intent, bool flipArrow = false)
         {
-            if (intentIcon == null || intentRoot == null)
-                return;
-
             switch (intent)
             {
                 case EnemyIntentType.Attack:

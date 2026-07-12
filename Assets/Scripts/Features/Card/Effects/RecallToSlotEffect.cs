@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Features.Combat.Targeting;
+using Features.Combat.Interfaces;
 using Features.Combat.View.Board;
 using Features.Enemy.View;
 using Features.Sword.Model;
@@ -14,10 +14,7 @@ namespace Features.Card.Effects
             BoardView board = Ctx.BoardAccess.Board;
             int targetSlot = Ctx.SlotTargetIndex;
 
-            List<int> swordSlots = new();
-            if (swordModel.CurSlotIndex.Value >= 0)
-                swordSlots.Add(swordModel.CurSlotIndex.Value);
-            swordSlots.AddRange(swordModel.SpiritSwordSlots);
+            List<int> swordSlots = swordModel.GetAllSwordSlots();
 
             HashSet<int> attachSlots = new();
 
@@ -25,8 +22,7 @@ namespace Features.Card.Effects
             {
                 bool isSpirit = swordModel.SpiritSwordSlots.Contains(fromSlot);
                 int pathDmg = (isSpirit ? Ctx.Config.SpiritPathDamage : Ctx.Config.SwordPathDamage) + swordModel.CustomPathDamage;
-                int step = targetSlot > fromSlot ? 1 : -1;
-                for (int i = fromSlot; i != targetSlot + step; i += step)
+                board.ForEachSlotOnPath(fromSlot, targetSlot, i =>
                 {
                     if (board.TryGetEnemyAtSlot(i, out EnemyView enemy) && enemy.IsValidTarget)
                     {
@@ -34,7 +30,7 @@ namespace Features.Card.Effects
                         if (swordModel.IsSpiritAttached.Value)
                             attachSlots.Add(i);
                     }
-                }
+                });
             }
 
             swordModel.CurSlotIndex.Value = targetSlot;

@@ -1,4 +1,4 @@
-using Features.Combat.Targeting;
+using Features.Combat.Interfaces;
 using UnityEngine;
 
 namespace Features.Combat.View.Board

@@ -1,6 +1,7 @@
 using Core.Architecture;
 using Features.Card.Interfaces;
 using Features.Card.UI;
+using Features.Card.Utility;
 using Features.Combat.System;
 using QFramework;
 using UnityEngine;

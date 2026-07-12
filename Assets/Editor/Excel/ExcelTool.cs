@@ -125,7 +125,8 @@ namespace Configuration.ExcelData.Container
     [BinaryTable(DataType = typeof({table.TableName}))]
     public class {table.TableName}Container
     {{
-        public Dictionary<{rowType[0]}, {table.TableName}> DataDic = new();
+        private readonly Dictionary<{rowType[0]}, {table.TableName}> mData = new();
+        public IReadOnlyDictionary<{rowType[0]}, {table.TableName}> DataDic => mData;
     }}
 }}";
                 File.WriteAllText(DataContainerPath + table.TableName + "Container.cs", str);

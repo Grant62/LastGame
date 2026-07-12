@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Systems;
-using Features.Combat.Targeting;
+using Features.Combat.Interfaces;
 using Features.Combat.View.Board;
 using Features.Enemy.View;
 using Features.Sword.Model;
@@ -37,12 +37,11 @@ namespace Features.Card.Effects
             foreach (int fromSlot in spiritSlots)
             {
                 int pathDmg = Ctx.Config.SpiritPathDamage + sword.CustomPathDamage;
-                int step = targetSlot > fromSlot ? 1 : -1;
-                for (int i = fromSlot; i != targetSlot + step; i += step)
+                board.ForEachSlotOnPath(fromSlot, targetSlot, i =>
                 {
                     if (board.TryGetEnemyAtSlot(i, out EnemyView enemy) && enemy.IsValidTarget)
                         enemy.TakeDamage(pathDmg);
-                }
+                });
             }
 
             sword.IsRecalling = true;

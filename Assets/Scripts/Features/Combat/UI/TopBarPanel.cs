@@ -29,19 +29,17 @@ namespace Features.Combat.UI
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
             IResourceModel resource = GameMain.Interface.GetModel<IResourceModel>();
-            resource.Gold.RegisterWithInitValue(v => CoinLabel.text = v.ToString())
+            resource.Gold.RegisterWithInitValue(v => CoinLabel.text = $"{v}金")
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
             IRunModel run = GameMain.Interface.GetModel<IRunModel>();
             run.CurrentLayer.RegisterWithInitValue(_ => RefreshLevelLabel(run))
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
-            run.CurrentStep.RegisterWithInitValue(_ => RefreshLevelLabel(run))
-                .UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
         private void RefreshLevelLabel(IRunModel run)
         {
-            levelLabel.text = $"关卡 {run.CurrentLayer.Value}-{run.CurrentStep.Value}";
+            levelLabel.text = $"第{run.CurrentLayer.Value}层";
         }
 
         private void RefreshLifeLabel(IHeroModel hero)

@@ -1,4 +1,5 @@
-using Features.Combat.Targeting;
+using Features.Combat.Define;
+using Features.Combat.Interfaces;
 using Features.Enemy.View;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ namespace Features.Card.Effects
         {
             bool casterIsWeakened = StatusHelper.HasStatus(Ctx.HeroModel.Statuses, StatusType.Weak);
 
-            float damageMultiplier = casterIsWeakened ? 0.75f : 1f;
+            float damageMultiplier = casterIsWeakened ? Ctx.Config.WeakMultiplier : 1f;
 
             foreach (ITargetable target in targets)
             {
@@ -27,7 +28,7 @@ namespace Features.Card.Effects
                 float finalMultiplier = damageMultiplier;
 
                 if (target is EnemyView enemy && StatusHelper.HasStatus(enemy.Statuses, StatusType.Vulnerable))
-                    finalMultiplier *= 1.25f;
+                    finalMultiplier *= Ctx.Config.VulnerableMultiplier;
 
                 int finalDamage = Mathf.RoundToInt(mAmount * finalMultiplier);
                 if (finalDamage > 0)

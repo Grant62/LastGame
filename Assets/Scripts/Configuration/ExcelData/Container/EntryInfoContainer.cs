@@ -7,6 +7,7 @@ namespace Configuration.ExcelData.Container
     [BinaryTable(DataType = typeof(EntryInfo))]
     public class EntryInfoContainer
     {
-        public Dictionary<int, EntryInfo> DataDic = new();
+        private readonly Dictionary<int, EntryInfo> mData = new();
+        public IReadOnlyDictionary<int, EntryInfo> DataDic => mData;
     }
 }

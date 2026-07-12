@@ -3,7 +3,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Configuration.ExcelData.Container;
 using Configuration.ExcelData.DataClass;
-using Features.Card.Interfaces;
 
 namespace Features.Card.Utility
 {

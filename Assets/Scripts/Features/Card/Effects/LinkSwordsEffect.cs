@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Features.Combat.Targeting;
+using Features.Combat.Interfaces;
 using Features.Combat.View.Board;
 using Features.Enemy.View;
 using Features.Hero.Model;
@@ -25,10 +25,7 @@ namespace Features.Card.Effects
             IHeroModel heroModel = Ctx.HeroModel;
             int playerSlot = heroModel.CurSlotIndex.Value;
 
-            List<int> swordSlots = new();
-            if (swordModel.CurSlotIndex.Value >= 0)
-                swordSlots.Add(swordModel.CurSlotIndex.Value);
-            swordSlots.AddRange(swordModel.SpiritSwordSlots);
+            List<int> swordSlots = swordModel.GetAllSwordSlots();
 
             int blockPerSword = mBlockPerSword > 0
                 ? mBlockPerSword
@@ -65,10 +62,14 @@ namespace Features.Card.Effects
 
         private bool IsPenetrated(int playerSlot, List<int> swordSlots)
         {
-            if (Ctx.SwordModel.LinkAlwaysPenetrate)
+            return IsPenetrated(Ctx.SwordModel, Ctx.BoardAccess.Board, playerSlot, swordSlots);
+        }
+
+        public static bool IsPenetrated(ISwordModel swordModel, BoardView board, int playerSlot, List<int> swordSlots)
+        {
+            if (swordModel.LinkAlwaysPenetrate)
                 return true;
 
-            BoardView board = Ctx.BoardAccess.Board;
             if (swordSlots.Count == 0)
                 return false;
 

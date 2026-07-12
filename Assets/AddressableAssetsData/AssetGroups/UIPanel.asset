@@ -35,6 +35,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cbc6efdaa868a884ea84e4ea8d1d184d
+    m_Address: RemoveCardPanel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f3aab30ff8605df44b9aefb9cd777751
     m_Address: DiscardSelectPanel
     m_ReadOnly: 0

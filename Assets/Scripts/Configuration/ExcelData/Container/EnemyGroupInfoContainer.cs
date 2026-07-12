@@ -7,6 +7,7 @@ namespace Configuration.ExcelData.Container
     [BinaryTable(DataType = typeof(EnemyGroupInfo))]
     public class EnemyGroupInfoContainer
     {
-        public Dictionary<int, EnemyGroupInfo> DataDic = new();
+        private readonly Dictionary<int, EnemyGroupInfo> mData = new();
+        public IReadOnlyDictionary<int, EnemyGroupInfo> DataDic => mData;
     }
 }

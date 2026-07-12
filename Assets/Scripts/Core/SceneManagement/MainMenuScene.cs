@@ -16,8 +16,7 @@ namespace Core.SceneManagement
 
         private void Start()
         {
-            if (startButton != null)
-                startButton.onClick.AddListener(() => OnStartGame().Forget());
+            startButton.onClick.AddListener(() => OnStartGame().Forget());
         }
 
         private async UniTaskVoid OnStartGame()

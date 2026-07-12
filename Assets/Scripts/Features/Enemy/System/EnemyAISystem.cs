@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using Features.Combat.Targeting;
+using Features.Combat.Define;
 using Features.Combat.Utility;
 using Features.Combat.View.Board;
 using Features.Enemy.Data;

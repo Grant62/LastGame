@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Core.Systems;
-using Features.Combat.Targeting;
+using Features.Combat.Define;
+using Features.Combat.Interfaces;
 
 namespace Features.Combat.Utility
 {

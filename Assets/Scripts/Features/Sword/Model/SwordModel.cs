@@ -27,6 +27,15 @@ namespace Features.Sword.Model
         public List<int> SpiritSwordSlots { get; } = new();
         public EasyEvent OnSpiritSwordsChanged { get; } = new();
 
+        public List<int> GetAllSwordSlots()
+        {
+            List<int> slots = new();
+            if (CurSlotIndex.Value >= 0)
+                slots.Add(CurSlotIndex.Value);
+            slots.AddRange(SpiritSwordSlots);
+            return slots;
+        }
+
         protected override void OnInit() { }
     }
 }

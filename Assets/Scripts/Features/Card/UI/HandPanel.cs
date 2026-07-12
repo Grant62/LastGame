@@ -5,6 +5,7 @@ using Features.Card.Data;
 using Features.Card.Event;
 using Features.Card.Interfaces;
 using Features.Card.Model;
+using Features.Card.Utility;
 using Features.Card.View;
 using Features.Combat.Event;
 using Features.Combat.System;
@@ -81,12 +82,11 @@ namespace Features.Card.UI
             if (mHoveredIndex < 0)
                 return;
 
-            this.GetUtility<ICardHoverDisplay>()?.Hide();
+            this.GetUtility<ICardHoverDisplay>().Hide();
 
             foreach (CardView card in mCardOrder)
             {
-                if (card.CanvasGroup != null)
-                    card.CanvasGroup.alpha = 1f;
+                card.CanvasGroup.alpha = 1f;
             }
 
             mHoveredIndex = -1;
@@ -183,11 +183,8 @@ namespace Features.Card.UI
             int curEnergy = visible ? this.GetModel<IResourceModel>().CurEnergy.Value : int.MaxValue;
             foreach (CardView card in mCardOrder)
             {
-                if (card.OutlineImage != null)
-                {
-                    bool show = visible && card.CardData != null && card.CardData.Cost <= curEnergy;
-                    card.OutlineImage.gameObject.SetActive(show);
-                }
+                bool show = visible && card.CardData != null && card.CardData.Cost <= curEnergy;
+                card.OutlineImage.gameObject.SetActive(show);
             }
         }
 

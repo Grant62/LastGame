@@ -1,5 +1,5 @@
 using Features.Card.Data;
-using Features.Combat.Targeting;
+using Features.Combat.Interfaces;
 
 namespace Features.Card.Event
 {

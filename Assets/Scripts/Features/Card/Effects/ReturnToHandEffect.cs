@@ -1,6 +1,5 @@
 using Features.Card.Data;
-using Features.Card.Model;
-using Features.Combat.Targeting;
+using Features.Combat.Interfaces;
 
 namespace Features.Card.Effects
 {
@@ -12,11 +11,7 @@ namespace Features.Card.Effects
             if (card == null)
                 return;
 
-            ICardModel model = Ctx.CardModel;
-            model.DiscardPile.Remove(card);
-            model.OnDiscardPileChanged.Trigger();
-            model.HandPile.Add(card);
-            model.OnHandPileChanged.Trigger();
+            Ctx.CardSystem.ReturnToHand(card);
         }
     }
 }

@@ -1,4 +1,4 @@
-using Features.Combat.Targeting;
+using Features.Combat.Interfaces;
 
 namespace Features.Card.Effects
 {
@@ -6,7 +6,7 @@ namespace Features.Card.Effects
     {
         public override void Execute(ITargetable[] targets, ITargetable caster)
         {
-            Ctx.CardSystem.ReduceSpinCardCosts();
+            Ctx.SwordSystem.ReduceSpinCardCosts();
         }
     }
 }

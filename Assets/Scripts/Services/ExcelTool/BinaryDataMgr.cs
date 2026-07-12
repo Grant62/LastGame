@@ -89,7 +89,7 @@ namespace Services.ExcelTool
                     }
                 }
 
-                object dicObject = containerType.GetField("DataDic").GetValue(containerObj);
+                object dicObject = containerType.GetField("mData", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).GetValue(containerObj);
                 MethodInfo mInfo = dicObject.GetType().GetMethod("Add");
                 object keyValue = infos[0].GetValue(dataObj);
                 mInfo.Invoke(dicObject, new[] { keyValue, dataObj });

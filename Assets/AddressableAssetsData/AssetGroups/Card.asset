@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Card
   m_GUID: 1ec8b9977ea710d45aa2d954cb321bb9
   m_SerializeEntries:
+  - m_GUID: 070beb9c1cb416e4faada39a8206e9f9
+    m_Address: bull
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 14cb622e8cffc4848b557261b69fcfed
     m_Address: CardView
     m_ReadOnly: 0
@@ -27,6 +32,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7a78ad87074a6eb47abb549b57addac7
     m_Address: TestDeck
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d115d1bd53cdd384aabc42c2d3004d7f
+    m_Address: bay
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

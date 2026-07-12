@@ -1,6 +1,6 @@
 using Core.Architecture;
 using DG.Tweening;
-using Features.Combat.Targeting;
+using Features.Combat.Interfaces;
 using Features.Combat.Utility;
 using Features.Combat.View;
 using Features.Combat.View.Board;

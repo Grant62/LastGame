@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using Core.Architecture;
+using Core.Systems;
+using Cysharp.Threading.Tasks;
 using Features.Card.Data;
-using Features.Card.Interfaces;
+using Features.Card.Utility;
 using Features.Card.View;
-using Features.Combat.System;
 using QFramework;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -32,7 +33,12 @@ namespace Features.Card.UI
             Close.onClick.AddListener(OnClose);
         }
 
-        public static async void ShowOrCreate(List<CardData> cards)
+        public static void ShowOrCreate(List<CardData> cards)
+        {
+            ShowOrCreateAsync(cards).Forget();
+        }
+
+        private static async UniTask ShowOrCreateAsync(List<CardData> cards)
         {
             if (sInstance == null)
             {
@@ -45,7 +51,7 @@ namespace Features.Card.UI
             sInstance.Show(cards);
         }
 
-        public static async void ToggleDrawPile(List<CardData> cards)
+        public static void ToggleDrawPile(List<CardData> cards)
         {
             if (sInstance != null && sInstance.gameObject.activeSelf)
             {

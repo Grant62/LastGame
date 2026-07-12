@@ -1,7 +1,7 @@
 using Features.Card.Data;
 using Features.Card.Event;
 using Features.Card.System;
-using Features.Combat.Targeting;
+using Features.Combat.Interfaces;
 using Features.Resource.Model;
 using Features.Resource.System;
 using QFramework;

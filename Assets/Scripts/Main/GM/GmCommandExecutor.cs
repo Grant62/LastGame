@@ -93,6 +93,11 @@ namespace Main.GM
                     controller.SendCommand<KillAllEnemiesCommand>();
                     onOutput("已消灭所有敌人");
                     break;
+
+                case "skip":
+                    controller.SendCommand<SkipLevelCommand>();
+                    onOutput("已跳过当前关卡");
+                    break;
                 #endregion
 
                 #region 资源

@@ -1,4 +1,4 @@
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using Configuration.ExcelData.Container;
 using Configuration.ExcelData.DataClass;
 using QFramework;
@@ -8,52 +8,64 @@ namespace Features.Combat.Model
 {
     public class GameConfigModel : AbstractModel, IGameConfigModel
     {
-        private static readonly Regex ValueRegex = new(
-            @"(造成|获得|施加|恢复)(\d+)点?【?(伤害|护甲|能量|生命值)】?");
+        private readonly Dictionary<int, int> mFloorClearGold = new();
 
         public int SwordPathDamage { get; private set; } = 4;
         public int SpiritPathDamage { get; private set; } = 7;
         public int SpinBaseDamage { get; private set; } = 3;
         public int LinkBlockPerSword { get; private set; } = 8;
 
+        public int InitialEnergy { get; private set; } = 3;
+        public int CardsPerTurn { get; private set; } = 5;
+        public int MaxStepsPerLayer { get; private set; } = 3;
+        public int MaxLayers { get; private set; } = 8;
+        public float ShortRestHealPercent { get; private set; } = 0.25f;
+        public int ShortRestMaxCount { get; private set; } = 2;
+        public float WeakMultiplier { get; private set; } = 0.75f;
+        public float VulnerableMultiplier { get; private set; } = 1.25f;
+
         protected override void OnInit()
         {
             IBinaryDataMgr mgr = this.GetUtility<IBinaryDataMgr>();
-            EntryInfoContainer container = mgr.GetTable<EntryInfoContainer>();
-            if (container?.DataDic == null)
-                return;
 
-            foreach (EntryInfo entry in container.DataDic.Values)
+            GameBalanceInfoContainer balance = mgr.GetTable<GameBalanceInfoContainer>();
+            if (balance?.DataDic != null && balance.DataDic.TryGetValue(1, out GameBalanceInfo b))
             {
-                switch (entry.Id)
-                {
-                    case 5:
-                    case 6:
-                        SwordPathDamage = ParseValue(entry.Desc, "伤害", 4);
-                        break;
-                    case 12:
-                        SpiritPathDamage = ParseValue(entry.Desc, "伤害", 7);
-                        break;
-                    case 11:
-                        SpinBaseDamage = ParseValue(entry.Desc, "伤害", 3);
-                        break;
-                    case 10:
-                        LinkBlockPerSword = ParseValue(entry.Desc, "护甲", 8);
-                        break;
-                }
+                InitialEnergy = b.InitialEnergy;
+                CardsPerTurn = b.CardsPerTurn;
+                MaxStepsPerLayer = b.MaxStepsPerLayer;
+                MaxLayers = b.MaxLayers;
+                ShortRestHealPercent = b.ShortRestHealPercent;
+                ShortRestMaxCount = b.ShortRestMaxCount;
+                WeakMultiplier = b.WeakMultiplier;
+                VulnerableMultiplier = b.VulnerableMultiplier;
+            }
+
+            FloorClearGoldInfoContainer goldConfig = mgr.GetTable<FloorClearGoldInfoContainer>();
+            if (goldConfig?.DataDic != null)
+            {
+                foreach (FloorClearGoldInfo info in goldConfig.DataDic.Values)
+                    mFloorClearGold[info.Step] = info.Gold;
+            }
+
+            EntryInfoContainer container = mgr.GetTable<EntryInfoContainer>();
+            if (container?.DataDic != null)
+            {
+                IReadOnlyDictionary<int, EntryInfo> dic = container.DataDic;
+                if (dic.TryGetValue(6, out EntryInfo e))
+                    SwordPathDamage = e.Value;
+                if (dic.TryGetValue(10, out e))
+                    LinkBlockPerSword = e.Value;
+                if (dic.TryGetValue(11, out e))
+                    SpinBaseDamage = e.Value;
+                if (dic.TryGetValue(12, out e))
+                    SpiritPathDamage = e.Value;
             }
         }
 
-        private static int ParseValue(string desc, string type, int fallback)
+        public int GetFloorClearGold(int step)
         {
-            if (string.IsNullOrEmpty(desc))
-                return fallback;
-
-            Match match = ValueRegex.Match(desc);
-            if (match.Success && match.Groups[3].Value == type && int.TryParse(match.Groups[2].Value, out int result))
-                return result;
-
-            return fallback;
+            return mFloorClearGold.TryGetValue(step, out int gold) ? gold : 0;
         }
     }
 }

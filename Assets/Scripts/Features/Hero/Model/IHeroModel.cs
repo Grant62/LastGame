@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Features.Combat.Targeting;
+using Features.Combat.Define;
 using QFramework;
 
 namespace Features.Hero.Model

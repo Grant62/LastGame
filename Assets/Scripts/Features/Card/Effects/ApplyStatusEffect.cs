@@ -1,4 +1,5 @@
-using Features.Combat.Targeting;
+using Features.Combat.Define;
+using Features.Combat.Interfaces;
 using Features.Enemy.View;
 
 namespace Features.Card.Effects

@@ -1,5 +1,5 @@
 using Core.Systems;
-using Features.Combat.Targeting;
+using Features.Combat.Interfaces;
 using Features.Sword.Model;
 
 namespace Features.Card.Effects

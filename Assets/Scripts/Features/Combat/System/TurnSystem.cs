@@ -4,6 +4,7 @@ using Configuration.ExcelData.Container;
 using Configuration.ExcelData.DataClass;
 using Cysharp.Threading.Tasks;
 using Features.Combat.Event;
+using Features.Combat.Model;
 using Features.Combat.Utility;
 using Features.Combat.View.Board;
 using Features.Enemy.Data;
@@ -23,7 +24,6 @@ namespace Features.Combat.System
     {
         private const int LeftSpawnSlot = 0;
         private const int RightSpawnSlot = 8;
-        private const int MaxLayer = 8;
 
         private Dictionary<string, int[]> mLevelQueueCache;
 
@@ -138,7 +138,8 @@ namespace Features.Combat.System
             AdvanceStep(enemyModel);
 
             IRunModel run = this.GetModel<IRunModel>();
-            if (run.CurrentLayer.Value > MaxLayer)
+            IGameConfigModel config = this.GetModel<IGameConfigModel>();
+            if (run.CurrentLayer.Value > config.MaxLayers)
                 return;
 
             this.SendEvent(new FloorClearedEvent
@@ -155,13 +156,13 @@ namespace Features.Combat.System
 
             IRunModel run = this.GetModel<IRunModel>();
             run.CurrentStep.Value++;
-            if (run.CurrentStep.Value > 3)
+            if (run.CurrentStep.Value > this.GetModel<IGameConfigModel>().MaxStepsPerLayer)
             {
                 run.CurrentStep.Value = 1;
                 run.CurrentLayer.Value++;
             }
 
-            if (run.CurrentLayer.Value > MaxLayer)
+            if (run.CurrentLayer.Value > this.GetModel<IGameConfigModel>().MaxLayers)
             {
                 this.SendEvent<BattleVictoryEvent>();
                 return;
@@ -203,16 +204,10 @@ namespace Features.Combat.System
             int heroSlot = this.GetModel<IHeroModel>().CurSlotIndex.Value;
             aiSystem.CalculateIntents(heroSlot);
 
-            BoardView board = this.GetUtility<IBoardAccess>().Board;
-
             foreach (KeyValuePair<int, EnemyIntentType> kvp in enemyModel.CachedIntents)
             {
                 if (kvp.Value == EnemyIntentType.None)
                     continue;
-
-                EnemyView view = board.GetEnemyAtSlot(kvp.Key);
-                if (view != null)
-                    view.ShowIntent(kvp.Value, kvp.Key > heroSlot);
 
                 this.SendEvent(new EnemyIntentEvent { SlotIndex = kvp.Key, Intent = kvp.Value });
             }

@@ -594,7 +594,7 @@ MonoBehaviour:
   intentRoot: {fileID: 7379493910696956127}
   intentIcon: {fileID: 2069809150792544166}
   attackIconSprite: {fileID: 21300000, guid: 825e2be2c5c2b9c498959b20c17ecb5f, type: 3}
-  moveIconSprite: {fileID: 21300000, guid: 773218a12980e0f47a9cae4117a19051, type: 3}
+  moveIconSprite: {fileID: 21300000, guid: ac2be14fa14c1e844b137cb1be4d1d36, type: 3}
   moveAttackIconSprite: {fileID: 21300000, guid: 37fb61eae9466054d814450159d7a14a, type: 3}
   HealthBarFill: {fileID: 5757726346341751807}
   HealthText: {fileID: 2541697041087438904}
