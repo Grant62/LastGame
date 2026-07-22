@@ -8,6 +8,7 @@ namespace Configuration.ExcelData.Container
     public class StartingCardInfoContainer
     {
         private readonly Dictionary<int, StartingCardInfo> mData = new();
-        public IReadOnlyDictionary<int, StartingCardInfo> DataDic => mData;
+
+        public IReadOnlyDictionary<int, StartingCardInfo> DataDic { get => mData; }
     }
 }

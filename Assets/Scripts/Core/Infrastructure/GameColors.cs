@@ -16,7 +16,7 @@ namespace Core.Infrastructure
         {
             { "普通", $"<color=#{ColorUtility.ToHtmlStringRGB(RarityCommon)}>普通</color>" },
             { "罕见", $"<color=#{ColorUtility.ToHtmlStringRGB(RarityUncommon)}>罕见</color>" },
-            { "史诗", $"<color=#{ColorUtility.ToHtmlStringRGB(RarityEpic)}>史诗</color>" },
+            { "史诗", $"<color=#{ColorUtility.ToHtmlStringRGB(RarityEpic)}>史诗</color>" }
         };
 
         public static string ColorizeRarity(string text)

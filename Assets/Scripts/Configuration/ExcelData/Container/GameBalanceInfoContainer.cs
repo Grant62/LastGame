@@ -8,6 +8,7 @@ namespace Configuration.ExcelData.Container
     public class GameBalanceInfoContainer
     {
         private readonly Dictionary<int, GameBalanceInfo> mData = new();
-        public IReadOnlyDictionary<int, GameBalanceInfo> DataDic => mData;
+
+        public IReadOnlyDictionary<int, GameBalanceInfo> DataDic { get => mData; }
     }
 }

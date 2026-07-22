@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using Configuration.ExcelData.Container;
 using Configuration.ExcelData.DataClass;
@@ -31,21 +30,50 @@ namespace Features.Card.Utility
             return KeywordRegex.Replace(desc, "<color=#EFC851>$1</color>");
         }
 
-        public string GetKeywordExplanations(string desc)
+        public string GetExplanation(string keyword)
         {
+            mEntries.TryGetValue(keyword, out string explanation);
+            return explanation;
+        }
+
+        public List<(string name, string desc)> CollectKeywords(string desc)
+        {
+            List<(string name, string desc)> result = new();
             if (string.IsNullOrEmpty(desc))
-                return "";
+                return result;
 
             HashSet<string> visited = new();
-            StringBuilder sb = new();
+            Queue<string> queue = new();
+
             foreach (Match match in KeywordRegex.Matches(desc))
             {
                 string keyword = match.Groups[1].Value;
-                if (mEntries.TryGetValue(keyword, out string explanation) && visited.Add(keyword))
-                    sb.AppendLine($"<color=#EFC851>【{keyword}】</color> {explanation}");
+                if (ShouldExpand(keyword) && visited.Add(keyword))
+                    queue.Enqueue(keyword);
             }
 
-            return sb.Length > 0 ? sb.ToString().TrimEnd() : "";
+            while (queue.Count > 0)
+            {
+                string keyword = queue.Dequeue();
+                if (!mEntries.TryGetValue(keyword, out string explanation) || string.IsNullOrEmpty(explanation))
+                    continue;
+
+                result.Add((keyword, explanation));
+
+                foreach (Match match in KeywordRegex.Matches(explanation))
+                {
+                    string nested = match.Groups[1].Value;
+                    if (ShouldExpand(nested) && visited.Add(nested))
+                        queue.Enqueue(nested);
+                }
+            }
+
+            return result;
+        }
+
+        private bool ShouldExpand(string keyword)
+        {
+            return mEntries.ContainsKey(keyword);
         }
     }
 }

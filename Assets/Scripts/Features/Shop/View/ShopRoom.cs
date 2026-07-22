@@ -9,6 +9,9 @@ using Features.Card.Model;
 using Features.Card.UI;
 using Features.Card.Utility;
 using Features.Card.View;
+using Features.Potion.Command;
+using Features.Potion.Data;
+using Features.Potion.Model;
 using Features.Resource.Command;
 using Features.Resource.Model;
 using Features.Shop.Command;
@@ -37,6 +40,7 @@ namespace Features.Shop.View
         [SerializeField] private CardPickPanel cardPickPanel;
         [SerializeField] private Button removeCardButton;
         [SerializeField] private TMP_Text removePriceText;
+        [SerializeField] private PotionShopSlot[] potionSlots;
 
         public new IArchitecture GetArchitecture()
         {
@@ -91,6 +95,18 @@ namespace Features.Shop.View
                     ? null
                     : this.GetUtility<ICardSpriteCache>().GetSprite(slotData.Address);
                 cardPackSlots[i].Render(slotData, sprite, () => OnBuyCardPack(capturedIndex));
+            }
+
+            List<ShopPotionSlot> potionSlotsData = shopModel.PotionShopSlots;
+            for (int i = 0; i < potionSlots.Length && i < potionSlotsData.Count; i++)
+            {
+                if (potionSlots[i] == null)
+                    continue;
+
+                int capturedIndex = i;
+                ShopPotionSlot slotData = potionSlotsData[i];
+                Sprite sprite = this.GetUtility<ICardSpriteCache>().GetSprite(slotData.Info.Address);
+                potionSlots[i].Render(slotData.Info, sprite, slotData.IsSold, () => OnBuyPotion(capturedIndex));
             }
         }
 
@@ -148,6 +164,26 @@ namespace Features.Shop.View
         {
             int price = this.GetModel<IShopModel>().CurrentRemovePrice;
             removePriceText.text = $"{price}金";
+        }
+
+        private void OnBuyPotion(int slotIndex)
+        {
+            IShopModel shopModel = this.GetModel<IShopModel>();
+            ShopPotionSlot slot = shopModel.PotionShopSlots[slotIndex];
+            if (slot.IsSold)
+                return;
+
+            IResourceModel resourceModel = this.GetModel<IResourceModel>();
+            if (resourceModel.Gold.Value < slot.Info.Price)
+                return;
+
+            if (this.GetModel<IPotionModel>().IsFull)
+                return;
+
+            this.SendCommand(new SpendGoldCommand(slot.Info.Price));
+            this.SendCommand(new BuyPotionCommand(slot.Info));
+            slot.IsSold = true;
+            RenderAll();
         }
 
         private void OpenCardPickPanel(List<CardData> candidates, int slotIndex)

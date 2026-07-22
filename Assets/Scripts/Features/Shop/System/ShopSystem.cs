@@ -6,6 +6,7 @@ using Core.Systems;
 using Features.Card.Data;
 using Features.Card.Define;
 using Features.Card.Model;
+using Features.Potion.Data;
 using Features.Shop.Data;
 using Features.Shop.Model;
 using QFramework;
@@ -47,6 +48,22 @@ namespace Features.Shop.System
             }
 
             model.ResetRemoveCount();
+
+            model.PotionShopSlots.Clear();
+            PotionInfoContainer potionConfig = mgr.GetTable<PotionInfoContainer>();
+            if (potionConfig?.DataDic != null)
+            {
+                List<PotionInfo> allPotions = new(potionConfig.DataDic.Values);
+                IRandomSystem random = this.GetSystem<IRandomSystem>();
+                int count = Math.Min(3, allPotions.Count);
+                for (int i = 0; i < count; i++)
+                {
+                    int index = random.Range(0, allPotions.Count, RandomModuleIds.Combat);
+                    model.PotionShopSlots.Add(new ShopPotionSlot { Info = allPotions[index] });
+                    allPotions.RemoveAt(index);
+                }
+            }
+
             model.OnShopChanged.Trigger();
         }
 

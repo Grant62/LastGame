@@ -255,6 +255,7 @@ MonoBehaviour:
   cursorHeightOffset: 275
   swordPrefab: {fileID: 5991985648103254268, guid: 6379372970572ac438e489f7bf5de908, type: 3}
   damageTextPrefab: {fileID: 336884958884566079, guid: 6fa58258382172f44b21c22bffe28a57, type: 3}
+  keywordCardPrefab: {fileID: 7568067405101673298, guid: fc695de0f158fe74ba9b4ca7642d4be8, type: 3}
   testMode: 1
   testDeckJson: {fileID: 4900000, guid: 7a78ad87074a6eb47abb549b57addac7, type: 3}
   invincibleMode: 0

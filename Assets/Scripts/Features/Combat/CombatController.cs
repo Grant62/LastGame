@@ -54,6 +54,8 @@ namespace Features.Combat
         [SerializeField] private SwordView swordPrefab;
         [BoxGroup("预制体")]
         [SerializeField] private DamageTextUI damageTextPrefab;
+        [BoxGroup("预制体")]
+        [SerializeField] private KeywordCard keywordCardPrefab;
 
         [BoxGroup("卡牌测试")]
         [SerializeField] private bool testMode;
@@ -80,7 +82,7 @@ namespace Features.Combat
 
         private void RegisterUtilities()
         {
-            GameMain.Interface.RegisterUtility<IBoardAccess>(new BoardAccess(board));
+            GameMain.Interface.RegisterUtility<IBoardAccess>(new BoardAccess(board, mHeroUI.transform));
 
             GameMain.Interface.RegisterUtility<IEnemyViewPool>(new EnemyViewPool(board.EnemyPrefab));
 
@@ -95,7 +97,7 @@ namespace Features.Combat
 
             CardView hoverCard = Instantiate(cardUIPrefab, overlayTrans);
             GameMain.Interface.RegisterUtility<ICardHoverDisplay>(
-                new CardHoverDisplay(hoverCard, this.GetUtility<IKeywordResolver>()));
+                new CardHoverDisplay(hoverCard, this.GetUtility<IKeywordResolver>(), keywordCardPrefab));
 
             GameObject arrowView = Instantiate(arrowViewPrefab, overlayTrans);
             GameObject arrowHead = arrowView.transform.Find("Head").gameObject;

@@ -8,6 +8,7 @@ namespace Configuration.ExcelData.Container
     public class EnemyGroupInfoContainer
     {
         private readonly Dictionary<int, EnemyGroupInfo> mData = new();
-        public IReadOnlyDictionary<int, EnemyGroupInfo> DataDic => mData;
+
+        public IReadOnlyDictionary<int, EnemyGroupInfo> DataDic { get => mData; }
     }
 }

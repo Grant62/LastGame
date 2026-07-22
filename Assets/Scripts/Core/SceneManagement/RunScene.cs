@@ -4,7 +4,6 @@ using Core.SceneManagement.Define;
 using Cysharp.Threading.Tasks;
 using Features.Card.Command;
 using Features.Card.Utility;
-using Features.Card.Utility;
 using Features.Hero.Command;
 using Features.Hero.Define;
 using QFramework;

@@ -1,11 +1,14 @@
 using Core.Systems;
 using Features.Card.Model;
 using Features.Card.System;
+using Features.Card.Utility;
 using Features.Combat.Model;
 using Features.Combat.System;
 using Features.Enemy.Model;
 using Features.Enemy.System;
 using Features.Hero.Model;
+using Features.Potion.Model;
+using Features.Potion.System;
 using Features.Resource.Model;
 using Features.Resource.System;
 using Features.Run.Model;
@@ -40,6 +43,7 @@ namespace Core.Architecture
             RegisterModel<IGameConfigModel>(new GameConfigModel());
             RegisterSystem<ISlotTargetSystem>(new SlotTargetSystem());
             RegisterUtility<IBinaryDataMgr>(new BinaryDataMgr());
+            RegisterUtility<ICardSpriteCache>(new CardSpriteCache());
             RegisterSystem<IInteractionSystem>(new InteractionSystem());
             RegisterSystem(new StatusTickSystem());
             RegisterSystem(new SpinDamageSystem());
@@ -52,6 +56,8 @@ namespace Core.Architecture
             RegisterSystem(new GmSystem());
             RegisterModel<IShopModel>(new ShopModel());
             RegisterSystem<IShopSystem>(new ShopSystem());
+            RegisterModel<IPotionModel>(new PotionModel());
+            RegisterSystem<IPotionSystem>(new PotionSystem());
         }
     }
 }

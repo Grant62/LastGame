@@ -162,19 +162,25 @@ namespace Features.Enemy.System
                 if (StatusHelper.HasStatus(hero.Statuses, StatusType.Weak))
                     damage = Mathf.FloorToInt(damage * 0.75f);
 
+                Transform heroTransform = this.GetUtility<IBoardAccess>().HeroTransform;
+
                 int remaining = damage;
                 if (hero.Armor.Value > 0)
                 {
                     int absorbed = Mathf.Min(hero.Armor.Value, remaining);
                     hero.Armor.Value -= absorbed;
                     remaining -= absorbed;
+                    this.GetUtility<IDamageTextSpawner>().Spawn(absorbed, heroTransform.position, Color.white);
                 }
 
                 if (remaining > 0 && hero.Invincible.Value)
                     remaining = 0;
 
                 if (remaining > 0)
+                {
                     hero.Health.Value -= remaining;
+                    this.GetUtility<IDamageTextSpawner>().Spawn(remaining, heroTransform.position, Color.red);
+                }
 
                 await UniTask.Delay(400);
 

@@ -8,6 +8,7 @@ namespace Configuration.ExcelData.Container
     public class FloorClearGoldInfoContainer
     {
         private readonly Dictionary<int, FloorClearGoldInfo> mData = new();
-        public IReadOnlyDictionary<int, FloorClearGoldInfo> DataDic => mData;
+
+        public IReadOnlyDictionary<int, FloorClearGoldInfo> DataDic { get => mData; }
     }
 }

@@ -8,6 +8,7 @@ namespace Configuration.ExcelData.Container
     public class RemoveCardCostInfoContainer
     {
         private readonly Dictionary<int, RemoveCardCostInfo> mData = new();
-        public IReadOnlyDictionary<int, RemoveCardCostInfo> DataDic => mData;
+
+        public IReadOnlyDictionary<int, RemoveCardCostInfo> DataDic { get => mData; }
     }
 }

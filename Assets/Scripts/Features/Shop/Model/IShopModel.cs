@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Features.Potion.Data;
 using Features.Shop.Data;
 using QFramework;
 
@@ -7,6 +8,7 @@ namespace Features.Shop.Model
     public interface IShopModel : IModel
     {
         List<ShopCardPackSlot> CardPackSlots { get; }
+        List<ShopPotionSlot> PotionShopSlots { get; }
         EasyEvent OnShopChanged { get; }
 
         int RemoveCount { get; }
