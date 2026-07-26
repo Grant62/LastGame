@@ -96,5 +96,6 @@ namespace Core.Architecture
                 new GameObject("GameRoot").AddComponent<GameRoot>();
             }
         }
+
     }
 }

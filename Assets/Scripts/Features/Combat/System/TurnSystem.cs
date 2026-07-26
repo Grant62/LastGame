@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Configuration.ExcelData.Container;
-using Configuration.ExcelData.DataClass;
 using Cysharp.Threading.Tasks;
 using Features.Combat.Event;
 using Features.Combat.Model;
 using Features.Combat.Utility;
 using Features.Combat.View.Board;
+using Features.Configuration.Model;
 using Features.Enemy.Data;
 using Features.Enemy.Define;
 using Features.Enemy.Event;
@@ -16,7 +15,7 @@ using Features.Enemy.View;
 using Features.Hero.Model;
 using Features.Run.Model;
 using QFramework;
-using Services.ExcelTool;
+using UnityEngine;
 
 namespace Features.Combat.System
 {
@@ -174,6 +173,8 @@ namespace Features.Combat.System
         private void SpawnOne(IEnemyModel enemyModel, BoardView board, int monsterId, int slot)
         {
             EnemyView enemyView = board.SpawnEnemy(slot);
+            if (enemyView == null)
+                return;
 
             int heroSlot = this.GetModel<IHeroModel>().CurSlotIndex.Value;
             IEnemyDefineModel defineModel = this.GetModel<IEnemyDefineModel>();
@@ -194,7 +195,7 @@ namespace Features.Combat.System
                 CurrentIntent = EnemyIntentType.Move
             };
 
-            enemyView.Init(monsterId, data.MaxHP, data.Damage);
+            enemyView.Init(data.MaxHP);
             enemyView.SetFacing(data.IsFacingRight);
             enemyModel.AddEnemy(data);
         }
@@ -230,12 +231,9 @@ namespace Features.Combat.System
         {
             mLevelQueueCache = new Dictionary<string, int[]>();
 
-            EnemyGroupInfoContainer container = this.GetUtility<IBinaryDataMgr>()
-                .GetTable<EnemyGroupInfoContainer>();
-            if (container == null)
-                return;
+            cfg.TbEnemyGroupInfo table = this.GetUtility<ILubanDataModel>().Tables.TbEnemyGroupInfo;
 
-            foreach (EnemyGroupInfo info in container.DataDic.Values)
+            foreach (cfg.EnemyGroupInfo info in table.DataList)
             {
                 string[] parts = info.Content.Split(',');
                 int[] queue = new int[parts.Length];

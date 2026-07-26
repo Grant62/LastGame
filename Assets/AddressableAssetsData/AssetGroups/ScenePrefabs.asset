@@ -11,9 +11,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
   m_Name: ScenePrefabs
-  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_EditorClassIdentifier: 
   m_GroupName: ScenePrefabs
-  m_GUID: 805bef5c5c51f6c4eb2fbb8ed8170c9d
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 2027fb7cf31ad224891e603d51fd5d1e
   m_SerializeEntries:
   - m_GUID: 2347a0379c4614c4caea1237023a4d7f
     m_Address: CombatRoomRoot
@@ -49,5 +51,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: bd0efc7142aef524d9304afec64a0ce5, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: dc93209960fe5b148a1b9646f72594f2, type: 2}
-    - {fileID: 11400000, guid: 7cf352f9bf2b6fe4bb849f0513436ca9, type: 2}
+    - {fileID: 11400000, guid: bededfffaa59dc1498f1400adebf16b5, type: 2}
+    - {fileID: 11400000, guid: f2f8bc7c9c6e4a2449624a2827b9a446, type: 2}

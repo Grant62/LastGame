@@ -1,7 +1,7 @@
-using Configuration.ExcelData.DataClass;
 using Core.Architecture;
 using DG.Tweening;
 using Features.Card.Utility;
+using Features.Combat.Command;
 using Features.Combat.Event;
 using Features.Combat.Interfaces;
 using Features.Combat.System;
@@ -13,6 +13,8 @@ using Features.Run.Model;
 using QFramework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
 
 namespace Features.Combat.UI
@@ -22,10 +24,9 @@ namespace Features.Combat.UI
         [SerializeField] private TextMeshProUGUI levelLabel;
         [SerializeField] private Image healthBarFill;
         [SerializeField] private Button[] potionSlots;
-        [SerializeField] private PotionPopup potionPopup;
 
-        private int mPendingThrowSlot = -1;
         private int mTargetingSlotIndex = -1;
+        private int mHoveredSlotIndex = -1;
 
         private void Start()
         {
@@ -52,9 +53,6 @@ namespace Features.Combat.UI
             potionModel.OnInventoryChanged.Register(RefreshPotionSlots)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            GameMain.Interface.RegisterEvent<PotionThrowRequestedEvent>(OnPotionThrowRequested)
-                .UnRegisterWhenGameObjectDestroyed(gameObject);
-
             for (int i = 0; i < potionSlots.Length; i++)
             {
                 int capturedIndex = i;
@@ -64,53 +62,92 @@ namespace Features.Combat.UI
             RefreshPotionSlots();
         }
 
-        private void OnPotionClicked(int slotIndex)
+        private async void OnPotionClicked(int slotIndex)
         {
             IPotionModel model = GameMain.Interface.GetModel<IPotionModel>();
-            PotionInfo potion = model.GetPotionAt(slotIndex);
+            cfg.PotionInfo potion = model.GetPotionAt(slotIndex);
             if (potion == null)
                 return;
 
             Sprite icon = GameMain.Interface.GetUtility<ICardSpriteCache>().GetSprite(potion.Address);
-            potionPopup.Show(
+
+            AsyncOperationHandle<GameObject> handle = Addressables.InstantiateAsync(
+                "PotionPopup", GameRoot.PopUILayer);
+            GameObject instance = await handle.Task;
+            PotionPopup popup = instance.GetComponent<PotionPopup>();
+            popup.Show(
                 potion,
                 icon,
-                () => { GameMain.Interface.SendCommand(new UsePotionCommand(slotIndex)); },
-                () =>
+                onUse: () =>
                 {
-                    mPendingThrowSlot = slotIndex;
-                    GameMain.Interface.SendEvent(new PotionThrowRequestedEvent { SlotIndex = slotIndex });
+                    GameMain.Interface.SendCommand(new UsePotionCommand(slotIndex));
                 },
-                () => { model.RemoveAt(slotIndex); }
+                onThrow: () =>
+                {
+                    mTargetingSlotIndex = slotIndex;
+                    Vector3 pos = potionSlots[slotIndex].transform.position;
+                    GameMain.Interface.SendCommand(new StartTargetingCommand(pos));
+                },
+                onDiscard: () =>
+                {
+                    model.RemoveAt(slotIndex);
+                }
             );
-        }
-
-        private void OnPotionThrowRequested(PotionThrowRequestedEvent e)
-        {
-            mTargetingSlotIndex = e.SlotIndex;
         }
 
         private void Update()
         {
-            if (mTargetingSlotIndex < 0)
-                return;
-
-            if (Input.GetMouseButtonDown(0))
+            if (mTargetingSlotIndex >= 0)
             {
-                ITargetingSystem targeting = GameMain.Interface.GetSystem<ITargetingSystem>();
-                ITargetable target = targeting.GetTargetAtMousePosition();
-                if (target is IDamageable)
+                if (Input.GetMouseButtonDown(0))
                 {
-                    GameMain.Interface.SendCommand(
-                        new UsePotionCommand(mTargetingSlotIndex, target));
-                    RefreshPotionSlots();
+                    ITargetingSystem targeting = GameMain.Interface.GetSystem<ITargetingSystem>();
+                    ITargetable target = targeting.GetTargetAtMousePosition();
+                    if (target is IDamageable)
+                    {
+                        GameMain.Interface.SendCommand(
+                            new UsePotionCommand(mTargetingSlotIndex, target));
+                        RefreshPotionSlots();
+                    }
+
+                    GameMain.Interface.SendCommand(new EndTargetingCommand());
+                    mTargetingSlotIndex = -1;
+                }
+                else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1))
+                {
+                    GameMain.Interface.SendCommand(new EndTargetingCommand());
+                    mTargetingSlotIndex = -1;
                 }
 
-                mTargetingSlotIndex = -1;
+                return;
             }
-            else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1))
+
+            int hovered = -1;
+            for (int i = 0; i < potionSlots.Length; i++)
             {
-                mTargetingSlotIndex = -1;
+                if (RectTransformUtility.RectangleContainsScreenPoint(
+                    (RectTransform)potionSlots[i].transform, Input.mousePosition))
+                {
+                    hovered = i;
+                    break;
+                }
+            }
+
+            if (hovered != mHoveredSlotIndex)
+            {
+                IPotionTooltip tooltip = GameMain.Interface.GetUtility<IPotionTooltip>();
+                if (mHoveredSlotIndex >= 0 && tooltip != null)
+                    tooltip.Hide();
+
+                mHoveredSlotIndex = hovered;
+
+                if (hovered >= 0)
+                {
+                    IPotionModel model = GameMain.Interface.GetModel<IPotionModel>();
+                    cfg.PotionInfo potion = model.GetPotionAt(hovered);
+                    if (potion != null)
+                        tooltip.Show(potion, potionSlots[hovered].transform.position);
+                }
             }
         }
 
@@ -120,7 +157,7 @@ namespace Features.Combat.UI
             ICardSpriteCache spriteCache = GameMain.Interface.GetUtility<ICardSpriteCache>();
             for (int i = 0; i < potionSlots.Length; i++)
             {
-                PotionInfo potion = model.GetPotionAt(i);
+                cfg.PotionInfo potion = model.GetPotionAt(i);
                 Image image = potionSlots[i].GetComponent<Image>();
                 if (potion != null)
                 {

@@ -4,6 +4,7 @@ using Features.Card.System;
 using Features.Card.Utility;
 using Features.Combat.Model;
 using Features.Combat.System;
+using Features.Configuration.Model;
 using Features.Enemy.Model;
 using Features.Enemy.System;
 using Features.Hero.Model;
@@ -18,7 +19,6 @@ using Features.Sword.Model;
 using Features.Sword.System;
 using Main.GM;
 using QFramework;
-using Services.ExcelTool;
 
 namespace Core.Architecture
 {
@@ -41,8 +41,8 @@ namespace Core.Architecture
             RegisterModel<ISwordModel>(new SwordModel());
             RegisterSystem<ISwordSystem>(new SwordSystem());
             RegisterModel<IGameConfigModel>(new GameConfigModel());
+            RegisterUtility<ILubanDataModel>(new LubanDataModel());
             RegisterSystem<ISlotTargetSystem>(new SlotTargetSystem());
-            RegisterUtility<IBinaryDataMgr>(new BinaryDataMgr());
             RegisterUtility<ICardSpriteCache>(new CardSpriteCache());
             RegisterSystem<IInteractionSystem>(new InteractionSystem());
             RegisterSystem(new StatusTickSystem());

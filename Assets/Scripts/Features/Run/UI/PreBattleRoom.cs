@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using Configuration.ExcelData.Container;
-using Configuration.ExcelData.DataClass;
 using Core.Architecture;
 using Core.SceneManagement;
 using Core.SceneManagement.Define;
@@ -11,13 +9,13 @@ using Features.Card.UI;
 using Features.Card.Utility;
 using Features.Card.View;
 using Features.Combat.Model;
+using Features.Configuration.Model;
 using Features.Hero.Command;
 using Features.Hero.Model;
 using Features.Run.Command;
 using Features.Run.Data;
 using Features.Run.Model;
 using QFramework;
-using Services.ExcelTool;
 using TMPro;
 using UnityEngine;
 
@@ -37,8 +35,9 @@ namespace Features.Run.UI
 
         private RoomPreviewData[] mData;
         private int mLastLayer;
-        private readonly Dictionary<string, EnemyGroupInfo> mInfoByLevelNum = new();
+        private readonly Dictionary<string, cfg.EnemyGroupInfo> mInfoByLevelNum = new();
         private int mSkippedStep = -1;
+        private bool mEntered;
 
         public new IArchitecture GetArchitecture()
         {
@@ -47,11 +46,17 @@ namespace Features.Run.UI
 
         public override UniTask OnSceneEnter(SceneLoadContext ctx)
         {
+            if (mEntered)
+            {
+                return UniTask.CompletedTask;
+            }
+            mEntered = true;
+
             GameMain.Interface.RegisterUtility<ICardViewPool>(new CardViewPool(cardViewPrefab, transform));
 
-            EnemyGroupInfoContainer table = this.GetUtility<IBinaryDataMgr>().GetTable<EnemyGroupInfoContainer>();
+            cfg.TbEnemyGroupInfo table = this.GetUtility<ILubanDataModel>().Tables.TbEnemyGroupInfo;
             mInfoByLevelNum.Clear();
-            foreach (EnemyGroupInfo info in table.DataDic.Values)
+            foreach (cfg.EnemyGroupInfo info in table.DataList)
                 mInfoByLevelNum[info.LevelNum] = info;
 
             IRunModel run = this.GetModel<IRunModel>();
@@ -117,7 +122,7 @@ namespace Features.Run.UI
                 else
                     state = RoomBoxState.Upcoming;
 
-                EnemyGroupInfo info = GetInfo(layer, step);
+                cfg.EnemyGroupInfo info = GetInfo(layer, step);
                 string levelType = info?.LevelType ?? "Normal";
                 string bossPreview = info?.Attribute ?? "";
                 bool canShortRest = step != 3;
@@ -129,10 +134,10 @@ namespace Features.Run.UI
             headerRestCountText.text = $"剩余短休次数: {shortRestCount}";
         }
 
-        private EnemyGroupInfo GetInfo(int layer, int step)
+        private cfg.EnemyGroupInfo GetInfo(int layer, int step)
         {
             string levelNum = $"{layer}-{step}";
-            mInfoByLevelNum.TryGetValue(levelNum, out EnemyGroupInfo info);
+            mInfoByLevelNum.TryGetValue(levelNum, out cfg.EnemyGroupInfo info);
             return info;
         }
 

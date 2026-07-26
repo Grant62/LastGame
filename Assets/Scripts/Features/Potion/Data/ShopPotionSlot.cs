@@ -1,10 +1,8 @@
-using Configuration.ExcelData.DataClass;
-
 namespace Features.Potion.Data
 {
     public class ShopPotionSlot
     {
-        public PotionInfo Info;
+        public cfg.PotionInfo Info;
         public bool IsSold;
     }
 }

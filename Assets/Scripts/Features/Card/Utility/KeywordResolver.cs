@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Configuration.ExcelData.Container;
-using Configuration.ExcelData.DataClass;
 
 namespace Features.Card.Utility
 {
@@ -10,12 +8,12 @@ namespace Features.Card.Utility
         private static readonly Regex KeywordRegex = new(@"【(.+?)】");
         private readonly Dictionary<string, string> mEntries = new();
 
-        public KeywordResolver(EntryInfoContainer container)
+        public KeywordResolver(cfg.TbEntryInfo entryTable)
         {
-            if (container?.DataDic == null)
+            if (entryTable?.DataList == null)
                 return;
 
-            foreach (EntryInfo entry in container.DataDic.Values)
+            foreach (cfg.EntryInfo entry in entryTable.DataList)
             {
                 if (!string.IsNullOrEmpty(entry.Name))
                     mEntries[entry.Name] = entry.Desc ?? "";

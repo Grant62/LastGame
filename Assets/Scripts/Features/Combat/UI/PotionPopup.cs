@@ -1,7 +1,7 @@
 using System;
-using Configuration.ExcelData.DataClass;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
 
 namespace Features.Combat.UI
@@ -30,7 +30,7 @@ namespace Features.Combat.UI
             });
         }
 
-        public void Show(PotionInfo potion, Sprite icon, Action onUse, Action onThrow, Action onDiscard)
+        public void Show(cfg.PotionInfo potion, Sprite icon, Action onUse, Action onThrow, Action onDiscard)
         {
             nameText.text = potion.Name;
             descText.text = potion.Desc;
@@ -57,6 +57,8 @@ namespace Features.Combat.UI
         private void Hide()
         {
             canvas.enabled = false;
+            Addressables.ReleaseInstance(gameObject);
+            Destroy(gameObject);
         }
     }
 }

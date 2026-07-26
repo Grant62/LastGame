@@ -28,53 +28,52 @@ namespace Core.SceneManagement
 
         protected override void OnInit() { }
 
-        public async UniTask LoadMainScene(string sceneId, SceneLoadContext ctx = null)
+        public UniTask LoadMainScene(string sceneId, SceneLoadContext ctx = null)
         {
-            if (mMainContainer.CurrentScene != null)
-                this.SendEvent(new SceneExitedEvent { SceneId = mMainContainer.CurrentScene.SceneId });
+            return LoadScene(sceneId, mMainContainer, ctx, isMain: true);
+        }
 
-            await mMainContainer.SetCurrentScene(null);
+        public UniTask LoadRoomScene(string sceneId, SceneLoadContext ctx = null)
+        {
+            if (mRoomContainer == null)
+                return UniTask.CompletedTask;
+
+            return LoadScene(sceneId, mRoomContainer, ctx, isMain: false);
+        }
+
+        private async UniTask LoadScene(string sceneId, SceneContainer container, SceneLoadContext ctx, bool isMain)
+        {
+            if (container.CurrentScene != null)
+            {
+                string exitingId = container.CurrentScene.SceneId;
+                if (isMain)
+                    this.SendEvent(new SceneExitedEvent { SceneId = exitingId });
+                else
+                    this.SendEvent(new RoomExitedEvent { RoomId = exitingId });
+            }
+
+            await container.SetCurrentScene(null);
 
             AsyncOperationHandle<GameObject> handle = Addressables.LoadAssetAsync<GameObject>(sceneId);
             GameObject prefab = await handle.Task;
             GameObject instance = Object.Instantiate(prefab);
             SceneBase scene = instance.GetComponent<SceneBase>();
 
-            await mMainContainer.SetCurrentScene(scene, ctx);
-
-            this.SendEvent(new SceneReadyEvent { SceneId = sceneId });
-
-            Addressables.Release(handle);
-        }
-
-        public async UniTask LoadRoomScene(string sceneId, SceneLoadContext ctx = null)
-        {
-            if (mRoomContainer == null)
+            if (scene == null)
             {
-                Debug.LogError("[SceneManager] LoadRoomScene called but mRoomContainer is null. Call SetRoomContainer first.");
+                Object.Destroy(instance);
+                Addressables.Release(handle);
                 return;
             }
 
-            if (mRoomContainer.CurrentScene != null)
-                this.SendEvent(new RoomExitedEvent { RoomId = mRoomContainer.CurrentScene.SceneId });
+            await container.SetCurrentScene(scene, ctx);
 
-            await mRoomContainer.SetCurrentScene(null);
-
-            AsyncOperationHandle<GameObject> handle = Addressables.LoadAssetAsync<GameObject>(sceneId);
-            GameObject prefab = await handle.Task;
-            GameObject instance = Object.Instantiate(prefab);
-            SceneBase scene = instance.GetComponent<SceneBase>();
-
-            await mRoomContainer.SetCurrentScene(scene, ctx);
-
-            this.SendEvent(new RoomReadyEvent { RoomId = sceneId });
+            if (isMain)
+                this.SendEvent(new SceneReadyEvent { SceneId = sceneId });
+            else
+                this.SendEvent(new RoomReadyEvent { RoomId = sceneId });
 
             Addressables.Release(handle);
-        }
-
-        public async UniTask PreloadScene(string sceneId)
-        {
-            await UniTask.CompletedTask;
         }
     }
 }

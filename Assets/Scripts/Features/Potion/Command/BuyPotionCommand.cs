@@ -1,4 +1,3 @@
-using Configuration.ExcelData.DataClass;
 using Features.Potion.Model;
 using QFramework;
 
@@ -6,9 +5,9 @@ namespace Features.Potion.Command
 {
     public class BuyPotionCommand : AbstractCommand
     {
-        private readonly PotionInfo mPotion;
+        private readonly cfg.PotionInfo mPotion;
 
-        public BuyPotionCommand(PotionInfo potion)
+        public BuyPotionCommand(cfg.PotionInfo potion)
         {
             mPotion = potion;
         }

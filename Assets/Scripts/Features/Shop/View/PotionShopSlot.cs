@@ -1,5 +1,4 @@
 using System;
-using Configuration.ExcelData.DataClass;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -25,7 +24,7 @@ namespace Features.Shop.View
                 clickButton.onClick.AddListener(() => mOnBuy?.Invoke());
         }
 
-        public void Render(PotionInfo info, Sprite sprite, bool isSold, Action onBuy)
+        public void Render(cfg.PotionInfo info, Sprite sprite, bool isSold, Action onBuy)
         {
             mOnBuy = onBuy;
             icon.sprite = sprite;

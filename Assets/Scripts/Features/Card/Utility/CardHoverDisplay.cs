@@ -4,7 +4,6 @@ using DG.Tweening;
 using Features.Card.Data;
 using Features.Card.View;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Features.Card.Utility
 {
@@ -12,24 +11,23 @@ namespace Features.Card.Utility
     {
         private readonly CardView mCardView;
         private readonly IKeywordResolver mKeywordResolver;
-        private readonly KeywordCard mKeywordCardPrefab;
+        private readonly IKeywordCardPool mPool;
         private readonly float mHoverScale = 1.3f;
         private readonly List<KeywordCard> mKeywordCards = new();
 
-        private const float CardWidth = 360f;
-        private const float CardSpacing = 12f;
-        private const float ColumnGap = 16f;
-        private const float ColumnOffsetX = 190f;
+        private const float CardWidth = 260f;
+        private const float CardSpacing = 9f;
+        private const float ColumnGap = 9f;
+        private const float ColumnOffsetX = 140f;
         private const float StartOffsetY = 200f;
-        private const float ScreenMargin = 50f;
-        private const float DescWidth = 350f;
+        private const float DescWidth = 260f;
         private const float CardMinHeight = 60f;
 
-        public CardHoverDisplay(CardView hoverCard, IKeywordResolver keywordResolver, KeywordCard keywordCardPrefab)
+        public CardHoverDisplay(CardView hoverCard, IKeywordResolver keywordResolver, IKeywordCardPool pool)
         {
             mCardView = hoverCard;
             mKeywordResolver = keywordResolver;
-            mKeywordCardPrefab = keywordCardPrefab;
+            mPool = pool;
 
             mCardView.CanvasGroup.blocksRaycasts = false;
             mCardView.HandDragHandler.enabled = false;
@@ -41,13 +39,8 @@ namespace Features.Card.Utility
         {
             mCardView.Setup(data);
 
-            Rect canvasRect = ((RectTransform)GameRoot.CombatOverlay).rect;
-            float screenHeight = canvasRect.height;
-            float screenWidth = canvasRect.width;
-
             List<(string name, string desc)> keywords = mKeywordResolver.CollectKeywords(data.Desc);
-            float startX = position.x + mCardView.RectTransform.rect.width * mHoverScale * 0.5f + ColumnOffsetX;
-            float curX = startX;
+            float curX = position.x + mCardView.RectTransform.rect.width * mHoverScale * 0.5f + ColumnOffsetX;
             float curTop = position.y + StartOffsetY;
             float columnTop = curTop;
 
@@ -56,7 +49,7 @@ namespace Features.Card.Utility
                 (string name, string desc) = keywords[i];
                 desc = mKeywordResolver.FormatDescription(desc.Replace("\\n", "\n"));
 
-                KeywordCard card = Object.Instantiate(mKeywordCardPrefab, GameRoot.CombatOverlay, false);
+                KeywordCard card = mPool.Get(GameRoot.CombatOverlay);
                 card.Setup(name, desc);
                 mKeywordCards.Add(card);
 
@@ -70,7 +63,7 @@ namespace Features.Card.Utility
                 descRt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, descHeight);
                 rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, cardHeight);
 
-                if (curTop - cardHeight < ScreenMargin)
+                if (curTop - cardHeight < 0)
                 {
                     curX += CardWidth + ColumnGap;
                     curTop = columnTop;
@@ -90,7 +83,7 @@ namespace Features.Card.Utility
         public void Hide()
         {
             foreach (KeywordCard card in mKeywordCards)
-                Object.Destroy(card.gameObject);
+                mPool.Return(card);
             mKeywordCards.Clear();
 
             mCardView.RectTransform.DOScale(1f, 0.08f).SetEase(Ease.InCubic)

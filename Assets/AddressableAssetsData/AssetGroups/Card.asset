@@ -11,9 +11,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
   m_Name: Card
-  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_EditorClassIdentifier: 
   m_GroupName: Card
-  m_GUID: 1ec8b9977ea710d45aa2d954cb321bb9
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 85042fcc4fbd0c54b8286718223d1176
   m_SerializeEntries:
   - m_GUID: 070beb9c1cb416e4faada39a8206e9f9
     m_Address: bull
@@ -44,5 +46,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: bd0efc7142aef524d9304afec64a0ce5, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: a438bb64a3e24dd4c9d37b6109554b88, type: 2}
-    - {fileID: 11400000, guid: daf3e6a5d73f35848938c6a4f0a2e1b6, type: 2}
+    - {fileID: 11400000, guid: b5be54c1af7c9ab4d90d9587a0d44d30, type: 2}
+    - {fileID: 11400000, guid: f2a8449392074a04b80a5545c908d1c0, type: 2}

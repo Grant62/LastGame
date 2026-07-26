@@ -1,34 +1,32 @@
 using System;
 using System.Collections.Generic;
-using Configuration.ExcelData.Container;
-using Configuration.ExcelData.DataClass;
 using Core.Systems;
 using Features.Combat.Interfaces;
+using Features.Configuration.Model;
 using Features.Hero.Model;
 using Features.Potion.Model;
 using Features.Resource.Model;
 using QFramework;
-using Services.ExcelTool;
 using UnityEngine;
 
 namespace Features.Potion.System
 {
     public class PotionSystem : AbstractSystem, IPotionSystem
     {
-        private PotionInfoContainer mPotionTable;
+        private cfg.TbPotionInfo mPotionTable;
 
         protected override void OnInit()
         {
-            mPotionTable = this.GetUtility<IBinaryDataMgr>().GetTable<PotionInfoContainer>();
+            mPotionTable = this.GetUtility<ILubanDataModel>().Tables.TbPotionInfo;
         }
 
-        public List<PotionInfo> GenerateShopPotions()
+        public List<cfg.PotionInfo> GenerateShopPotions()
         {
-            List<PotionInfo> result = new();
-            if (mPotionTable?.DataDic == null || mPotionTable.DataDic.Count == 0)
+            List<cfg.PotionInfo> result = new();
+            if (mPotionTable.DataList.Count == 0)
                 return result;
 
-            List<PotionInfo> allPotions = new(mPotionTable.DataDic.Values);
+            List<cfg.PotionInfo> allPotions = new(mPotionTable.DataList);
             IRandomSystem random = this.GetSystem<IRandomSystem>();
 
             int count = Math.Min(3, allPotions.Count);
@@ -45,7 +43,7 @@ namespace Features.Potion.System
         public void UsePotion(int slotIndex, ITargetable target = null)
         {
             IPotionModel model = this.GetModel<IPotionModel>();
-            PotionInfo potion = model.GetPotionAt(slotIndex);
+            cfg.PotionInfo potion = model.GetPotionAt(slotIndex);
             if (potion == null)
                 return;
 

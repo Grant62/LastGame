@@ -274,7 +274,8 @@ namespace QFramework
         [DidReloadScripts]
         private static void Compile()
         {
-            Default.OnCompile();
+            try { Default.OnCompile(); }
+            catch (Exception) { }
         }
     }
 }

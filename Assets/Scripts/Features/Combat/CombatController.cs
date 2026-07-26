@@ -16,6 +16,7 @@ using Features.Combat.Command;
 using Features.Combat.Event;
 using Features.Combat.Model;
 using Features.Combat.System;
+using Features.Combat.UI;
 using Features.Combat.Utility;
 using Features.Combat.View.Board;
 using Features.Enemy.Command;
@@ -96,8 +97,12 @@ namespace Features.Combat
             Transform overlayTrans = GameRoot.CombatOverlay;
 
             CardView hoverCard = Instantiate(cardUIPrefab, overlayTrans);
+            IKeywordCardPool keywordCardPool = new KeywordCardPool(keywordCardPrefab, transform);
+            GameMain.Interface.RegisterUtility<IKeywordCardPool>(keywordCardPool);
             GameMain.Interface.RegisterUtility<ICardHoverDisplay>(
-                new CardHoverDisplay(hoverCard, this.GetUtility<IKeywordResolver>(), keywordCardPrefab));
+                new CardHoverDisplay(hoverCard, this.GetUtility<IKeywordResolver>(), keywordCardPool));
+            GameMain.Interface.RegisterUtility<IPotionTooltip>(
+                new PotionTooltip(this.GetUtility<IKeywordResolver>(), keywordCardPool));
 
             GameObject arrowView = Instantiate(arrowViewPrefab, overlayTrans);
             GameObject arrowHead = arrowView.transform.Find("Head").gameObject;

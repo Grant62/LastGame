@@ -268,8 +268,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u56DE\u590D15\u70B9\u751F\u547D\u503C"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 52310d8fa5baa854da1b8e4102d22fcf, type: 2}
-  m_sharedMaterial: {fileID: -8440876160903525539, guid: 52310d8fa5baa854da1b8e4102d22fcf, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: be0bae706e7ab4247ba9818809ba9e33, type: 2}
+  m_sharedMaterial: {fileID: 0, guid: be0bae706e7ab4247ba9818809ba9e33, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -525,8 +525,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u7EA2\u836F\u6C34"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 52310d8fa5baa854da1b8e4102d22fcf, type: 2}
-  m_sharedMaterial: {fileID: -8440876160903525539, guid: 52310d8fa5baa854da1b8e4102d22fcf, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: be0bae706e7ab4247ba9818809ba9e33, type: 2}
+  m_sharedMaterial: {fileID: 0, guid: be0bae706e7ab4247ba9818809ba9e33, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -661,8 +661,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u4F7F\u7528"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 52310d8fa5baa854da1b8e4102d22fcf, type: 2}
-  m_sharedMaterial: {fileID: -8440876160903525539, guid: 52310d8fa5baa854da1b8e4102d22fcf, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: be0bae706e7ab4247ba9818809ba9e33, type: 2}
+  m_sharedMaterial: {fileID: 0, guid: be0bae706e7ab4247ba9818809ba9e33, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -872,8 +872,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u4E22\u5F03"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 52310d8fa5baa854da1b8e4102d22fcf, type: 2}
-  m_sharedMaterial: {fileID: -8440876160903525539, guid: 52310d8fa5baa854da1b8e4102d22fcf, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: be0bae706e7ab4247ba9818809ba9e33, type: 2}
+  m_sharedMaterial: {fileID: 0, guid: be0bae706e7ab4247ba9818809ba9e33, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -955,7 +955,7 @@ GameObject:
   - component: {fileID: 1903964794837758270}
   - component: {fileID: 2664759020643523431}
   m_Layer: 5
-  m_Name: PotionPopup
+  m_Name: PotionPopup 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

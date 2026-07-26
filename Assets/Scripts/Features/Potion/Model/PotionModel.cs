@@ -1,14 +1,13 @@
 using System.Collections.Generic;
-using Configuration.ExcelData.DataClass;
 using QFramework;
 
 namespace Features.Potion.Model
 {
     public class PotionModel : AbstractModel, IPotionModel
     {
-        private readonly List<PotionInfo> mInventory = new();
+        private readonly List<cfg.PotionInfo> mInventory = new();
 
-        public IReadOnlyList<PotionInfo> Inventory { get => mInventory; }
+        public IReadOnlyList<cfg.PotionInfo> Inventory { get => mInventory; }
 
         public int MaxSlots { get => 3; }
 
@@ -16,7 +15,7 @@ namespace Features.Potion.Model
 
         public EasyEvent OnInventoryChanged { get; } = new();
 
-        public void AddPotion(PotionInfo potion)
+        public void AddPotion(cfg.PotionInfo potion)
         {
             if (IsFull)
                 return;
@@ -34,7 +33,7 @@ namespace Features.Potion.Model
             OnInventoryChanged.Trigger();
         }
 
-        public PotionInfo GetPotionAt(int index)
+        public cfg.PotionInfo GetPotionAt(int index)
         {
             if (index < 0 || index >= mInventory.Count)
                 return null;

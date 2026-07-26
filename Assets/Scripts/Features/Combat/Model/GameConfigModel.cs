@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using Configuration.ExcelData.Container;
-using Configuration.ExcelData.DataClass;
+using Features.Configuration.Model;
 using QFramework;
-using Services.ExcelTool;
 
 namespace Features.Combat.Model
 {
@@ -26,11 +24,12 @@ namespace Features.Combat.Model
 
         protected override void OnInit()
         {
-            IBinaryDataMgr mgr = this.GetUtility<IBinaryDataMgr>();
+            cfg.Tables tables = this.GetUtility<ILubanDataModel>().Tables;
 
-            GameBalanceInfoContainer balance = mgr.GetTable<GameBalanceInfoContainer>();
-            if (balance?.DataDic != null && balance.DataDic.TryGetValue(1, out GameBalanceInfo b))
+            var balanceList = tables.TbGameBalanceInfo.DataList;
+            if (balanceList.Count > 0)
             {
+                cfg.GameBalanceInfo b = balanceList[0];
                 InitialEnergy = b.InitialEnergy;
                 CardsPerTurn = b.CardsPerTurn;
                 MaxStepsPerLayer = b.MaxStepsPerLayer;
@@ -41,24 +40,19 @@ namespace Features.Combat.Model
                 VulnerableMultiplier = b.VulnerableMultiplier;
             }
 
-            FloorClearGoldInfoContainer goldConfig = mgr.GetTable<FloorClearGoldInfoContainer>();
-            if (goldConfig?.DataDic != null)
-            {
-                foreach (FloorClearGoldInfo info in goldConfig.DataDic.Values)
-                    mFloorClearGold[info.Step] = info.Gold;
-            }
+            foreach (cfg.FloorClearGoldInfo info in tables.TbFloorClearGoldInfo.DataList)
+                mFloorClearGold[info.Step] = info.Gold;
 
-            EntryInfoContainer container = mgr.GetTable<EntryInfoContainer>();
-            if (container?.DataDic != null)
+            var entryList = tables.TbEntryInfo.DataList;
+            foreach (cfg.EntryInfo e in entryList)
             {
-                IReadOnlyDictionary<int, EntryInfo> dic = container.DataDic;
-                if (dic.TryGetValue(6, out EntryInfo e))
+                if (e.Id == 6)
                     SwordPathDamage = e.Value;
-                if (dic.TryGetValue(10, out e))
+                if (e.Id == 10)
                     LinkBlockPerSword = e.Value;
-                if (dic.TryGetValue(11, out e))
+                if (e.Id == 11)
                     SpinBaseDamage = e.Value;
-                if (dic.TryGetValue(12, out e))
+                if (e.Id == 12)
                     SpiritPathDamage = e.Value;
             }
         }

@@ -1,11 +1,9 @@
 using System;
-using Configuration.ExcelData.Container;
-using Configuration.ExcelData.DataClass;
 using Features.Card.Define;
 using Features.Card.Model;
 using Features.Card.Utility;
+using Features.Configuration.Model;
 using QFramework;
-using Services.ExcelTool;
 
 namespace Features.Card.Command
 {
@@ -18,9 +16,9 @@ namespace Features.Card.Command
             if (model.Defines.Count > 0)
                 return;
 
-            CardInfoContainer container = this.GetUtility<IBinaryDataMgr>().GetTable<CardInfoContainer>();
+            cfg.TbCardInfo table = this.GetUtility<ILubanDataModel>().Tables.TbCardInfo;
 
-            foreach (CardInfo info in container.DataDic.Values)
+            foreach (cfg.CardInfo info in table.DataList)
             {
                 model.Register(new CardDefine
                 {
@@ -36,9 +34,9 @@ namespace Features.Card.Command
                     SlotDistance = info.SlotDistance,
                     EffectSlots = new[]
                     {
-                        MakeSlot(info.Effect1_Type, info.Effect1_Target, info.Effect1_Param1, info.Effect1_Param2, info.Effect1_Condition),
-                        MakeSlot(info.Effect2_Type, info.Effect2_Target, info.Effect2_Param1, info.Effect2_Param2, info.Effect2_Condition),
-                        MakeSlot(info.Effect3_Type, info.Effect3_Target, info.Effect3_Param1, info.Effect3_Param2, info.Effect3_Condition)
+                        MakeSlot(info.Effect1Type, info.Effect1Target, info.Effect1Param1, info.Effect1Param2, info.Effect1Condition),
+                        MakeSlot(info.Effect2Type, info.Effect2Target, info.Effect2Param1, info.Effect2Param2, info.Effect2Condition),
+                        MakeSlot(info.Effect3Type, info.Effect3Target, info.Effect3Param1, info.Effect3Param2, info.Effect3Condition)
                     }
                 });
             }

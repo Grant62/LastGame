@@ -1,12 +1,10 @@
 using System.Collections.Generic;
-using Configuration.ExcelData.Container;
-using Configuration.ExcelData.DataClass;
 using Features.Card.Data;
 using Features.Card.Define;
 using Features.Card.Model;
 using Features.Card.System;
+using Features.Configuration.Model;
 using QFramework;
-using Services.ExcelTool;
 
 namespace Features.Combat.Command
 {
@@ -14,18 +12,16 @@ namespace Features.Combat.Command
     {
         protected override void OnExecute()
         {
-            IBinaryDataMgr dataMgr = this.GetUtility<IBinaryDataMgr>();
-            CardInfoContainer cardContainer = dataMgr.GetTable<CardInfoContainer>();
-            StartingCardInfoContainer startContainer = dataMgr.GetTable<StartingCardInfoContainer>();
+            cfg.Tables tables = this.GetUtility<ILubanDataModel>().Tables;
 
             Dictionary<string, int> nameToId = new();
-            foreach (CardInfo info in cardContainer.DataDic.Values)
+            foreach (cfg.CardInfo info in tables.TbCardInfo.DataList)
                 nameToId[info.Name] = info.CardId;
 
             ICardDefineModel defines = this.GetModel<ICardDefineModel>();
             List<CardData> deck = new();
 
-            foreach (StartingCardInfo start in startContainer.DataDic.Values)
+            foreach (cfg.StartingCardInfo start in tables.TbStartingCardInfo.DataList)
             {
                 if (nameToId.TryGetValue(start.CardName, out int cardId)
                     && defines.TryGet(cardId, out CardDefine define))

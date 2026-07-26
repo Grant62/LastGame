@@ -14,7 +14,5 @@ namespace Core.SceneManagement
         UniTask LoadMainScene(string sceneId, SceneLoadContext ctx = null);
 
         UniTask LoadRoomScene(string sceneId, SceneLoadContext ctx = null);
-
-        UniTask PreloadScene(string sceneId);
     }
 }

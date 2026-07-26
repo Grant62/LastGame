@@ -1,13 +1,12 @@
-using Configuration.ExcelData.Container;
 using Core.Architecture;
 using Core.SceneManagement.Define;
 using Cysharp.Threading.Tasks;
 using Features.Card.Command;
 using Features.Card.Utility;
+using Features.Configuration.Model;
 using Features.Hero.Command;
 using Features.Hero.Define;
 using QFramework;
-using Services.ExcelTool;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -31,14 +30,14 @@ namespace Core.SceneManagement
 
             this.GetSystem<ISceneManager>().SetRoomContainer(mRoomContainer);
 
-            InitRunData();
+            await InitRunData();
 
             await this.GetSystem<ISceneManager>().LoadRoomScene("PreBattleRoomRoot");
 
             _ = Addressables.InstantiateAsync("TopBarPanel", GameRoot.CommonLayer);
         }
 
-        private void InitRunData()
+        private async UniTask InitRunData()
         {
             this.SendCommand<LoadCardDefinesCommand>();
 
@@ -48,12 +47,12 @@ namespace Core.SceneManagement
                 InitialHealth = 80
             }));
 
-            EntryInfoContainer entryContainer = this.GetUtility<IBinaryDataMgr>().GetTable<EntryInfoContainer>();
-            GameMain.Interface.RegisterUtility<IKeywordResolver>(new KeywordResolver(entryContainer));
+            cfg.TbEntryInfo entryTable = this.GetUtility<ILubanDataModel>().Tables.TbEntryInfo;
+            GameMain.Interface.RegisterUtility<IKeywordResolver>(new KeywordResolver(entryTable));
             GameMain.Interface.RegisterUtility<ICardSpriteCache>(new CardSpriteCache());
 
             AsyncOperationHandle<TextAsset> handle = Addressables.LoadAssetAsync<TextAsset>("TestDeck");
-            handle.WaitForCompletion();
+            await handle.Task;
             if (handle.Result != null)
                 this.SendCommand(new InitDeckFromJsonCommand(handle.Result));
         }

@@ -11,9 +11,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
   m_Name: UIPanel
-  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_EditorClassIdentifier: 
   m_GroupName: UIPanel
-  m_GUID: f1118252d6b37da41a646e5c4f313038
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 46cb65eb57f3bd94999772b2682b00be
   m_SerializeEntries:
   - m_GUID: 02b47f9d9f1ed754f966ef9809393aea
     m_Address: GmPanel
@@ -30,7 +32,7 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5e6a338a48ddfc346ae0c37014d86045
+  - m_GUID: 35ad4ba5f222c93439eb584485b81c51
     m_Address: PotionPopup
     m_ReadOnly: 0
     m_SerializedLabels: []
@@ -59,5 +61,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: bd0efc7142aef524d9304afec64a0ce5, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 873616277cc6445459aa037d33f640dd, type: 2}
-    - {fileID: 11400000, guid: af7b73999b274ad47bacff6c26196a23, type: 2}
+    - {fileID: 11400000, guid: 21f5e9783c489ec40891e1b703fc8f64, type: 2}
+    - {fileID: 11400000, guid: fd581147e7c32ba4495c6b26adfdf7d9, type: 2}

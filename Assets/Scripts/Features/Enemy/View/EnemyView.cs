@@ -34,8 +34,6 @@ namespace Features.Enemy.View
         [SerializeField] private Sprite moveIconSprite;
         [SerializeField] private Sprite moveAttackIconSprite;
 
-        public int MonsterId { get; private set; }
-        public int Damage { get; private set; }
         public int SlotIndex { get; set; }
 
         public List<StatusModifier> Statuses { get; } = new();
@@ -49,13 +47,14 @@ namespace Features.Enemy.View
             return GameMain.Interface;
         }
 
-        public void Init(int monsterId, int maxHealth, int damage)
+        public void Init(int maxHealth)
         {
-            MonsterId = monsterId;
             mHealth = maxHealth;
             mMaxHealth = maxHealth;
             mArmor = 0;
-            Damage = damage;
+
+            if (HealthBarFill == null || HealthText == null || shieldView == null) return;
+
             RefreshHealthBar(false);
             shieldView.SetArmor(0);
 
@@ -75,7 +74,7 @@ namespace Features.Enemy.View
                     mSpineTrans = mSkeleton.transform;
             }
 
-            if (mSkeleton != null)
+            if (mSkeleton != null && mSkeleton.AnimationState != null)
             {
                 mSkeleton.AnimationState.ClearTracks();
                 mSkeleton.AnimationState.SetAnimation(0, "ready", true);

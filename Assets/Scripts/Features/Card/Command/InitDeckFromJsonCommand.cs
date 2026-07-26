@@ -23,10 +23,7 @@ namespace Features.Card.Command
                 "{\"entries\":" + mJson.text + "}");
 
             if (list?.entries == null || list.entries.Length == 0)
-            {
-                Debug.LogWarning("Deck JSON is empty");
                 return;
-            }
 
             ICardDefineModel defines = this.GetModel<ICardDefineModel>();
             List<CardData> deck = new();
@@ -34,10 +31,7 @@ namespace Features.Card.Command
             foreach (CardAmountEntry entry in list.entries)
             {
                 if (!defines.TryGet(entry.cardId, out CardDefine define))
-                {
-                    Debug.LogWarning($"CardDefine not found for id={entry.cardId}, skipped");
                     continue;
-                }
 
                 for (int i = 0; i < entry.amount; i++)
                     deck.Add(define.CreateCardData());

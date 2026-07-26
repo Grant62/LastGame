@@ -35,7 +35,9 @@ namespace Features.Combat.View.Board
         [SerializeField] private float moveDuration = 0.15f;
 
         private readonly List<SlotView> mSlots = new();
-        public List<EnemyView> EnemyViews { get; } = new();
+        private readonly List<EnemyView> mEnemyViews = new();
+
+        public IReadOnlyList<EnemyView> EnemyViews => mEnemyViews;
 
         public int SlotCount { get => mSlots.Count; }
 
@@ -55,7 +57,7 @@ namespace Features.Combat.View.Board
             IEnemyModel enemyModel = this.GetModel<IEnemyModel>();
             enemyModel.RemoveEnemy(@event.SlotIndex);
 
-            for (int i = EnemyViews.Count - 1; i >= 0; i--)
+            for (int i = mEnemyViews.Count - 1; i >= 0; i--)
             {
                 if (EnemyViews[i].SlotIndex == @event.SlotIndex)
                 {
@@ -67,18 +69,18 @@ namespace Features.Combat.View.Board
 
         public void ClearAllEnemies()
         {
-            for (int i = EnemyViews.Count - 1; i >= 0; i--)
+            for (int i = mEnemyViews.Count - 1; i >= 0; i--)
             {
                 EnemyViews[i].gameObject.SetActive(false);
                 RemoveEnemy(EnemyViews[i]);
             }
 
-            EnemyViews.Clear();
+            mEnemyViews.Clear();
         }
 
         public IEnumerable<EnemyView> GetActiveEnemies()
         {
-            foreach (EnemyView enemy in EnemyViews)
+            foreach (EnemyView enemy in mEnemyViews)
             {
                 if (enemy.isActiveAndEnabled)
                     yield return enemy;
@@ -127,14 +129,16 @@ namespace Features.Combat.View.Board
         {
             SlotView slot = mSlots[slotIndex];
             EnemyView enemy = this.GetUtility<IEnemyViewPool>().Get(slot.transform);
+            if (enemy == null)
+                return null;
             enemy.SlotIndex = slotIndex;
-            EnemyViews.Add(enemy);
+            mEnemyViews.Add(enemy);
             return enemy;
         }
 
         public void RemoveEnemy(EnemyView enemy)
         {
-            EnemyViews.Remove(enemy);
+            mEnemyViews.Remove(enemy);
             this.GetUtility<IEnemyViewPool>().Return(enemy);
         }
 
@@ -151,7 +155,7 @@ namespace Features.Combat.View.Board
 
         public int FindRightEmptySlot(int heroSlot)
         {
-            for (int i = 8; i > heroSlot; i--)
+            for (int i = mSlots.Count - 1; i > heroSlot; i--)
             {
                 if (GetEnemyAtSlot(i) == null)
                     return i;

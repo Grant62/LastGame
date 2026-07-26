@@ -1,4 +1,3 @@
-using Configuration.ExcelData.DataClass;
 using Features.Combat.Interfaces;
 using Features.Hero.Model;
 using Features.Potion.Model;
@@ -22,7 +21,7 @@ namespace Features.Potion.Command
         protected override void OnExecute()
         {
             IPotionModel model = this.GetModel<IPotionModel>();
-            PotionInfo potion = model.GetPotionAt(mSlotIndex);
+            cfg.PotionInfo potion = model.GetPotionAt(mSlotIndex);
             if (potion == null)
                 return;
 

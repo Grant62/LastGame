@@ -1,9 +1,7 @@
-using Configuration.ExcelData.Container;
-using Configuration.ExcelData.DataClass;
+using Features.Configuration.Model;
 using Features.Enemy.Define;
 using Features.Enemy.Model;
 using QFramework;
-using Services.ExcelTool;
 
 namespace Features.Enemy.Command
 {
@@ -15,11 +13,9 @@ namespace Features.Enemy.Command
             if (model.Defines.Count > 0)
                 return;
 
-            EnemyInfoContainer container = this.GetUtility<IBinaryDataMgr>().GetTable<EnemyInfoContainer>();
-            if (container == null)
-                return;
+            cfg.TbEnemyInfo table = this.GetUtility<ILubanDataModel>().Tables.TbEnemyInfo;
 
-            foreach (EnemyInfo info in container.DataDic.Values)
+            foreach (cfg.EnemyInfo info in table.DataList)
             {
                 model.Register(new EnemyDefine
                 {

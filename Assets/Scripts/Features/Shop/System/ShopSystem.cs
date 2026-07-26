@@ -1,16 +1,14 @@
 using System;
 using System.Collections.Generic;
-using Configuration.ExcelData.Container;
-using Configuration.ExcelData.DataClass;
 using Core.Systems;
 using Features.Card.Data;
 using Features.Card.Define;
 using Features.Card.Model;
+using Features.Configuration.Model;
 using Features.Potion.Data;
 using Features.Shop.Data;
 using Features.Shop.Model;
 using QFramework;
-using Services.ExcelTool;
 
 namespace Features.Shop.System
 {
@@ -20,12 +18,11 @@ namespace Features.Shop.System
 
         public void GenerateShop()
         {
-            IBinaryDataMgr mgr = this.GetUtility<IBinaryDataMgr>();
-            ShopCardPackInfoContainer config = mgr.GetTable<ShopCardPackInfoContainer>();
+            cfg.Tables tables = this.GetUtility<ILubanDataModel>().Tables;
             IShopModel model = this.GetModel<IShopModel>();
             model.CardPackSlots.Clear();
 
-            foreach (ShopCardPackInfo info in config.DataDic.Values)
+            foreach (cfg.ShopCardPackInfo info in tables.TbShopCardPackInfo.DataList)
             {
                 model.CardPackSlots.Add(new ShopCardPackSlot
                 {
@@ -40,20 +37,19 @@ namespace Features.Shop.System
                 });
             }
 
-            RemoveCardCostInfoContainer removeConfig = mgr.GetTable<RemoveCardCostInfoContainer>();
-            if (removeConfig != null && removeConfig.DataDic.Count > 0)
+            var removeList = tables.TbRemoveCardCostInfo.DataList;
+            if (removeList.Count > 0)
             {
-                RemoveCardCostInfo removeInfo = removeConfig.DataDic[1];
+                cfg.RemoveCardCostInfo removeInfo = removeList[0];
                 model.SetRemoveCostConfig(removeInfo.Cost, removeInfo.Increment);
             }
 
             model.ResetRemoveCount();
 
             model.PotionShopSlots.Clear();
-            PotionInfoContainer potionConfig = mgr.GetTable<PotionInfoContainer>();
-            if (potionConfig?.DataDic != null)
+            var allPotions = new List<cfg.PotionInfo>(tables.TbPotionInfo.DataList);
+            if (allPotions.Count > 0)
             {
-                List<PotionInfo> allPotions = new(potionConfig.DataDic.Values);
                 IRandomSystem random = this.GetSystem<IRandomSystem>();
                 int count = Math.Min(3, allPotions.Count);
                 for (int i = 0; i < count; i++)
